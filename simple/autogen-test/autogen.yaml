@@ -1,0 +1,159 @@
+
+
+partnerId: influxdata-dev
+solutionId: influxdb-enterprise-byol
+partnerInfo:
+  name: InfluxData, Inc.
+  description: |
+    InfluxData, the creator of InfluxDB, provides a platform for time series data.
+  url: https://www.influxdata.com
+  shortDescription: InfluxData, the creator of InfluxDB, provides a platform for time series data.
+solutionInfo:
+  name: InfluxDB Enterprise BYOL
+  version: 1.0
+  description: This solution creates an InfluxDB Enterprise cluster with two data nodes of eight cores each.
+  url: https://www.influxdata.com
+  tagline: InfluxDB Enterprise cluster for highly-available and scalable time series metric and event storage 
+  supportInfo: Some description of the support provided for this solution
+  supportUrl: https://support.influxdb.com/hc/en-us
+  eulaUrl: https://portal.influxdata.com/users/new/gcp
+  documentations:
+  - url: https://docs.influxdata.com/enterprise_influxdb/v1.6/
+    title: Getting Started
+    description: Get started docs for this example solution
+    # List of places where this support info should be displayed
+    # check marketing_info.proto for options
+    destinations:
+    - DESTINATION_POST_DEPLOY
+  - url: https://www.google.com
+    title: Some more docs
+    description: Additional docs for this solution
+    destinations:
+    - DESTINATION_POST_DEPLOY
+    - DESTINATION_CONFIGURATION
+  packagedSoftwareGroups:
+  - type: SOFTWARE_GROUP_OS
+    components:
+    - name: Debian
+      version: 9 Stretch
+logo:
+  raw:
+    contentType: PNG
+    # Base 64 encoded image
+    content: iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==
+  description: Solution Logo
+spec:
+  version: 1.0
+  multiVm:
+    passwords:
+    - metadataKey: influxdb-admin-password
+      length: 24
+    tiers:
+    - name: meta
+      title: InfluxDB Enterprise Meta Node
+      
+      instanceCount:
+        defaultValue: 3
+        description: Always use three InfluxDB Enterprise meta nodes to quickly reach consensus. Additional nodes are not required.
+      
+      images:
+      - project: influxdata-dev
+        name: influxdb-enterprise-byol-test-1536078153
+        label: InfluxDB Enterprise meta node (BYOL)
+      
+      bootDisk:
+        diskSize:
+          defaultSizeGb: 10
+          minSizeGb: 10
+        diskType:
+          defaultType: pd-standard
+      
+      firewallRules:
+      - port: '8089'
+        protocol: TCP
+        allowed_source: TIER
+      - port: '8091'
+        protocol: TCP
+        allowed_source: DEPLOYMENT
+      - protocol: ICMP
+        allowed_source: DEPLOYMENT
+      
+      externalIp:
+        defaultType: EPHEMERAL
+      
+      # applicationStatus:
+      #   type: WAITER
+      #   waiter:
+      #     waiterTimeoutSecs: 300
+      #     script:
+      #       checkScriptContent: |
+      #         if [[ ! -f /opt/c2d/validation.complete ]]; then
+      #           return 1 # Not yet ready, but retry
+      #         fi
+      #         local validation_result="$(more /opt/c2d/validation.log | grep -c "All tests PASSED")"
+      #         if [[ "${validation_result}" == 1 ]]; then
+      #           return 0 # Validation completed successfully
+      #         else
+      #           return 2 # Validation failed
+      #         fi
+
+    - name: data
+      title: InfluxDB Enterprise Data Node
+      
+      instanceCount:
+        defaultValue: 2
+        description: Always use three InfluxDB Enterprise meta nodes to quickly reach consensus. Additional nodes are not required.
+      
+      images:
+      - project: influxdata-dev
+        name: influxdb-enterprise-byol-test-1536078153
+        label: InfluxDB Enterprise data node (BYOL)
+      
+      bootDisk:
+        diskSize:
+          defaultSizeGb: 10
+          minSizeGb: 10
+        diskType:
+          defaultType: pd-standard
+      
+      additionalDisks:
+      - diskSize:
+          defaultSizeGb: 250
+          minSizeGb: 20
+        diskType:
+          defaultType: pd-ssd
+        deviceNameSuffix:
+          name: data
+        displayLabel: Data disk
+      
+      firewallRules:
+      - port: '8086'
+        protocol: TCP
+        allowed_source: PUBLIC
+      - port: '8088'
+        protocol: TCP
+        allowed_source: DEPLOYMENT
+      - protocol: ICMP
+        allowed_source: DEPLOYMENT
+      
+      externalIp:
+        defaultType: EPHEMERAL
+
+    postDeploy:
+      actionItems:
+      - heading: Read the getting started guide
+        description: Here is a link to the getting started guide.
+
+    deployInput:
+      sections:
+      - placement: MAIN
+        fields:
+        - name: LICENSE_KEY
+          title: InfluxDB Enterprise license key
+          tooltip: E.g. a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+          required: true
+          stringBox:
+            placeholder: License key
+            defaultValue: a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+            testDefaultValue: a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+

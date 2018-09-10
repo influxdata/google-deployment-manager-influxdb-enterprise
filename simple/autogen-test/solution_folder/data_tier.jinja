@@ -1,0 +1,111 @@
+{% import "path_utils.jinja" as path_utils with context %}
+
+{% set instanceCount = properties["instanceCount"] %}
+{% set zone = properties["zone"] %}
+{% set machineType = properties["machineType"] %}
+{% set network = path_utils.networkPath(properties["network"]) %}
+{% set subnetwork = properties["subnetwork"] %}
+{% set bootDiskType = properties["bootDiskType"] %}
+{% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
+{% set hasExternalIP = properties["externalIP"] != "None" %}
+{# Software status only works if the VM has an external IP. #}
+{% set enableStatusWaiter = hasExternalIP %}
+{% if instanceCount <= 0 %}
+resources: []
+{% else %}
+resources:
+  {% for vmIndex in range(instanceCount) %}
+  - name: {{ env["deployment"] }}-data-vm-tmpl-{{ vmIndex }}
+    type: vm_instance.py
+    properties:
+      instanceName: {{ env["deployment"] }}-data-vm-{{ vmIndex }}
+      sourceImage: https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdb-enterprise-byol-test-1536078153
+      zone: {{ zone }}
+      machineType: {{ machineType }}
+      network: {{ network }}
+      {% if subnetwork %}
+      subnetwork: {{ subnetwork }}
+      {% endif %}
+      bootDiskType: {{ bootDiskType }}
+      bootDiskSizeGb: {{ bootDiskSizeGb }}
+      disks:
+        - deviceName: {{ env["deployment"] }}-data-vm-{{ vmIndex }}-data
+          type: PERSISTENT
+          diskType: {{ properties["data_disk1_type"] }}
+          diskSizeGb: {{ properties["data_disk1_sizeGb"] }}
+          boot: False
+          autoDelete: True
+      hasExternalIP: {{ hasExternalIP }}
+      serviceAccounts:
+        - email: default
+          scopes:
+            - 'https://www.googleapis.com/auth/cloud.useraccounts.readonly'
+            - 'https://www.googleapis.com/auth/devstorage.read_only'
+            - 'https://www.googleapis.com/auth/logging.write'
+            - 'https://www.googleapis.com/auth/monitoring.write'
+      metadata:
+        items:
+          - key: influxdb-admin-password
+            value: {{ properties["generatedPassword0"] }}
+      tags:
+        items:
+          - {{ env["deployment"] }}-deployment
+          - {{ env["deployment"] }}-data-tier
+          - {{ env["deployment"] }}-data-tcp-8086
+  {% endfor %}
+  {% if properties["enableTcp8086"] %}
+  - name: {{ env["deployment"] }}-data-tcp-8086
+    type: compute.v1.firewall
+    properties:
+      network: {{ network }}
+      {% if properties.get("tcp8086SourceRanges") %}
+      sourceRanges:
+        {% for source in properties["tcp8086SourceRanges"].split(',') %}
+        - '{{ source | trim }}'
+        {% endfor %}
+      {% else %}
+      sourceRanges: ["0.0.0.0/0"]
+      {% endif %}
+      targetTags: ["{{ env["deployment"] }}-data-tcp-8086"]
+      allowed:
+        - IPProtocol: TCP
+          ports: ["8086"]
+  {% endif %}
+  - name: {{ env["deployment"] }}-data-tcp-8088
+    type: compute.v1.firewall
+    properties:
+      network: {{ network }}
+      sourceTags:
+      - {{ env["deployment"] }}-deployment
+      targetTags: ["{{ env["deployment"] }}-deployment"]
+      allowed:
+        - IPProtocol: TCP
+          ports: ["8088"]
+  - name: {{ env["deployment"] }}-icmp
+    type: compute.v1.firewall
+    properties:
+      network: {{ network }}
+      sourceTags:
+      - {{ env["deployment"] }}-deployment
+      targetTags: ["{{ env["deployment"] }}-deployment"]
+      allowed:
+        - IPProtocol: ICMP
+
+outputs:
+  {% for vmIndex in range(instanceCount) %}
+  - name: vmId{{ vmIndex }}
+    value: $(ref.{{ env["deployment"] }}-data-vm-{{ vmIndex }}.id)
+  - name: vmExternalIP{{ vmIndex }}
+    {% if hasExternalIP %}
+    value: $(ref.{{ env["deployment"] }}-data-vm-tmpl-{{ vmIndex }}.ip)
+    {% else %}
+    value: NONE
+    {% endif %}
+  - name: vmInternalIP{{ vmIndex }}
+    value: $(ref.{{ env["deployment"] }}-data-vm-tmpl-{{ vmIndex }}.internalIP)
+  - name: vmName{{ vmIndex }}
+    value: {{ env["deployment"] }}-data-vm-{{ vmIndex }}
+  - name: vmSelfLink{{ vmIndex }}
+    value: $(ref.{{ env["deployment"] }}-data-vm-{{ vmIndex }}.selfLink)
+  {% endfor %}
+{% endif %}

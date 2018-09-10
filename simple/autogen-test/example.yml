@@ -1,0 +1,328 @@
+# multiVm autogen configuration sample
+multiVm:
+  tiers:
+  - name: db
+    title: Cassandra
+    bootDisk:
+      diskSize:
+        defaultSizeGb: 10
+        minSizeGb: 10
+      diskType:
+        defaultType: pd-standard
+    additionalDisks:
+    - diskSize:
+        defaultSizeGb: 1000
+        minSizeGb: 10
+      diskType:
+        defaultType: pd-standard
+      deviceNameSuffix:
+        name: data
+      displayLabel: Data disk
+    firewallRules:
+    - port: 7000-7001
+      protocol: TCP
+      allowed_source: TIER
+    - port: '7199'
+      protocol: TCP
+      allowed_source: TIER
+    - protocol: ICMP
+      allowed_source: TIER
+    gceMetadataItems:
+    - key: cassandra_node_hostnames
+      tierVmNames:
+        tier: db
+        allVms:
+          delimiter: ' '
+    - key: cassandra_cluster_name
+      valueFromDeployInputField: clusterName
+    images:
+    - name: cassandra-v20180828
+      project: click-to-deploy-images
+    instanceCount:
+      defaultValue: 3
+      range:
+        startValue: 1
+        endValue: 30
+    machineType:
+      defaultMachineType:
+        gceMachineType: n1-highmem-4
+      minimum:
+        cpu: 1
+        ramGb: 3.75
+    applicationStatus:
+      type: WAITER
+      waiter:
+        waiterTimeoutSecs: 300
+    externalIp:
+      defaultType: EPHEMERAL
+
+  deployInput:
+    sections:
+    - placement: MAIN
+      fields:
+      - name: clusterName
+        title: Cluster Name
+        description: The name of the cluster. Prevents Cassandra nodes in one logical
+          cluster from joining another.
+        required: true
+        stringBox:
+          placeholder: Test Cluster
+          defaultValue: Test Cluster
+
+  postDeploy:
+    actionItems:
+    - heading: Read the getting started guide
+      description: View the <a href="https://cassandra.apache.org/doc/latest/getting_started/index.html">Apache
+        Documentation</a> (Start on configuring Cassandra).
+
+
+
+
+
+# Example from autogen docs of singleVm
+  singleVm:
+    images:
+      # if more than one image is provided, the user will be able to select which one they want
+      - project: your-project-id-that-the-image-belongs-to
+        name: name-of-your-image
+        label: Label to show in the selection dropdown
+    machineType:
+      # Check http://cloud.google.com/compute/docs/machine-types for all available types
+      defaultMachineType:
+        gceMachineType: n1-standard-4
+      # Minimum CPU and memory constraints for the machine type to run your solution properly
+      minimum:
+        cpu: 2
+        ramGb: 4
+    bootDisk:
+      # Describes the default and minimum disk size (GB) that user should have to run your solution properly
+      diskSize:
+        defaultSizeGb: 30
+        minSizeGb: 20
+      diskType:
+        # For more information about disk types: http://cloud.google.com/compute/docs/reference/latest/diskTypes
+        # Some types: pd-standard, local-ssd, pd-ssd
+        defaultType: pd-standard
+      # Defaults to Boot Disk
+      displayLabel: My Boot Disk
+      # Additional SSDs to be attached to you VM
+    localSsds:
+      count: 2
+    # Adds the option for the use to set IP forwarding when deploying this solution
+    # More info: http://cloud.google.com/compute/docs/networking#eventualconsistency
+    ipForwarding:
+      defaultOff: true
+    # List of firewall rules for this solution. If not specified, allowedSource will be set to PUBLIC by default
+    # More details in deployment_package_autogen_spec.proto
+    firewallRules:
+      - protocol: TCP
+        # Can be a range of ports, in the format 32768-40000
+        port: 80
+    # Rules to specify how to generate passwords
+    passwords:
+      # This password identifier that
+      - metadataKey: my-password-1
+        length: 8
+        allowSpecialChars: true
+        username: solutionuser
+        # Label to describe the purpose of this password (will default to Admin in case only one password is provided)
+        displayLabel: Admin
+    gceStartupScript:
+      bashScriptContent: echo SUCCESS > /var/log/startup-log.txt
+    # Post deployment information that will be displayed to the user to actions upon
+    postDeploy:
+      # List of suggested action items for users, after deployment is successful
+      actionItems:
+        - heading: Log on now
+          description: "Start using your application by accessing the following URL: https://www.google.com"
+          snippet: $ some code snippets can go here, to show some examples
+        - heading: Another label
+          description: Another description
+          showIf:
+            # We make this action only show in the post deployment page if a boolean expression is satisfied
+            # In this example, only if an input field (see deployInput sections below) in the DM config UI is selected
+            booleanDeployInputField:
+              name: booleanField1
+      # In the post deployment page we can show a table to expose some more details about the deployed solution
+      infoRows:
+        - label: Property 1
+          value: Value for property 1
+        - label: Property 2
+          # We can specify values from custom deploy input fields present in this spec
+          valueFromDeployInputField: additionalEmail
+    # Field describing the accelerators that can be attached to this VM. For now, only one acceleratorSpec is allowed
+    accelerators:
+      # List of available GPUs (user can only pick one type). This list is required. Types: https://cloud.google.com/compute/docs/gpus/
+      # Check the ids of the GPUs through GCP API: https://cloud.google.com/compute/docs/reference/latest/acceleratorTypes
+      - types:
+          - nvidia-tesla-k80
+          - nvidia-tesla-p100
+        defaultType: nvidia-tesla-p100
+        # Only values of 0, 1, 2, 4, and 8 are supported.
+        defaultCount: 2
+    # Here we can specify extra input fields to be passed to the deployment manager
+    deployInput:
+      sections:
+        # The place int he Deployment Manager config that this section will appear. More details in deployment_package_autogen_spec.proto
+        - placement: MAIN
+          name: idOfThisSection
+          title: Title that will appear on top of this section
+          description: This will appear below the title
+          tooltip: Tooltip for this section
+          # List of input fields that this section has
+          fields:
+            - required: true
+              name: adminEmail
+              title: Enter your e-mail here
+              description: Some description to go below the title
+              tooltip: Tooltipe for this input field
+              emailBox: {}
+            - required: false
+              name: additionalEmail
+              title: Additional email address
+              emailBox: {}
+            - required:
+              name: booleanField1
+              title: Boolean checkbox used to tell whether our actionItem above should be displayed or not
+              booleanCheckbox: {}
+
+
+# A sample with checking for startup status and the inline startup script:
+singleVm:
+  applicationStatus:
+    type: WAITER
+    waiter:
+      waiterTimeoutSecs: 300
+      script:
+        checkScriptContent: |
+          if [[ ! -f /opt/c2d/validation.complete ]]; then
+            return 1 # Not yet ready, but retry
+          fi
+          local validation_result="$(more /opt/c2d/validation.log | grep -c "All tests PASSED")"
+          if [[ "${validation_result}" == 1 ]]; then
+            return 0 # Validation completed successfully
+          else
+            return 2 # Validation failed
+          fi
+
+  gceStartupScript:
+    bashScriptContent: |
+      cd /opt/c2d
+      ./singlefs_install.sh
+      ./singlefs_monitoring.sh
+      ./singlefs_validate.sh
+      cd -
+
+  bootDisk:
+    diskSize:
+      defaultSizeGb: 10
+      minSizeGb: 10
+    diskType:
+      defaultType: pd-standard
+
+  additionalDisks:
+  - diskSize:
+      defaultSizeGb: 1000
+      minSizeGb: 10
+    diskType:
+      defaultType: pd-standard
+    deviceNameSuffix:
+      nameFromDeployInputField: storagePoolName
+    displayLabel: Storage disk
+    preventAutoDeletion: true
+
+  localSsds:
+    countFromDeployInputField: localSSDs
+
+  images:
+  - name: singlefs-1-0-0-20180124-150844
+    project: click-to-deploy-images
+
+  machineType:
+    defaultMachineType:
+      gceMachineType: n1-standard-2
+    minimum:
+      cpu: 1
+      ramGb: 3.5
+
+  gceMetadataItems:
+  - key: ENABLE_NFS
+    value: '{{ "enable:" ~ properties["input_enableNFS"] }}'
+  - key: ENABLE_SMB
+    value: '{{ "enable:" ~ properties["input_enableSMB"] }}'
+  - key: STORAGE_POOL_NAME
+    valueFromDeployInputField: storagePoolName
+  - key: FILE_SYSTEM
+    valueFromDeployInputField: fileSystem
+  - key: C2D_STATUS
+    value: deprecated
+
+  passwords:
+  - allowSpecialChars: true
+    displayLabel: Web admin
+    length: 14
+    metadataKey: ADMIN_PASSWORD
+    username: admin
+
+  deployInput:
+    sections:
+    - placement: MAIN
+      fields:
+      - name: storagePoolName
+        title: Storage name
+        required: true
+        tooltip: Name of the data disk and ZFS storage pool. The storage is automatically mounted under this name in the root directory.
+        stringBox:
+          defaultValue: data
+          validation:
+            description: The name must contain only alphanumeric characters, hyphen (-) or underscore (_).
+            regex: '[A-Za-z0-9\-_]+'
+      - name: localSSDs
+        title: Number of local SSDs
+        required: true
+        tooltip: Local ssds are optional and used for caching reads, both sequential and random reads.
+        integerDropdown:
+          values:
+          - 0
+          - 1
+          - 2
+          - 3
+          - 4
+          defaultValueIndex:
+            value: 0
+      - name: enableNFS
+        title: Enable NFS sharing
+        required: true
+        tooltip: Configure NFS sharing to the network attached to the instance.
+        booleanCheckbox:
+          defaultValue: true
+      - name: enableSMB
+        title: Enable SMB sharing
+        required: true
+        tooltip: Configure SMB sharing to the network attached to the instance.
+        booleanCheckbox:
+          defaultValue: true
+      - name: fileSystem
+        title: File system
+        required: true
+        tooltip: The file system used for the data disk.
+        level: 1
+        stringDropdown:
+          values:
+          - zfs
+          - ext4
+          - xfs
+          defaultValueIndex:
+            value: 2
+
+  postDeploy:
+    actionItems:
+    - heading: Mount the NFS share from another GCE instance
+      description: 'Mount the NFS share from another GCE instance attached to the <code> {{ properties().network }} </code> GCE network. NFS utilities need to be installed on the GCE client instance.'
+    - heading: Suggested mount command
+      snippet: 'sudo mount -t nfs {{ outputs().vmName }}:/{{ properties().input_storagePoolName }} /mnt'
+    - heading: Access the Monitoring Console
+      description: 'From your local workstation, execute this gcloud command to access your Monitoring Console through an SSH tunnel'
+      snippet: 'gcloud compute ssh --ssh-flag=-L3000:localhost:3000 --project={{ outputs().project }} --zone {{ properties().zone }} {{ outputs().vmName }}'
+    - heading: Access monitoring control
+      description: 'After the ssh tunnel has been set up, access the monitoring console using the link below. The username is <b>admin</b>. The generated password can be found above.<br> <a href="htt

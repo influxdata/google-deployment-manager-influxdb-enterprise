@@ -1,0 +1,95 @@
+{% import "path_utils.jinja" as path_utils with context %}
+
+{% set instanceCount = properties["instanceCount"] %}
+{% set zone = properties["zone"] %}
+{% set machineType = properties["machineType"] %}
+{% set network = path_utils.networkPath(properties["network"]) %}
+{% set subnetwork = properties["subnetwork"] %}
+{% set bootDiskType = properties["bootDiskType"] %}
+{% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
+{% set hasExternalIP = properties["externalIP"] != "None" %}
+{# Software status only works if the VM has an external IP. #}
+{% set enableStatusWaiter = hasExternalIP %}
+{% if instanceCount <= 0 %}
+resources: []
+{% else %}
+resources:
+  {% for vmIndex in range(instanceCount) %}
+  - name: {{ env["deployment"] }}-meta-vm-tmpl-{{ vmIndex }}
+    type: vm_instance.py
+    properties:
+      instanceName: {{ env["deployment"] }}-meta-vm-{{ vmIndex }}
+      sourceImage: https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdb-enterprise-byol-test-1536078153
+      zone: {{ zone }}
+      machineType: {{ machineType }}
+      network: {{ network }}
+      {% if subnetwork %}
+      subnetwork: {{ subnetwork }}
+      {% endif %}
+      bootDiskType: {{ bootDiskType }}
+      bootDiskSizeGb: {{ bootDiskSizeGb }}
+      hasExternalIP: {{ hasExternalIP }}
+      serviceAccounts:
+        - email: default
+          scopes:
+            - 'https://www.googleapis.com/auth/cloud.useraccounts.readonly'
+            - 'https://www.googleapis.com/auth/devstorage.read_only'
+            - 'https://www.googleapis.com/auth/logging.write'
+            - 'https://www.googleapis.com/auth/monitoring.write'
+      metadata:
+        items:
+          - key: influxdb-admin-password
+            value: {{ properties["generatedPassword0"] }}
+      tags:
+        items:
+          - {{ env["deployment"] }}-deployment
+          - {{ env["deployment"] }}-meta-tier
+  {% endfor %}
+  - name: {{ env["deployment"] }}-meta-tcp-8089
+    type: compute.v1.firewall
+    properties:
+      network: {{ network }}
+      sourceTags:
+      - {{ env["deployment"] }}-meta-tier
+      targetTags: ["{{ env["deployment"] }}-meta-tier"]
+      allowed:
+        - IPProtocol: TCP
+          ports: ["8089"]
+  - name: {{ env["deployment"] }}-meta-tcp-8091
+    type: compute.v1.firewall
+    properties:
+      network: {{ network }}
+      sourceTags:
+      - {{ env["deployment"] }}-deployment
+      targetTags: ["{{ env["deployment"] }}-deployment"]
+      allowed:
+        - IPProtocol: TCP
+          ports: ["8091"]
+  - name: {{ env["deployment"] }}-meta-icmp
+    type: compute.v1.firewall
+    properties:
+      network: {{ network }}
+      sourceTags:
+      - {{ env["deployment"] }}-deployment
+      targetTags: ["{{ env["deployment"] }}-deployment"]
+      allowed:
+        - IPProtocol: ICMP
+
+outputs:
+  {% for vmIndex in range(instanceCount) %}
+  - name: vmId{{ vmIndex }}
+    value: $(ref.{{ env["deployment"] }}-meta-vm-{{ vmIndex }}.id)
+  - name: vmExternalIP{{ vmIndex }}
+    {% if hasExternalIP %}
+    value: $(ref.{{ env["deployment"] }}-meta-vm-tmpl-{{ vmIndex }}.ip)
+    {% else %}
+    value: NONE
+    {% endif %}
+  - name: vmInternalIP{{ vmIndex }}
+    value: $(ref.{{ env["deployment"] }}-meta-vm-tmpl-{{ vmIndex }}.internalIP)
+  - name: vmName{{ vmIndex }}
+    value: {{ env["deployment"] }}-meta-vm-{{ vmIndex }}
+  - name: vmSelfLink{{ vmIndex }}
+    value: $(ref.{{ env["deployment"] }}-meta-vm-{{ vmIndex }}.selfLink)
+  {% endfor %}
+{% endif %}

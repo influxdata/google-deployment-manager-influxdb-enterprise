@@ -1,0 +1,7 @@
+{
+  "defaultDeploymentType": "MULTI_VM",
+  "imageName": "influxdb-enterprise-byol-test-1536078153",
+  "projectId": "influxdata-dev",
+  "templateName": "nonexistent_template",
+  "useSolutionPackage": true
+}

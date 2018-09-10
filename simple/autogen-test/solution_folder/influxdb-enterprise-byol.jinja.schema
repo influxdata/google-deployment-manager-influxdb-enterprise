@@ -1,0 +1,130 @@
+imports:
+  - path: meta_tier.jinja
+  - path: data_tier.jinja
+
+info:
+  version: '1.0'
+  title: InfluxDB Enterprise BYOL Template
+
+required:
+  - zone
+  - network
+  - meta_instanceCount
+  - meta_machineType
+  - meta_bootDiskType
+  - meta_bootDiskSizeGb
+  - data_instanceCount
+  - data_machineType
+  - data_bootDiskType
+  - data_bootDiskSizeGb
+  - input_LICENSE_KEY
+
+properties:
+  zone:
+    type: string
+    default: us-central1-f
+    x-googleProperty:
+      type: GCE_ZONE
+  network:
+    type: string
+    default: default
+    x-googleProperty:
+      type: GCE_NETWORK
+  subnetwork:
+    type: string
+    x-googleProperty:
+      type: GCE_SUBNETWORK
+      zoneProperty: zone
+      gceSubnetwork:
+        networkProperty: network
+  meta_instanceCount:
+    type: integer
+    default: 3
+  meta_machineType:
+    type: string
+    default: f1-micro
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+  meta_externalIP:
+    type: string
+    enum:
+      - Ephemeral
+      - None
+    default: Ephemeral
+  meta_bootDiskType:
+    type: string
+    default: pd-standard
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  meta_bootDiskSizeGb:
+    type: integer
+    default: 10
+    minimum: 10
+    maximum: 10000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: meta_bootDiskType
+  data_instanceCount:
+    type: integer
+    default: 2
+  data_machineType:
+    type: string
+    default: f1-micro
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+  data_externalIP:
+    type: string
+    enum:
+      - Ephemeral
+      - None
+    default: Ephemeral
+  data_bootDiskType:
+    type: string
+    default: pd-standard
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  data_bootDiskSizeGb:
+    type: integer
+    default: 10
+    minimum: 10
+    maximum: 10000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: data_bootDiskType
+  data_disk1_type:
+    type: string
+    default: pd-ssd
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  data_disk1_sizeGb:
+    type: integer
+    default: 250
+    minimum: 20
+    maximum: 10000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: data_disk1_type
+  data_enableTcp8086:
+    type: boolean
+    default: True
+  data_tcp8086SourceRanges:
+    type: string
+  input_LICENSE_KEY:
+    type: string
+    default: a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+
+outputs:
+  deployment:
+    type: string
+  project:
+    type: string
+  password0:
+    type: string
