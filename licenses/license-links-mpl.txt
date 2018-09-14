@@ -1,0 +1,6 @@
+https://codeload.github.com/hashicorp/raft/zip/master
+https://codeload.github.com/hashicorp/zip/raft-boltdb
+https://codeload.github.com/hashicorp/zip/yamux
+https://codeload.github.com/go-sql-driver/zip/mysql
+https://codeload.github.com/hashicorp/zip/consul
+https://codeload.github.com/influxdata/zip/yamux
