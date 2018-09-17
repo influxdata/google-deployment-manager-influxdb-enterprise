@@ -7,14 +7,11 @@
 {% set subnetwork = properties["subnetwork"] %}
 {% set bootDiskType = properties["bootDiskType"] %}
 {% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
-{% set hasExternalIP = properties["externalIP"] != "None" %}
-{# Software status only works if the VM has an external IP. #}
-{% set enableStatusWaiter = hasExternalIP %}
 {% if instanceCount <= 0 %}
 resources: []
 {% else %}
 resources:
-  {% for vmIndex in range(instanceCount) %}
+  {# {% for vmIndex in range(instanceCount) %} #}
   - name: {{ env["deployment"] }}-meta-vm-tmpl-{{ vmIndex }}
     type: vm_instance.py
     properties:
@@ -44,7 +41,8 @@ resources:
         items:
           - {{ env["deployment"] }}-deployment
           - {{ env["deployment"] }}-meta-group
-  {% endfor %}
+  {# {% endfor %} #}
+
   - name: {{ env["deployment"] }}-meta-tcp-8089
     type: compute.v1.firewall
     properties:
@@ -55,6 +53,7 @@ resources:
       allowed:
         - IPProtocol: TCP
           ports: ["8089"]
+
   - name: {{ env["deployment"] }}-meta-tcp-8091
     type: compute.v1.firewall
     properties:
@@ -65,6 +64,7 @@ resources:
       allowed:
         - IPProtocol: TCP
           ports: ["8091"]
+
   - name: {{ env["deployment"] }}-meta-icmp
     type: compute.v1.firewall
     properties:
@@ -76,7 +76,7 @@ resources:
         - IPProtocol: ICMP
 
 outputs:
-  {% for vmIndex in range(instanceCount) %}
+  {# {% for vmIndex in range(instanceCount) %} #}
   - name: vmId{{ vmIndex }}
     value: $(ref.{{ env["deployment"] }}-meta-vm-{{ vmIndex }}.id)
   - name: vmExternalIP{{ vmIndex }}
@@ -91,5 +91,5 @@ outputs:
     value: {{ env["deployment"] }}-meta-vm-{{ vmIndex }}
   - name: vmSelfLink{{ vmIndex }}
     value: $(ref.{{ env["deployment"] }}-meta-vm-{{ vmIndex }}.selfLink)
-  {% endfor %}
+  {# {% endfor %} #}
 {% endif %}

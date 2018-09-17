@@ -14,6 +14,18 @@ test_config.yaml
 resources/us-en/logo.png
 ```
 
+The support files for this deployment include:
+
+```
+# DM resource files
+
+# startup scripts included in DM template
+utils.sh
+meta-setup.sh
+meta-master-setup.sh
+data-setup.sh
+```
+
 # Using Autogen (not in use)
 
 [Deployment Manager `autogen`](https://github.com/GoogleCloudPlatform/deploymentmanager-autogen) is a useful tool for auto-generating a complete set of deployment manager templates from a single YAML file that describes a single solution. Unfortunately, it does not yet support instance groups and some other resources used in the BYOL listing and is therefore not used.

@@ -47,72 +47,62 @@ input:
     - name: meta_instanceCount
       title: Instance Count
       subtext: Always use three InfluxDB Enterprise meta nodes to quickly reach consensus. Additional nodes are not required.
-      section: META_TIER
+      section: META_GROUP
     - name: meta_machineType
       title: Machine type
-      section: META_TIER
+      section: META_GROUP
     - name: meta_bootDiskType
       title: Boot disk type
-      section: META_TIER
+      section: META_GROUP
     - name: meta_bootDiskSizeGb
       title: Boot disk size in GB
-      section: META_TIER
-    - name: meta_externalIP
-      title: External IP
-      tooltip: 'An external IP address associated with this instance. Selecting "None" will result in the instance having no external internet access. <a href="https://cloud.google.com/compute/docs/configure-instance-ip-addresses">Learn more</a>'
-      section: META_TIER
-      level: 1
+      section: META_GROUP
     - name: data_instanceCount
       title: Instance Count
       subtext: Always use three InfluxDB Enterprise meta nodes to quickly reach consensus. Additional nodes are not required.
-      section: DATA_TIER
+      section: DATA_GROUP
     - name: data_machineType
       title: Machine type
-      section: DATA_TIER
+      section: DATA_GROUP
     - name: data_bootDiskType
       title: Boot disk type
-      section: DATA_TIER
+      section: DATA_GROUP
     - name: data_bootDiskSizeGb
       title: Boot disk size in GB
-      section: DATA_TIER
+      section: DATA_GROUP
     - name: data_disk1_type
       title: Data disk type
-      section: DATA_TIER
+      section: DATA_GROUP
     - name: data_disk1_sizeGb
       title: Data disk size in GB
-      section: DATA_TIER
-    - name: data_externalIP
-      title: External IP
-      tooltip: 'An external IP address associated with this instance. Selecting "None" will result in the instance having no external internet access. <a href="https://cloud.google.com/compute/docs/configure-instance-ip-addresses">Learn more</a>'
-      section: DATA_TIER
-      level: 1
+      section: DATA_GROUP
     - name: data_tcp8086SourceRanges
       title: Source IP ranges for TCP port 8086 traffic
       tooltip: 'Traffic is only allowed from sources within these IP address ranges. Use CIDR notation when entering ranges. <a href="https://cloud.google.com/compute/docs/networking#firewalls">Learn more</a>'
       placeholder: '0.0.0.0/0, 192.169.0.2/24'
-      section: DATA_TIER
+      section: DATA_GROUP
       level: 1
     - name: data_enableTcp8086
       title: Allow TCP port 8086 traffic
-      section: DATA_TIER
-      boolean_group: DATA_TIER_FIREWALL
+      section: DATA_GROUP
+      boolean_group: DATA_GROUP_FIREWALL
     - name: input_LICENSE_KEY
       title: InfluxDB Enterprise license key
       tooltip: E.g. a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx
       placeholder: License key
   sections:
-    - name: META_TIER
+    - name: META_GROUP
       title: InfluxDB Enterprise Meta Node
-    - name: DATA_TIER
+    - name: DATA_GROUP
       title: InfluxDB Enterprise Data Node
     - name: NETWORKING
       title: Networking
   boolean_groups:
-    - name: META_TIER_FIREWALL
+    - name: META_GROUP_FIREWALL
       title: Firewall
       tooltip: 'By default all incoming traffic from outside a network is blocked. Select the type of network traffic you want to allow. <a href="https://cloud.google.com/compute/docs/networking#firewalls">Learn more</a>'
       subtext: Add tags and firewall rules to allow specific network traffic from the Internet
-    - name: DATA_TIER_FIREWALL
+    - name: DATA_GROUP_FIREWALL
       title: Firewall
       tooltip: 'By default all incoming traffic from outside a network is blocked. Select the type of network traffic you want to allow. <a href="https://cloud.google.com/compute/docs/networking#firewalls">Learn more</a>'
       subtext: Add tags and firewall rules to allow specific network traffic from the Internet
@@ -126,12 +116,6 @@ runtime:
       - label: Zone
         value: '{{ properties().zone }}'
   suggestedActions:
-    - heading: No external IP configured on any tier
-      description: 'All VM instances have been configured with no external IP or internet access. Connecting to them directly may not be possible. Consider using a <a href="https://cloud.google.com/compute/docs/instances/connecting-advanced#bastion_host">bastion host</a> to access these VMs.'
-      showIf: "{{ outputs().tiersWithNoExternalIPStatus == 'ALL' }}"
-    - heading: No external IP configured on some tiers
-      description: 'Some VM instances have been configured with no external IP or internet access. Connecting to them directly may not be possible. Consider using a <a href="https://cloud.google.com/compute/docs/instances/connecting-advanced#bastion_host">bastion host</a> to access these VMs.'
-      showIf: "{{ outputs().tiersWithNoExternalIPStatus == 'SOME' }}"
     - heading: Read the getting started guide
       description: Here is a link to the getting started guide.
     - heading: Open TCP port 8086 traffic for InfluxDB Enterprise Data Node

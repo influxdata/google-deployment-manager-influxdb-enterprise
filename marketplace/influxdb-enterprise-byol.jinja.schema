@@ -1,6 +1,6 @@
 imports:
-  - path: meta_tier.jinja
-  - path: data_tier.jinja
+  - path: meta_group.jinja
+  - path: data_group.jinja
 
 info:
   version: '1.0'
@@ -46,12 +46,6 @@ properties:
     x-googleProperty:
       type: GCE_MACHINE_TYPE
       zoneProperty: zone
-  meta_externalIP:
-    type: string
-    enum:
-      - Ephemeral
-      - None
-    default: Ephemeral
   meta_bootDiskType:
     type: string
     default: pd-standard
@@ -76,12 +70,6 @@ properties:
     x-googleProperty:
       type: GCE_MACHINE_TYPE
       zoneProperty: zone
-  data_externalIP:
-    type: string
-    enum:
-      - Ephemeral
-      - None
-    default: Ephemeral
   data_bootDiskType:
     type: string
     default: pd-standard

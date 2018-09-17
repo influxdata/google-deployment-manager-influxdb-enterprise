@@ -1,11 +1,6 @@
-{% set allTiersCount = 2 %}
-{% set tiersWithNoExternalIPCount = 0 %}
-{% if properties["meta_externalIP"] == "None" %}
-{% set tiersWithNoExternalIPCount = tiersWithNoExternalIPCount + 1 %}
-{% endif %}
-{% if properties["data_externalIP"] == "None" %}
-{% set tiersWithNoExternalIPCount = tiersWithNoExternalIPCount + 1 %}
-{% endif %}
+imports:
+  - path: meta-setup.sh
+    name: 
 
 resources:
   - name: meta-group
@@ -16,9 +11,6 @@ resources:
       network: {{ properties["network"] }}
       {% if properties.get("subnetwork") %}
       subnetwork: {{ properties["subnetwork"] }}
-      {% endif %}
-      {% if properties.get("meta_externalIP") %}
-      externalIP: {{ properties["meta_externalIP"] }}
       {% endif %}
       machineType: {{ properties["meta_machineType"] }}
       bootDiskType: {{ properties["meta_bootDiskType"] }}
@@ -32,9 +24,6 @@ resources:
       network: {{ properties["network"] }}
       {% if properties.get("subnetwork") %}
       subnetwork: {{ properties["subnetwork"] }}
-      {% endif %}
-      {% if properties.get("data_externalIP") %}
-      externalIP: {{ properties["data_externalIP"] }}
       {% endif %}
       machineType: {{ properties["data_machineType"] }}
       bootDiskType: {{ properties["data_bootDiskType"] }}
@@ -83,11 +72,3 @@ outputs:
   - name: data_vmSelfLink{{ vmIndex }}
     value: $(ref.data-group.vmSelfLink{{ vmIndex }})
   {% endfor %}
-  - name: tiersWithNoExternalIPStatus
-    {% if tiersWithNoExternalIPCount == 0 %}
-    value: 'NONE'
-    {% elif tiersWithNoExternalIPCount < allTiersCount %}
-    value: 'SOME'
-    {% else %}
-    value: 'ALL'
-    {% endif %}

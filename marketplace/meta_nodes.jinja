@@ -1,4 +1,4 @@
-{% set deployment = properties['deployment'] %}
+{% set deployment = properties['deployment'] %}x
 {% set zone = properties['zone'] %}
 {% set project = properties['project'] %}
 {% set projectNumber = env['project_number'] %}
@@ -9,17 +9,9 @@
 {% set network = properties['network'] %}
 {% set bootDiskSizeGb = properties['bootDiskSizeGb'] %}
 {% set diskType = properties['diskType'] %}
-{% set influxdbAdminPassword = properties['influxdbAdminPassword'] %}
-{% set cloudsqlConnectionIP = properties['cloudsqlConnectionIP'] %}
-{% set bucketName = properties['bucketName'] %}
+{# {% set influxdbAdminPassword = properties['influxdbAdminPassword'] %} #}
 {% set startupScriptUrl = properties['startupScriptUrl'] %}
 {% set gcsSyncScriptUrl = properties['gcsSyncScriptUrl'] %}
-{% set svcAccountName = properties['svcAccountName'] %}
-{% set svcAccountKeyBase64 = properties['svcAccountKeyBase64'] %}
-{% set rtcName = properties['rtcName'] %}
-{% set ipVariableName = properties['ipVariableName'] %}
-{% set ipVarWaitTimeout = properties['ipVarWaitTimeout'] %}
-{% set loadBalancerWaitTimeout = properties['loadBalancerWaitTimeout'] %}
 
 resources:
 # Meta Node Instance template
@@ -43,40 +35,25 @@ resources:
           sourceImage: {{ sourceImage }}
           diskSizeGb: {{ bootDiskSizeGb }}
           diskType: {{ diskType }}
-      metadata:
+      {# metadata:
         items:
           - key: deployment
             value: {{ deployment }}
           - key: influxdb-admin-password
             value: {{ influxdbAdminPassword }}
-          - key: cloudsql-connection-ip
-            value: {{ cloudsqlConnectionIP }}
-          - key: bucket-name
-            value: {{ bucketName }}
-          - key: service-account-name
-            value: {{ svcAccountName }}
-          - key: service-account-key-base-64
-            value: {{ svcAccountKeyBase64 }}
-          - key: rtc-name
-            value: {{ rtcName }}
-          - key: ip-variable-name
-            value: {{ ipVariableName }}
-          - key: ip-var-wait-timeout
-            value: {{ ipVarWaitTimeout }}
-          - key: lb-wait-timeout
-            value: {{ loadBalancerWaitTimeout }}
           - key: status-config-url
             value: https://runtimeconfig.googleapis.com/v1beta1/projects/{{ project }}/configs/{{ rtcName }}
           - key: status-variable-path
             value: startup-status
-          - key: is-admin-node
-            value: false
           - key: admin-waiter-name
-            value: {{ deployment }}-rtc-admin-waiter
+            value: {{ deployment }}-rtc-admin-waiter #}
+      metadata-from-file:
+        items:
+          - key: startup-script
+            value: "meta-setup.sh"
       tags:
         items:
-          - {{ deployment }}-tcp-80
-          - {{ deployment }}-sql-client
+          - {{ deployment }}-meta
       serviceAccounts:
         - email: default
           scopes:
@@ -100,29 +77,7 @@ resources:
     dependsOn:
     - {{ deployment }}-svc-account-key
     - {{ deployment }}-{{ projectNumber }}-wp-data
-
-{# # content Auto Healing Health Check
-- name: {{ deployment }}-content-autoheal
-  type: compute.v1.httpHealthCheck
-  properties:
-    checkIntervalSec: 30
-    timeoutSec: 30
-    unhealthyThreshold: 4
-    port: 80
-    portName: http
-    requestPath: /
-
-# content HTTP Health Check
-- name: {{ deployment }}-content-health
-  type: compute.v1.httpHealthCheck
-  properties:
-    checkIntervalSec: 10
-    timeoutSec: 10
-    unhealthyThreshold: 2
-    port: 80
-    portName: http
-    requestPath: / #}
-
+{# 
 # Meta Node Backend Service(s)
 - name: {{ deployment }}-meta-node-backend
   type: compute.v1.backendService
@@ -137,4 +92,4 @@ resources:
 
 outputs:
   - name: backendSelfLink
-    value: $(ref.{{ deployment }}-meta-node-backend.selfLink)
+    value: $(ref.{{ deployment }}-meta-node-backend.selfLink) #}
