@@ -1,6 +1,6 @@
 # How to handle licenses
 
-GCP Marketplace requires every revision of a Marketplace listing to provide up-to-date information on licensing. The GCP Marketplace OSS checklist form is [here](https://docs.google.com/spreadsheets/d/1qkpFjAYfqadg7IVmJGEpzEPxyhjE6L8Xi5epE98OCw0/edit#gid=0).
+GCP Marketplace requires every revision of a Marketplace listing to provide up-to-date information on licensing. The GCP Marketplace OSS checklist form is [here](https://docs.google.com/spreadsheets/d/1qkpFjAYfqadg7IVmJGEpzEPxyhjE6L8Xi5epE98OCw0/edit#gid=0) (this is an authenticated link).
 
 ## Lists of licenses and dependency licenses
 

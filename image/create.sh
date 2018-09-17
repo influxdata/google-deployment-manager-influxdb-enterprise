@@ -37,7 +37,7 @@ gcloud compute ssh ${BASE_INSTANCE_NAME} --command "bash setup.sh ${INFLUXDB_ENT
 gcloud compute ssh ${BASE_INSTANCE_NAME} --command "rm setup.sh"
 
 echo "Deleting base instance."
-gcloud compute instances delete ${BASE_INSTANCE_NAME} \
+gcloud compute instances delete ${BASE_INSTANCE_NAME} -s \
     --project ${PROJECT} \
     --zone ${ZONE} \
     --keep-disks "boot"
@@ -67,13 +67,13 @@ echo "Running cleanup script."
 gcloud compute ssh ${CLEAN_INSTANCE_NAME} --command "bash clean.sh"
 
 echo "Deleting cleanup instance."
-gcloud compute instances delete ${CLEAN_INSTANCE_NAME} \
+gcloud compute instances delete ${CLEAN_INSTANCE_NAME} -s \
     --project ${PROJECT} \
     --zone ${ZONE}
 
 sleep 60
 
-echo "Installing the GCP partner-utils. (Password required)"
+echo "Installing the GCP partner-utils. Password required"
 mkdir partner-utils
 cd partner-utils
 curl -O https://storage.googleapis.com/c2d-install-scripts/partner-utils.tar.gz
@@ -85,10 +85,9 @@ python image_creator.py --project ${PROJECT} \
     --disk ${INFLUX_IMAGE_NAME} \
     --name influxdata-debian-9-${INFLUX_IMAGE_NAME} \
     --description "InfluxData, InfluxDB Enterprise, version ${INFLUXDB_ENTERPRISE_VERSION}, based on Debian 9 (stretch), amd64 built on ${IMAGE_VERSION}" \
-    --destination-project "influxdata-prod" \
-    --license "influxdata-prod/influxdb-enterprise-byol"
+    --destination-project "influxdata-dev" \
+    --license "influxdata-dev/influxdb-enterprise-byol"
 
 echo "Cleaning up partner-utils."
-rm *
 cd ..
-rmdir parter-utils
+sudo rm -rf partner-utils
