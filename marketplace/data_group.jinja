@@ -50,7 +50,7 @@ resources:
       tags:
         items:
           - {{ env["deployment"] }}-deployment
-          - {{ env["deployment"] }}-data-tier
+          - {{ env["deployment"] }}-data-group
           - {{ env["deployment"] }}-data-tcp-8086
   {% endfor %}
   {% if properties["enableTcp8086"] %}

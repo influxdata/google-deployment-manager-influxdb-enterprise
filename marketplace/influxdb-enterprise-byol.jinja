@@ -8,8 +8,8 @@
 {% endif %}
 
 resources:
-  - name: meta-tier
-    type: meta_tier.jinja
+  - name: meta-group
+    type: meta_group.jinja
     properties:
       instanceCount: {{ properties["meta_instanceCount"] }}
       zone: {{ properties["zone"] }}
@@ -24,8 +24,8 @@ resources:
       bootDiskType: {{ properties["meta_bootDiskType"] }}
       bootDiskSizeGb: {{ properties["meta_bootDiskSizeGb"] }}
       generatedPassword0: $(ref.generated-password-0.password)
-  - name: data-tier
-    type: data_tier.jinja
+  - name: data-group
+    type: data_group.jinja
     properties:
       instanceCount: {{ properties["data_instanceCount"] }}
       zone: {{ properties["zone"] }}
@@ -61,27 +61,27 @@ outputs:
     value: $(ref.generated-password-0.password)
   {% for vmIndex in range(properties["meta_instanceCount"]) %}
   - name: meta_vmId{{ vmIndex }}
-    value: $(ref.meta-tier.vmId{{ vmIndex }})
+    value: $(ref.meta-group.vmId{{ vmIndex }})
   - name: meta_vmExternalIP{{ vmIndex }}
-    value: $(ref.meta-tier.vmExternalIP{{ vmIndex }})
+    value: $(ref.meta-group.vmExternalIP{{ vmIndex }})
   - name: meta_vmInternalIP{{ vmIndex }}
-    value: $(ref.meta-tier.vmInternalIP{{ vmIndex }})
+    value: $(ref.meta-group.vmInternalIP{{ vmIndex }})
   - name: meta_vmName{{ vmIndex }}
-    value: $(ref.meta-tier.vmName{{ vmIndex }})
+    value: $(ref.meta-group.vmName{{ vmIndex }})
   - name: meta_vmSelfLink{{ vmIndex }}
-    value: $(ref.meta-tier.vmSelfLink{{ vmIndex }})
+    value: $(ref.meta-group.vmSelfLink{{ vmIndex }})
   {% endfor %}
   {% for vmIndex in range(properties["data_instanceCount"]) %}
   - name: data_vmId{{ vmIndex }}
-    value: $(ref.data-tier.vmId{{ vmIndex }})
+    value: $(ref.data-group.vmId{{ vmIndex }})
   - name: data_vmExternalIP{{ vmIndex }}
-    value: $(ref.data-tier.vmExternalIP{{ vmIndex }})
+    value: $(ref.data-group.vmExternalIP{{ vmIndex }})
   - name: data_vmInternalIP{{ vmIndex }}
-    value: $(ref.data-tier.vmInternalIP{{ vmIndex }})
+    value: $(ref.data-group.vmInternalIP{{ vmIndex }})
   - name: data_vmName{{ vmIndex }}
-    value: $(ref.data-tier.vmName{{ vmIndex }})
+    value: $(ref.data-group.vmName{{ vmIndex }})
   - name: data_vmSelfLink{{ vmIndex }}
-    value: $(ref.data-tier.vmSelfLink{{ vmIndex }})
+    value: $(ref.data-group.vmSelfLink{{ vmIndex }})
   {% endfor %}
   - name: tiersWithNoExternalIPStatus
     {% if tiersWithNoExternalIPCount == 0 %}

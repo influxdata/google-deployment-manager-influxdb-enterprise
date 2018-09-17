@@ -43,15 +43,15 @@ resources:
       tags:
         items:
           - {{ env["deployment"] }}-deployment
-          - {{ env["deployment"] }}-meta-tier
+          - {{ env["deployment"] }}-meta-group
   {% endfor %}
   - name: {{ env["deployment"] }}-meta-tcp-8089
     type: compute.v1.firewall
     properties:
       network: {{ network }}
       sourceTags:
-      - {{ env["deployment"] }}-meta-tier
-      targetTags: ["{{ env["deployment"] }}-meta-tier"]
+      - {{ env["deployment"] }}-meta-group
+      targetTags: ["{{ env["deployment"] }}-meta-group"]
       allowed:
         - IPProtocol: TCP
           ports: ["8089"]

@@ -1,0 +1,140 @@
+{% set deployment = properties['deployment'] %}
+{% set zone = properties['zone'] %}
+{% set project = properties['project'] %}
+{% set projectNumber = env['project_number'] %}
+{% set sourceImage = properties['sourceImage'] %}
+{% set metaNodeMachineType = properties['metaNodeMachineType'] %}
+{% set instancegroupTargetSize = properties['instancegroupTargetSize'] %}
+{% set maxNumReplicas = properties['maxNumReplicas'] %}
+{% set network = properties['network'] %}
+{% set bootDiskSizeGb = properties['bootDiskSizeGb'] %}
+{% set diskType = properties['diskType'] %}
+{% set influxdbAdminPassword = properties['influxdbAdminPassword'] %}
+{% set cloudsqlConnectionIP = properties['cloudsqlConnectionIP'] %}
+{% set bucketName = properties['bucketName'] %}
+{% set startupScriptUrl = properties['startupScriptUrl'] %}
+{% set gcsSyncScriptUrl = properties['gcsSyncScriptUrl'] %}
+{% set svcAccountName = properties['svcAccountName'] %}
+{% set svcAccountKeyBase64 = properties['svcAccountKeyBase64'] %}
+{% set rtcName = properties['rtcName'] %}
+{% set ipVariableName = properties['ipVariableName'] %}
+{% set ipVarWaitTimeout = properties['ipVarWaitTimeout'] %}
+{% set loadBalancerWaitTimeout = properties['loadBalancerWaitTimeout'] %}
+
+resources:
+# Meta Node Instance template
+- name: {{ deployment }}-meta-node-it
+  type: compute.v1.instanceTemplate
+  properties:
+    zone: {{ zone }}
+    properties:
+      machineType: {{ metaNodeMachineType }}
+      networkInterfaces:
+      - network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/{{ network }}
+        accessConfigs:
+        - name: External-IP
+          type: ONE_TO_ONE_NAT
+      disks:
+      - deviceName: boot
+        type: PERSISTENT
+        boot: true
+        autoDelete: true
+        initializeParams:
+          sourceImage: {{ sourceImage }}
+          diskSizeGb: {{ bootDiskSizeGb }}
+          diskType: {{ diskType }}
+      metadata:
+        items:
+          - key: deployment
+            value: {{ deployment }}
+          - key: influxdb-admin-password
+            value: {{ influxdbAdminPassword }}
+          - key: cloudsql-connection-ip
+            value: {{ cloudsqlConnectionIP }}
+          - key: bucket-name
+            value: {{ bucketName }}
+          - key: service-account-name
+            value: {{ svcAccountName }}
+          - key: service-account-key-base-64
+            value: {{ svcAccountKeyBase64 }}
+          - key: rtc-name
+            value: {{ rtcName }}
+          - key: ip-variable-name
+            value: {{ ipVariableName }}
+          - key: ip-var-wait-timeout
+            value: {{ ipVarWaitTimeout }}
+          - key: lb-wait-timeout
+            value: {{ loadBalancerWaitTimeout }}
+          - key: status-config-url
+            value: https://runtimeconfig.googleapis.com/v1beta1/projects/{{ project }}/configs/{{ rtcName }}
+          - key: status-variable-path
+            value: startup-status
+          - key: is-admin-node
+            value: false
+          - key: admin-waiter-name
+            value: {{ deployment }}-rtc-admin-waiter
+      tags:
+        items:
+          - {{ deployment }}-tcp-80
+          - {{ deployment }}-sql-client
+      serviceAccounts:
+        - email: default
+          scopes:
+            - 'https://www.googleapis.com/auth/cloudruntimeconfig'
+
+# Meta Node Instance Group Manager
+- name: {{ deployment }}-meta-node-igm
+  type: compute.beta.instanceGroupManager
+  properties:
+    baseInstanceName: {{ deployment }}-meta-node-vm
+    instanceTemplate: $(ref.{{ deployment }}-meta-node-it.selfLink)
+    targetSize: {{ instancegroupTargetSize }}
+    zone: {{ zone }}
+    namedPorts:
+      - name: 'http'
+        port: 80
+    autoHealingPolicies:
+      - healthCheck: $(ref.{{ deployment }}-meta-node-health.selfLink)
+        initialDelaySec: 180
+  metadata:
+    dependsOn:
+    - {{ deployment }}-svc-account-key
+    - {{ deployment }}-{{ projectNumber }}-wp-data
+
+{# # content Auto Healing Health Check
+- name: {{ deployment }}-content-autoheal
+  type: compute.v1.httpHealthCheck
+  properties:
+    checkIntervalSec: 30
+    timeoutSec: 30
+    unhealthyThreshold: 4
+    port: 80
+    portName: http
+    requestPath: /
+
+# content HTTP Health Check
+- name: {{ deployment }}-content-health
+  type: compute.v1.httpHealthCheck
+  properties:
+    checkIntervalSec: 10
+    timeoutSec: 10
+    unhealthyThreshold: 2
+    port: 80
+    portName: http
+    requestPath: / #}
+
+# Meta Node Backend Service(s)
+- name: {{ deployment }}-meta-node-backend
+  type: compute.v1.backendService
+  properties:
+    loadBalancingScheme: EXTERNAL
+    sessionAffinity: GENERATED_COOKIE
+    affinityCookieTtlSec: 0
+    healthChecks: [ $(ref.{{ deployment }}-meta-node-health.selfLink) ]
+    backends:
+      - balacingMode: RATE
+        group: $(ref.{{ deployment }}-meta-node-igm.instanceGroup)
+
+outputs:
+  - name: backendSelfLink
+    value: $(ref.{{ deployment }}-meta-node-backend.selfLink)

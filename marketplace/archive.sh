@@ -10,6 +10,11 @@ cp test_config.yaml $tmp
 cp -r resources $tmp
 cp c2d_deployment_configuration.json $tmp
 
+cp data_group.jinja $tmp
+cp data_group.jinja.schema $tmp
+cp meta_group.jinja $tmp
+cp meta_group.jinja.schema $tmp
+
 cp deployment.py $tmp
 cp cluster.py $tmp
 cp group.py $tmp
