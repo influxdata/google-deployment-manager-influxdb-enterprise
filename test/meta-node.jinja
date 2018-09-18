@@ -1,0 +1,40 @@
+{% set deployment = properties['deployment'] %}
+{% set zone = properties['zone'] %}
+
+resources:
+# Instance template for meta nodes
+# Used by the meta node instance group manager
+- name: {{ deployment }}-meta-node-it
+  type: compute.v1.instanceTemplate
+  properties:
+    zone: {{ zone }}
+    machineType: n1-standard-8
+    disks:
+    - deviceName: boot
+      type: PERSISTENT
+      boot: True
+      autoDelete: False
+      initializeParams:
+        sourceImage: https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdata-debian-9-influxdb-enterprise-v20180917
+        diskType: pd-ssd
+        diskSizeGb: 10
+    - deviceName: 
+    metadata-from-file:
+      startup-script: "setup-common.sh"
+
+- name: {{ deployment }}-meta-node-igm
+  type: compute.v1.instanceGroupManager
+  properties:
+    baseInstanceName: {{ deployment }}-meta-node-vm
+    instanceTemplate: $(ref.{{ deployment }}-meta-node-it.selfLink)
+    targetSize: 3
+    zone: {{ zone }}
+    {# waiter: {{  }} #}
+    namedPorts:
+      - name: 'http'
+        port: 8086
+
+
+outputs:
+- name: group
+  value: $(ref.{{ deployment }}-meta-node-igm.instanceGroup)

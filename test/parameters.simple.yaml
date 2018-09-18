@@ -1,0 +1,20 @@
+imports:
+  # - path: firewall.py
+  - path: meta-node.jinja
+  # - path: data-node.jinja
+  # - path: naming.py
+  - path: setup-common.sh
+  # - path: setup-meta.sh
+  # - path: setup-meta-master.sh
+  # - path: setup-data.sh
+
+resources:
+- name: meta-nodes
+  type: meta-node.jinja
+  properties:
+    licenseKey: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    zone: us-central1-f
+
+# outputs:
+# - name: cluster1-server-AdminUrl
+#   value: http://$(ref.deployment.externalIp-cluster1-group1):8091/

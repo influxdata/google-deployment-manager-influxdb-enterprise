@@ -26,6 +26,16 @@ meta-master-setup.sh
 data-setup.sh
 ```
 
+# Test the DM templates
+
+```
+LICENSE_KEY="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+gcloud deployment-manager deployments create my-deployment \
+    --config test_config.yaml \
+    --properties "LICENSE_KEY:'${LICENSE_KEY}'"
+    --automatic-rollback-on-error
+```
+
 # Using Autogen (not in use)
 
 [Deployment Manager `autogen`](https://github.com/GoogleCloudPlatform/deploymentmanager-autogen) is a useful tool for auto-generating a complete set of deployment manager templates from a single YAML file that describes a single solution. Unfortunately, it does not yet support instance groups and some other resources used in the BYOL listing and is therefore not used.
@@ -33,5 +43,8 @@ data-setup.sh
 The command to run autogen is shown below in case the tool is extended to cover the missing resource types.
 
 ```
+autogen --input_type YAML --single_input autogen.yaml --output_type PACKAGE --output solution_folder
+
+autogen --input_type YAML --single_input example-config/solution.yaml --output_type PACKAGE --output solution_folder
 autogen --input_type YAML --single_input autogen.yaml --output_type PACKAGE --output solution_folder
 ```

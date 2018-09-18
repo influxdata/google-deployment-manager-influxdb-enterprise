@@ -1,0 +1,67 @@
+{% set deployment = properties['deployment'] %}
+{% set waiterTimeout = properties['waiterTimeout'] %}
+
+
+resources:
+# Runtime Config to store the gloabl IP and LB readiness
+- name: {{ deployment }}-rtc
+  type: runtimeconfig.v1beta1.config
+  properties:
+    config: {{ deployment }}-rtc
+
+# LB Global IP Address
+- name: {{ deployment }}-rtc-ip-variable
+  type: runtimeconfig.v1beta1.variable
+  properties:
+    parent: $(ref.{{ deployment }}-rtc.name)
+    variable: ipaddress
+    text: $(ref.{{ deployment }}-lb-forwarding-rule.IPAddress)
+
+
+# Admin waiter
+- name: {{ deployment }}-rtc-admin-waiter
+  type: runtimeconfig.v1beta1.waiter
+  metadata:
+    dependsOn:
+    - {{ deployment }}-rtc
+    - {{ deployment }}-admin-igm
+  properties:
+    parent: $(ref.{{ deployment }}-rtc.name)
+    waiter: {{ deployment }}-rtc-admin-waiter
+    timeout: {{ waiterTimeout }}s
+    success:
+      cardinality:
+        number: 1
+        path: admin-status/success
+    failure:
+      cardinality:
+        number: 1
+        path: admin-status/failure
+
+
+# Waiter
+- name: {{ deployment }}-rtc-waiter
+  type: runtimeconfig.v1beta1.waiter
+  metadata:
+    dependsOn:
+    - {{ deployment }}-rtc
+    - {{ deployment }}-admin-igm
+    - {{ deployment }}-content-igm
+    - {{ deployment }}-sql-proxy-igm
+    - {{ deployment }}-rtc-ip-variable
+  properties:
+    parent: $(ref.{{ deployment }}-rtc.name)
+    waiter: {{ deployment }}-rtc-waiter
+    timeout: {{ waiterTimeout }}s
+    success:
+      cardinality:
+        number: 1
+        path: startup-status/success
+    failure:
+      cardinality:
+        number: 1
+        path: startup-status/failure
+
+outputs:
+  - name: globalIp
+    value: $(ref.{{ deployment }}-rtc-ip-variable.text)
