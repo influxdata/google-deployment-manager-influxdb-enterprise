@@ -1,17 +1,16 @@
 imports:
-  # - path: firewall.py
   - path: meta-node.jinja
   - path: meta-node.jinja.schema
   - path: runtime-config.jinja
   # - path: runtime-config.jinja.schema
-  # - path: data-node.jinja
-  # - path: naming.py
+  - path: data-node.jinja
+  - path: data-node.jinja.schema
   - path: setup-common.sh
-    name: setup-common.sh
   - path: setup-meta.sh
-    name: setup-meta.sh
   # - path: setup-meta-master.sh
-  # - path: setup-data.sh
+  - path: setup-data.sh
+  # - path: firewall.py
+  # - path: naming.py
 
 resources:
 - name: meta-nodes
@@ -22,6 +21,14 @@ resources:
     startupScripts:
       - setup-common.sh
       - setup-meta.sh
+- name: data-nodes
+  type: data-node.jinja
+  properties:
+    licenseKey: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    zone: us-central1-f
+    startupScripts:
+      - setup-common.sh
+      - setup-data.sh
 - name: runtime-config
   type: runtime-config.jinja
 

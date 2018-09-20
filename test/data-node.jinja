@@ -1,14 +1,14 @@
 {% set project = env['project'] %}
 {% set deployment = env['deployment'] %}
 {% set zone = properties['zone'] %}
-{% set machineType = properties['metaNodeMachineType'] %}
-{% set diskSize = properties['metaDiskSizeGb'] %}
+{% set machineType = properties['dataNodeMachineType'] %}
+{% set diskSize = properties['dataDiskSizeGb'] %}
 {% set licenseKey = properties['licenseKey'] %}
 
 resources:
-# Instance template for meta nodes
-# Used by the meta node instance group manager
-- name: {{ deployment }}-meta-node-it
+# Instance template for data nodes
+# Used by the data node instance group manager
+- name: {{ deployment }}-data-node-it
   type: compute.v1.instanceTemplate
   properties:
     zone: {{ zone }}
@@ -28,7 +28,7 @@ resources:
           sourceImage: https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdata-debian-9-influxdb-enterprise-v20180917
           diskType: pd-ssd
           diskSizeGb: 10
-      - deviceName: influxdb-meta-node
+      - deviceName: influxdb-data-node
         type: PERSISTENT
         autoDelete: False
         initializeParams:
@@ -50,18 +50,40 @@ resources:
             {{ imports[script]|indent(12) }}
             {% endfor %}
 
-- name: {{ deployment }}-meta-node-igm
+- name: {{ deployment }}-data-node-igm
   type: compute.v1.instanceGroupManager
   properties:
-    baseInstanceName: {{ deployment }}-meta-node-vm
-    instanceTemplate: $(ref.{{ deployment }}-meta-node-it.selfLink)
-    targetSize: 3
+    baseInstanceName: {{ deployment }}-data-node-vm
+    instanceTemplate: $(ref.{{ deployment }}-data-node-it.selfLink)
+    targetSize: 2
     zone: {{ zone }}
     {# waiter: {{  }} #}
     namedPorts:
       - name: 'tcp'
-        port: 8091
+        port: 8086
+
+- name: {{ deployment }}-data-node-backend
+  type: compute.v1.backendService
+  properties:
+    loadBalancingScheme: EXTERNAL
+    sessionAffinity: NONE
+    healthChecks: [ $(ref.{{ deployment }}-data-node-health.selfLink) ]
+    backends:
+      - balacingMode: RATE
+        group: $(ref.{{ deployment }}-data-node-igm.instanceGroup)
+
+# content HTTP Health Check
+- name: {{ deployment }}-data-node-health
+  type: compute.v1.healthCheck
+  properties:
+    type: TCP
+    checkIntervalSec: 10
+    timeoutSec: 10
+    unhealthyThreshold: 2
+    tcpHealthCheck:
+      port: 8086
+      portName: tcp
 
 outputs:
 - name: group
-  value: $(ref.{{ deployment }}-meta-node-igm.instanceGroup)
+  value: $(ref.{{ deployment }}-data-node-igm.instanceGroup)
