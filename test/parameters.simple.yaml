@@ -7,7 +7,9 @@ imports:
   # - path: data-node.jinja
   # - path: naming.py
   - path: setup-common.sh
+    name: setup-common.sh
   - path: setup-meta.sh
+    name: setup-meta.sh
   # - path: setup-meta-master.sh
   # - path: setup-data.sh
 
@@ -17,6 +19,9 @@ resources:
   properties:
     licenseKey: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     zone: us-central1-f
+    startupScripts:
+      - setup-common.sh
+      - setup-meta.sh
 - name: runtime-config
   type: runtime-config.jinja
 

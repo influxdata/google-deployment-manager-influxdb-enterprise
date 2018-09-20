@@ -43,11 +43,12 @@ resources:
         - key: rtc-name
           value: {{ deployment }}-rtc
         - key: startup-script
-          values: |
+          value: |
             #!/bin/bash
             set -euxo pipefail
-            {{ imports['setup-common.sh']|indent(12) }}
-            {{ imports['meta-common.sh']|indent(12) }}
+            {% for script in properties['startupScripts'] %}
+            {{ imports[script]|indent(12) }}
+            {% endfor %}
 
 - name: {{ deployment }}-meta-node-igm
   type: compute.v1.instanceGroupManager

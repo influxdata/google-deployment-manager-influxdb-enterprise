@@ -35,3 +35,6 @@ properties:
   licenseKey:
     type: string
     default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  startupScripts:
+    type: array
+    description: The startup script files.

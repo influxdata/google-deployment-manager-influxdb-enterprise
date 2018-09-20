@@ -150,3 +150,12 @@ python image_creator.py --project "influxdata-dev" \
     --destination-project "influxdata-prod" \
     --license "influxdata-prod/influxdb-enterprise-byol"
 ```
+
+Alternatively, the following command will create an image without using the `partner-utils`. This will _not_ create a proper image that can be used for a GCP Marketplace listing.
+
+```
+gcloud compute images create influxdata-debian-9-influxdb-enterprise-${IMAGE_VERSION} \
+  --source-disk influxdb-enterprise-${IMAGE_VERSION} \
+  --source-disk-zone "us-central1-f" \
+  --family "influxdb-enterprise"
+```
