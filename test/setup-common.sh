@@ -1,7 +1,3 @@
-#!/bin/bash
-
-set -euxo pipefail
-
 # Disk mounting operations
 
 function format_and_mount_disk() {

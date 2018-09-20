@@ -1,6 +1,8 @@
 imports:
   - name: setup-common.sh
     path: setup-common.sh
+  - name: setup-meta.sh
+    path: setup-meta.sh
 
 info:
   version: '1.0'
@@ -30,9 +32,6 @@ properties:
       type: GCE_DISK_SIZE
       gceDiskSize:
         diskTypeProperty: diskType
-  metadata-from-file:
-    type: object
-    description: Key is metadata key, value is import file containing metadata value.
   licenseKey:
     type: string
     default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx

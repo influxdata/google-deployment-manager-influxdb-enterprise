@@ -1,0 +1,13 @@
+info:
+  version: '1.0'
+  title: InfluxDB Enterprise BYOL
+
+properties:
+  zone:
+    type: string
+    default: us-central1-f
+    x-googleProperty:
+      type: GCE_ZONE
+  licenseKey:
+    type: string
+    default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx

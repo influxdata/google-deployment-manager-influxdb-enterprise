@@ -1,10 +1,9 @@
 {% set project = env['project'] %}
 {% set deployment = env['deployment'] %}
 {% set zone = properties['zone'] %}
-{% set licenseKey = properties['licenseKey'] %}
-{% set diskSize = properties['metaDiskSizeGb'] %}
 {% set machineType = properties['metaNodeMachineType'] %}
-{% set rtcName = properties['runtimeConfigName'] %}
+{% set diskSize = properties['metaDiskSizeGb'] %}
+{% set licenseKey = properties['licenseKey'] %}
 
 resources:
 # Instance template for meta nodes
@@ -42,12 +41,13 @@ resources:
         - key: license-key
           value: {{ licenseKey }}
         - key: rtc-name
-          value: {{ rtcName }}
-        {% for key, value in properties['metadata-from-file'].iteritems() %}
-        - key: {{ key }}
-          value: |
-            {{ imports[value]|indent(12) }}
-        {% endfor %}
+          value: {{ deployment }}-rtc
+        - key: startup-script
+          values: |
+            #!/bin/bash
+            set -euxo pipefail
+            {{ imports['setup-common.sh']|indent(12) }}
+            {{ imports['meta-common.sh']|indent(12) }}
 
 - name: {{ deployment }}-meta-node-igm
   type: compute.v1.instanceGroupManager

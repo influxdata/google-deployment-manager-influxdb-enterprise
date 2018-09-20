@@ -1,17 +1,13 @@
-#!/bin/bash
-
-set -euxo pipefail
-
 ###
 ### Mount disk
 ###
 
 # confirm disk is not already mounted with data
 if [ -d "/mnt/influxdb/data" ]; then
-  echo "InfluxDB Enterprise is already initialized. Exiting immediately."
+  echo "InfluxDB Enterprise data dir already exists. Exiting immediately."
   exit
 elif [ -d "/mnt/influxdb/meta" ]; then
-  echo "InfluxDB Enterprise is already initialized. Exiting immediately."
+  echo "InfluxDB Enterprise meta dir already exists. Exiting immediately."
   exit
 fi
 
@@ -35,5 +31,3 @@ DEPLOYMENT=$(get_attributes_value "deployment")
 echo "${DEPLOYMENT}"
 
 set_rtc_var_text "RTC_NAME" "${HOSTNAME}/internal-ip-address" "${INTERNAL_IP}"
-
-
