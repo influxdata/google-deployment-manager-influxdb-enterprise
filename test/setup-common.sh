@@ -2,6 +2,49 @@
 
 set -euxo pipefail
 
+# Disk mounting operations
+
+function format_and_mount_disk() {
+  local -r disk_name="$1"
+  local -r mount_dir="$2"
+  local -r filesystem="${3:-ext4}"
+
+  # Validate the filesystem variable.
+  # Currently supported: ext4 and xfs.
+  if [[ ! ("${filesystem}" == "ext4" || "${filesystem}" == "xfs") ]]; then
+    echo "Error: unexpected filesystem: ${filesystem}. Expected ext4 or xfs."
+    exit 1
+  fi
+
+  # Translate the disk's name to filesystem path.
+  local -r disk_path="/dev/disk/by-id/google-${disk_name}"
+
+  # Create mount directory.
+  mkdir -p "${mount_dir}"
+  chmod 0755 "${mount_dir}"
+
+  case "${filesystem}" in
+    ext4)
+      echo "Format disk: mkfs.ext4 '${disk_path}'"
+      mkfs.ext4 "${disk_path}"
+    ;;
+    xfs)
+      # Formatting the disk with mkfs.xfs requires
+      # the xfsprogs package to be installed.
+      echo "Format disk: mkfs.xfs '${disk_path}'"
+      mkfs.xfs "${disk_path}"
+    ;;
+  esac
+
+  # Try to mount disk after formatted it.
+  echo "Mount disk '${disk_name}'"
+  mount -o discard,defaults -t "${filesystem}" "${disk_path}" "${mount_dir}"
+
+  # Add an entry to /etc/fstab to mount the disk on restart.
+  echo "${disk_path} ${mount_dir} ${filesystem} discard,defaults 0 2" \
+    >> /etc/fstab
+}
+
 # Runtime config variable operations
 
 function read_rtc_var() {
@@ -73,15 +116,3 @@ function get_access_token() {
 function get_internal_ip() {
   get_metadata_value "instance/network-interfaces/0/ip"
 }
-
-echo get_internal_ip()
-echo get_hostname()
-
-# switch to checking data directory?
-if [ -d "/etc/systemd/system/influxd.service" ]; then
-  echo "InfluxDB Enterprise is already initialized. Exiting immediately."
-  exit
-elif [ -d "/etc/systemd/system/influxd-meta.service" ]; then
-  echo "InfluxDB Enterprise is already initialized. Exiting immediately."
-  exit
-fi

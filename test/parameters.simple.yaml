@@ -4,6 +4,7 @@ imports:
   # - path: data-node.jinja
   # - path: naming.py
   - path: setup-common.sh
+    name: setup-common.sh
   # - path: setup-meta.sh
   # - path: setup-meta-master.sh
   # - path: setup-data.sh
@@ -14,6 +15,13 @@ resources:
   properties:
     licenseKey: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     zone: us-central1-f
+    metadata-from-file:
+      startup-script: setup-common.sh
+      startup-script: setup-meta.sh
+- name: runtime-config
+  type: runtime-config.jinja
+  properties:
+    runtimeConfigName: {{ deployment }}-rtc
 
 # outputs:
 # - name: cluster1-server-AdminUrl

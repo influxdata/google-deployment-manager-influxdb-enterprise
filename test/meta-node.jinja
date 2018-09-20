@@ -1,5 +1,10 @@
-{% set deployment = properties['deployment'] %}
+{% set project = env['project'] %}
+{% set deployment = env['deployment'] %}
 {% set zone = properties['zone'] %}
+{% set licenseKey = properties['licenseKey'] %}
+{% set diskSize = properties['metaDiskSizeGb'] %}
+{% set machineType = properties['metaNodeMachineType'] %}
+{% set rtcName = properties['runtimeConfigName'] %}
 
 resources:
 # Instance template for meta nodes
@@ -8,19 +13,41 @@ resources:
   type: compute.v1.instanceTemplate
   properties:
     zone: {{ zone }}
-    machineType: n1-standard-8
-    disks:
-    - deviceName: boot
-      type: PERSISTENT
-      boot: True
-      autoDelete: False
-      initializeParams:
-        sourceImage: https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdata-debian-9-influxdb-enterprise-v20180917
-        diskType: pd-ssd
-        diskSizeGb: 10
-    - deviceName: 
-    metadata-from-file:
-      startup-script: "setup-common.sh"
+    properties:
+      machineType: {{ machineType }}
+      networkInterfaces:
+        - network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/default
+          accessConfigs:
+          - name: External-IP
+            type: ONE_TO_ONE_NAT
+      disks:
+      - deviceName: boot
+        type: PERSISTENT
+        boot: True
+        autoDelete: False
+        initializeParams:
+          sourceImage: https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdata-debian-9-influxdb-enterprise-v20180917
+          diskType: pd-ssd
+          diskSizeGb: 10
+      - deviceName: influxdb-meta-node
+        type: PERSISTENT
+        autoDelete: False
+        initializeParams:
+          diskType: pd-ssd
+          diskSizeGb: {{ diskSize }}
+      metadata:
+        items:
+        - key: deployment
+          value: {{ deployment }}
+        - key: license-key
+          value: {{ licenseKey }}
+        - key: rtc-name
+          value: {{ rtcName }}
+        {% for key, value in properties['metadata-from-file'].iteritems() %}
+        - key: {{ key }}
+          value: |
+            {{ imports[value]|indent(12) }}
+        {% endfor %}
 
 - name: {{ deployment }}-meta-node-igm
   type: compute.v1.instanceGroupManager
@@ -31,9 +58,30 @@ resources:
     zone: {{ zone }}
     {# waiter: {{  }} #}
     namedPorts:
-      - name: 'http'
+      - name: 'tcp'
         port: 8086
 
+- name: {{ deployment }}-meta-node-backend
+  type: compute.v1.backendService
+  properties:
+    loadBalancingScheme: EXTERNAL
+    sessionAffinity: NONE
+    healthChecks: [ $(ref.{{ deployment }}-meta-node-health.selfLink) ]
+    backends:
+      - balacingMode: RATE
+        group: $(ref.{{ deployment }}-meta-node-igm.instanceGroup)
+
+# content HTTP Health Check
+- name: {{ deployment }}-meta-node-health
+  type: compute.v1.healthCheck
+  properties:
+    type: TCP
+    checkIntervalSec: 10
+    timeoutSec: 10
+    unhealthyThreshold: 2
+    tcpHealthCheck:
+      port: 8086
+      portName: tcp
 
 outputs:
 - name: group

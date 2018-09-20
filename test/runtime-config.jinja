@@ -1,0 +1,8 @@
+{% set runtimeConfigName = properties['runtimeConfigName'] %}
+
+resources:
+# Runtime Config to store the gloabl IP for meta nodes
+- name: {{ deployment }}-rtc
+  type: runtimeconfig.v1beta1.config
+  properties:
+    config: {{ deployment }}-rtc

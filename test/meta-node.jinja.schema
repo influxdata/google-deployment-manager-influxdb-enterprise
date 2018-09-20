@@ -1,0 +1,38 @@
+imports:
+  - name: setup-common.sh
+    path: setup-common.sh
+
+info:
+  version: '1.0'
+  title: InfluxDB Enterprise BYOL
+
+properties:
+  zone:
+    type: string
+    default: us-central1-f
+    x-googleProperty:
+      type: GCE_ZONE
+  metaNodeMachineType:
+    type: string
+    default: n1-standard-8
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 2
+        minRamGb: 4
+  metaDiskSizeGb:
+    type: integer
+    default: 100
+    minimum: 50
+    maximum: 5000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: diskType
+  metadata-from-file:
+    type: object
+    description: Key is metadata key, value is import file containing metadata value.
+  licenseKey:
+    type: string
+    default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
