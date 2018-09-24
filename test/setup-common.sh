@@ -1,5 +1,4 @@
-# Disk mounting operations
-
+# Volume mount operations
 function format_and_mount_disk() {
   local -r disk_name="$1"
   local -r mount_dir="$2"
@@ -41,8 +40,42 @@ function format_and_mount_disk() {
     >> /etc/fstab
 }
 
-# Runtime config variable operations
+# Metadata operations
+function get_metadata_value() {
+  curl --retry 5 \
+    -s \
+    -f \
+    -H "Metadata-Flavor: Google" \
+    "http://metadata/computeMetadata/v1/$1"
+}
 
+function get_attribute_value() {
+  get_metadata_value "instance/attributes/$1"
+}
+
+function get_hostname() {
+  get_metadata_value "instance/hostname"
+}
+
+function get_access_token() {
+  get_metadata_value "instance/service-accounts/default/token" \
+    | awk -F\" '{ print $4 }'
+}
+
+function get_project_id() {
+  get_metadata_value "project/project-id"
+}
+
+# IP operations
+function get_internal_ip() {
+  get_metadata_value "instance/network-interfaces/0/ip"
+}
+
+function get_external_ip() {
+  get_metadata_value "instance/network-interfaces/0/access-configs/0/external-ip"
+}
+
+# Runtime config variable operations
 function read_rtc_var() {
   local -r project_id="$(get_project_id)"
   local -r access_token="$(get_access_token)"
@@ -84,31 +117,78 @@ function set_rtc_var_text() {
     "https://runtimeconfig.googleapis.com/v1beta1/projects/${project_id}/configs/${rtc_name}/variables"
 }
 
-# Metadata operations
+# Waiters
+function read_rtc_waiter() {
+  local -r project_id="$(get_project_id)"
+  local -r access_token="$(get_access_token)"
 
-function get_metadata_value() {
-  curl --retry 5 \
-    -s \
-    -f \
-    -H "Metadata-Flavor: Google" \
-    "http://metadata/computeMetadata/v1/$1"
+  local -r rtc_name="$1"
+  local -r waiter_name="$2"
+
+  curl -s -k -X GET \
+    -H "Authorization: Bearer ${access_token}" \
+    -H "Content-Type: application/json" \
+    -H "X-GFE-SSL: yes" \
+    "https://runtimeconfig.googleapis.com/v1beta1/projects/${project_id}/configs/${rtc_name}/waiters/${waiter_name}"
 }
 
-function get_attribute_value() {
-  get_metadata_value "instance/attributes/$1"
+function get_rtc_waiter_status() {
+  local -r rtc_name="$1"
+  local -r waiter_name="$2"
+  local -r response="$(read_rtc_waiter "${rtc_name}" "${waiter_name}")"
+
+  if [[ "$(echo "${response}" | grep -c "\"done\": true")" -eq 1 ]]; then
+    if [[ "$(echo "${response}" | grep -c "\"error\":")" -eq 1 ]]; then
+      echo "FAILED"
+    else
+      echo "SUCCESS"
+    fi
+  else
+    echo "UNKNOWN"
+  fi
 }
 
-function get_hostname() {
-  get_metadata_value "instance/hostname"
+function wait_for_rtc_waiter_success() {
+  local -r rtc_name="$1"
+  local -r waiter_name="$2"
+  local -r timeout_sec="${3:-600}"
+
+  local -r timeout_time_sec=$(($(get_current_time_in_sec) + "${timeout_sec}"))
+
+  echo "Waiting for waiter '${waiter_name}' with timeout of ${timeout_sec}s..."
+
+  local status="$(get_rtc_waiter_status "${rtc_name}" "${waiter_name}")"
+  while [[ "${status}" != "SUCCESS" ]] \
+        && [[ $(get_current_time_in_sec) -lt ${timeout_time_sec} ]]; do
+    if [[ "${status}" == "FAIL" ]]; then
+      echo "Waiter '${waiter_name}' failed"
+      return 1
+    else
+      echo "Waiter '${waiter_name}' not finished yet - sleeping 3s..."
+      sleep 3
+      local status="$(get_rtc_waiter_status "${rtc_name}" "${waiter_name}")"
+    fi
+  done
+  echo "Waiter '${waiter_name}' succeeded"
 }
 
-function get_access_token() {
-  get_metadata_value "instance/service-accounts/default/token" \
-    | awk -F\" '{ print $4 }'
+# Manage hostnames
+function remove_hostname() {
+  local -r hostname="$1"
+  local -r etc_hosts="/etc/hosts"
+  local -r host_regex="\(\s\+\)${hostname}\s*$"
+  
+  sudo sed -ie "/[[:blank:]]${hostname}/d" "${etc_hosts}"
 }
 
-# IP operations
-
-function get_internal_ip() {
-  get_metadata_value "instance/network-interfaces/0/ip"
+function add_hostname() {
+  local -r hostname="$1"
+  local -r ip_address="$2"
+  local -r etc_hosts="/etc/hosts"
+  
+  if grep -q "${hostname}" "${etc_hosts}"; then
+    echo "Replacing existing hostname ${hostname} with IP ${ip_address}"
+    remove_hostname "${hostname}"
+  fi
+  printf "%s\t%s\n" "${ip_address}" "${hostname}" | sudo tee -a "${etc_hosts}" > /dev/null;
 }

@@ -1,4 +1,6 @@
 {% set deployment = env['deployment'] %}
+{% set waiterTimeout = properties['waiterTimeout'] %}
+{% set licenseKey = %}
 
 resources:
 # Runtime Config to store the gloabl IP for meta nodes
@@ -6,3 +8,11 @@ resources:
   type: runtimeconfig.v1beta1.config
   properties:
     config: {{ deployment }}-rtc
+
+# Cluster DNS names
+- name: {{ deployment }}-rtc-internal-dns-meta
+  type: runtimeconfig.v1beta1.variable
+  properties:
+    parent: $(ref.{{ deployment }}-rtc.name)
+    variable: internal-dns-meta
+    text: test

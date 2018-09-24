@@ -11,3 +11,6 @@ properties:
   licenseKey:
     type: string
     default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  waiterTimeout:
+    type: string
+    default: 300s
