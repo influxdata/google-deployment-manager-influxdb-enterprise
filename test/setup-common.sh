@@ -90,6 +90,24 @@ function read_rtc_var() {
     "https://runtimeconfig.googleapis.com/v1beta1/projects/${project_id}/configs/${rtc_name}/variables/${var_name}"
 }
 
+function filter_rtc_var() {
+  local -r project_id="$(get_project_id)"
+  local -r access_token="$(get_access_token)"
+
+  local -r rtc_name="$1"
+  local -r filter="projects/${project_id}/configs/${rtc_name}/variables/$2"
+
+  curl -s -k -X GET \
+    -H "Authorization: Bearer ${access_token}" \
+    -H "Content-Type: application/json" \
+    -H "X-GFE-SSL: yes" \
+    --data-urlencode "filter:${filter}*" \
+    "https://runtimeconfig.googleapis.com/v1beta1/projects/${project_id}/configs/${rtc_name}/variables" |
+      python -c 'import json,sys; o=json.load(sys.stdin); print "\n".join([v["name"] for v in o["variables"]]);' |
+      sed "s|${filter}||" |
+      sort
+}
+
 function get_rtc_var_text() {
   local -r rtc_name="$1"
   local -r var_name="$2"
@@ -146,6 +164,10 @@ function get_rtc_waiter_status() {
   else
     echo "UNKNOWN"
   fi
+}
+
+function get_current_time_in_sec() {
+  date +%s
 }
 
 function wait_for_rtc_waiter_success() {

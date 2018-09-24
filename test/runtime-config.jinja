@@ -1,6 +1,5 @@
 {% set deployment = env['deployment'] %}
 {% set waiterTimeout = properties['waiterTimeout'] %}
-{% set licenseKey = %}
 
 resources:
 # Runtime Config to store the gloabl IP for meta nodes
@@ -9,10 +8,53 @@ resources:
   properties:
     config: {{ deployment }}-rtc
 
-# Cluster DNS names
-- name: {{ deployment }}-rtc-internal-dns-meta
+{# # Cluster DNS names
+- name: {{ deployment }}-rtc-variable
   type: runtimeconfig.v1beta1.variable
   properties:
     parent: $(ref.{{ deployment }}-rtc.name)
-    variable: internal-dns-meta
-    text: test
+    variable: test
+    text: unknown #}
+
+- name: {{ deployment }}-rtc-cluster-init-waiter
+  type: runtimeconfig.v1beta1.waiter
+  metadata:
+    dependsOn:
+      - {{ deployment }}-rtc
+      - {{ deployment }}-meta-node-igm
+  properties:
+    parent: $(ref.{{ deployment }}-rtc.name)
+    waiter: {{ deployment }}-rtc-cluster-init-waiter
+    timeout: {{ waiterTimeout }}
+    success:
+      cardinality:
+        path: internal-dns
+        number: 1
+    failure:
+      cardinality:
+        path: failure
+        number: 1
+
+- name: {{ deployment }}-rtc-startup-waiter
+  type: runtimeconfig.v1beta1.waiter
+  metadata:
+    dependsOn:
+      - {{ deployment }}-rtc
+      - {{ deployment }}-meta-node-igm
+  properties:
+    parent: $(ref.{{ deployment }}-rtc.name)
+    waiter: {{ deployment }}-rtc-startup-waiter
+    timeout: {{ waiterTimeout }}
+    success:
+      cardinality:
+        path: startup-success
+        number: 1
+    failure:
+      cardinality:
+        path: failure
+        number: 1
+
+
+outputs:
+- name: configName
+  value: $(ref.{{ deployment }}-rtc.name)

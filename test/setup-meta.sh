@@ -38,22 +38,27 @@ hostname = \"${NODE_PRIVATE_DNS}\"
   license-key = \"${LICENSE_KEY}\"
 " sudo tee -a /etc/influxdb/influxdb-meta.conf > /dev/null
 
-
-
 sudo systemctl enable influxdb-meta
 sudo systemctl start influxdb-meta
 
+# gcloud beta runtime-config configs variables set meta-dns "${NODE_PRIVATE_DNS}" --config-name "${DEPLOYMENT}-rtc"
 
+set_rtc_var_text "${DEPLOYMENT}-rtc" "internal-dns/meta/${HOSTNAME}" "${NODE_PRIVATE_DNS}"
 
-# add internal IP address to hosts file
-# TODO(Gunnar): Confirm if this is required
-# add_hostname "${NODE_PRIVATE_DNS}" "${INTERNAL_IP}"
+wait_for_rtc_waiter_success "${DEPLOYMENT}-rtc" "${DEPLOYMENT}-rtc-cluster-init-waiter" "250"
 
+readonly META_LEADER="$(filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/meta/" | head -n 1)"
 
-set_rtc_var_text "rtc-name" "internal-ip-address/${HOSTNAME}" "${INTERNAL_IP}"
+if [ "${HOSTNAME}" != "${META_LEADER}" ]; then
+  exit
+fi
 
-get_rtc_var_text "rtc-name" "internal-ip-address/meta/${HOSTNAME}"
+filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/meta/" | while read line; do
+  influxd-ctl add-meta $(get_rtc_var_text "${DEPLOYMENT}" "internal-dns/meta/${line}"):8091
+done
 
-read_rtc_var "rtc-name" "internal-ip-address/meta/${HOSTNAME}"
+filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/data/" | while read line; do
+  influxd-ctl add-data $(get_rtc_var_text "${DEPLOYMENT}" "internal-dns/data/${line}"):8088
+done
 
-set_rtc_var_text "rtc-name" "startup-status/success" "success"
+set_rtc_var_text "${DEPLOYMENT}-rtc" "startup-success" "success"
