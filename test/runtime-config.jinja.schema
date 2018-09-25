@@ -3,14 +3,6 @@ info:
   title: InfluxDB Enterprise BYOL
 
 properties:
-  zone:
-    type: string
-    default: us-central1-f
-    x-googleProperty:
-      type: GCE_ZONE
-  licenseKey:
-    type: string
-    default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   waiterTimeout:
-    type: string
-    default: 300s
+    type: integer
+    default: 300

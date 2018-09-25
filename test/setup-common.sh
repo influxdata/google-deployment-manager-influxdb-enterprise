@@ -101,9 +101,9 @@ function filter_rtc_var() {
     -H "Authorization: Bearer ${access_token}" \
     -H "Content-Type: application/json" \
     -H "X-GFE-SSL: yes" \
-    --data-urlencode "filter:${filter}*" \
     "https://runtimeconfig.googleapis.com/v1beta1/projects/${project_id}/configs/${rtc_name}/variables" |
       python -c 'import json,sys; o=json.load(sys.stdin); print "\n".join([v["name"] for v in o["variables"]]);' |
+      grep ${filter} |
       sed "s|${filter}||" |
       sort
 }

@@ -29,7 +29,7 @@ resources:
     success:
       cardinality:
         path: internal-dns
-        number: 1
+        number: 
     failure:
       cardinality:
         path: failure
@@ -44,7 +44,7 @@ resources:
   properties:
     parent: $(ref.{{ deployment }}-rtc.name)
     waiter: {{ deployment }}-rtc-startup-waiter
-    timeout: {{ waiterTimeout }}
+    timeout: {{ waiterTimeout }}s
     success:
       cardinality:
         path: startup-success

@@ -23,9 +23,9 @@ properties:
       gceMachineType:
         minCpu: 2
         minRamGb: 4
-  dataDiskSizeGb:
+  dataNodeDiskSizeGb:
     type: integer
-    default: 100
+    default: 250
     minimum: 50
     maximum: 5000
     x-googleProperty:

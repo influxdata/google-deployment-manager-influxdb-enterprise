@@ -36,7 +36,7 @@ hostname = \"${NODE_PRIVATE_DNS}\"
 
 [enterprise]
   license-key = \"${LICENSE_KEY}\"
-" sudo tee -a /etc/influxdb/influxdb-meta.conf > /dev/null
+" | sudo tee -a /etc/influxdb/influxdb-meta.conf > /dev/null
 
 sudo systemctl enable influxdb-meta
 sudo systemctl start influxdb-meta
@@ -54,11 +54,11 @@ if [ "${HOSTNAME}" != "${META_LEADER}" ]; then
 fi
 
 filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/meta/" | while read line; do
-  influxd-ctl add-meta $(get_rtc_var_text "${DEPLOYMENT}" "internal-dns/meta/${line}"):8091
+  influxd-ctl add-meta $(get_rtc_var_text "${DEPLOYMENT}-rtc" "internal-dns/meta/${line}"):8091
 done
 
 filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/data/" | while read line; do
-  influxd-ctl add-data $(get_rtc_var_text "${DEPLOYMENT}" "internal-dns/data/${line}"):8088
+  influxd-ctl add-data $(get_rtc_var_text "${DEPLOYMENT}-rtc" "internal-dns/data/${line}"):8088
 done
 
 set_rtc_var_text "${DEPLOYMENT}-rtc" "startup-success" "success"

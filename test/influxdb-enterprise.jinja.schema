@@ -1,0 +1,65 @@
+imports:
+  - path: influxdb-enterprise.jinja
+  - path: influxdb-enterprise.jinja.schema
+  - path: meta-node.jinja
+  - path: meta-node.jinja.schema
+  - path: data-node.jinja
+  - path: data-node.jinja.schema
+  - path: runtime-config.jinja
+  - path: setup-common.sh
+  - path: setup-meta.sh
+  - path: setup-data.sh
+
+info:
+  version: '0.1'
+  title: InfluxDB Enterprise Template
+
+required:
+  - zone
+  - licenseKey
+
+properties:
+  zone:
+    type: string
+    default: us-central1-f
+    x-googleProperty:
+      type: GCE_ZONE
+  licenseKey:
+    type: string
+    default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  metaNodeMachineType:
+    type: string
+    default: n1-standard-1
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 1
+        minRamGb: 1
+  metaNodeDiskSizeGb:
+    type: integer
+    default: 10
+    minimum: 10
+    maximum: 5000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: diskType
+  dataNodeMachineType:
+    type: string
+    default: n1-standard-8
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 2
+        minRamGb: 4
+  dataNodeDiskSizeGb:
+    type: integer
+    default: 250
+    minimum: 50
+    maximum: 5000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: diskType

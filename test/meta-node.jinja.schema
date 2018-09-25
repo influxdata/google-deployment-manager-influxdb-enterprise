@@ -16,14 +16,14 @@ properties:
       type: GCE_ZONE
   metaNodeMachineType:
     type: string
-    default: n1-standard-8
+    default: n1-standard-1
     x-googleProperty:
       type: GCE_MACHINE_TYPE
       zoneProperty: zone
       gceMachineType:
-        minCpu: 2
-        minRamGb: 4
-  metaDiskSizeGb:
+        minCpu: 1
+        minRamGb: 1
+  metaNodeDiskSizeGb:
     type: integer
     default: 10
     minimum: 4
