@@ -19,7 +19,7 @@ resources:
     metaNodeDiskSizeGb: {{ metaNodeDiskSizeGb }}
     startupScripts:
       - setup-common.sh
-      - setup-meta.sh
+      - setup-data.sh
 
 - name: {{ deployment }}-data-nodes
   type: data-node.jinja
