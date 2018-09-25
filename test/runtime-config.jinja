@@ -8,24 +8,17 @@ resources:
   properties:
     config: {{ deployment }}-rtc
 
-{# # Cluster DNS names
-- name: {{ deployment }}-rtc-variable
-  type: runtimeconfig.v1beta1.variable
-  properties:
-    parent: $(ref.{{ deployment }}-rtc.name)
-    variable: test
-    text: unknown #}
-
 - name: {{ deployment }}-rtc-cluster-init-waiter
   type: runtimeconfig.v1beta1.waiter
   metadata:
     dependsOn:
       - {{ deployment }}-rtc
       - {{ deployment }}-meta-node-igm
+      - {{ deployment }}-data-node-igm
   properties:
     parent: $(ref.{{ deployment }}-rtc.name)
     waiter: {{ deployment }}-rtc-cluster-init-waiter
-    timeout: {{ waiterTimeout }}
+    timeout: {{ waiterTimeout }}s
     success:
       cardinality:
         path: internal-dns
@@ -40,18 +33,17 @@ resources:
   metadata:
     dependsOn:
       - {{ deployment }}-rtc
-      - {{ deployment }}-meta-node-igm
   properties:
     parent: $(ref.{{ deployment }}-rtc.name)
     waiter: {{ deployment }}-rtc-startup-waiter
     timeout: {{ waiterTimeout }}s
     success:
       cardinality:
-        path: startup-success
+        path: startup-status/success
         number: 1
     failure:
       cardinality:
-        path: failure
+        path: startup-status/failure
         number: 1
 
 

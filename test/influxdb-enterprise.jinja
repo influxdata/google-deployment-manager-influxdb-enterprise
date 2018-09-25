@@ -12,18 +12,18 @@
 resources:
 - name: {{ deployment }}-meta-nodes
   type: meta-node.jinja
-  metadata:
+  properties:
     zone: {{ zone }}
     licenseKey: {{ licenseKey }}
     metaNodeMachineType: {{ metaNodeMachineType }}
     metaNodeDiskSizeGb: {{ metaNodeDiskSizeGb }}
     startupScripts:
       - setup-common.sh
-      - setup-data.sh
+      - setup-meta.sh
 
 - name: {{ deployment }}-data-nodes
   type: data-node.jinja
-  metadata:
+  properties:
     zone: {{ zone }}
     licenseKey: {{ licenseKey }}
     dataNodeMachineType: {{ dataNodeMachineType }}
@@ -34,3 +34,5 @@ resources:
 
 - name: {{ deployment }}-runtime-config
   type: runtime-config.jinja
+  properties:
+    waiterTimeout: 600

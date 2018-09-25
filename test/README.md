@@ -27,3 +27,5 @@ TOKEN=$(curl --retry 5 -s -f -H 'Metadata-Flavor: Google' http://metadata/comput
 TOKEN=$(curl --retry 5 -s -f -H 'Metadata-Flavor: Google' http://metadata/computeMetadata/v1/instance/service-accounts/default/token | python -c "import sys, json; print json.load(sys.stdin)['access_token']")
 
 curl -s -k -X GET -H 'Authorization: Bearer ${TOKEN}' -H 'Content-Type: application/json' -H 'X-GFE-SSL: yes' https://runtimeconfig.googleapis.com/v1beta1/projects/influxdata-dev/configs/rtc-name/variables/internal-ip-addresses
+
+

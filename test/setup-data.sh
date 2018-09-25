@@ -5,28 +5,19 @@
 # confirm fstab mounts are created before continuing
 sudo mount -a
 
+readonly INFLUX_DIR="/mnt/influxdb"
+
 # mount influxdb volume if it is not already mounted
 if [ ! -d "/mnt/influxdb" ]; then
-  format_and_mount_disk "influxdb" "/mnt/influxdb"
+  format_and_mount_disk "influxdb" "${INFLUX_DIR}"
 fi
 
 ###
 ### Set IP address as runtime config
 ###
 
-readonly ACCESS_TOKEN=$(get_access_token)
-readonly PROJECT_ID=$(get_project_id)
-readonly EXTERNAL_IP=$(get_external_ip)
-readonly INTERNAL_IP=$(get_internal_ip)
 readonly NODE_PRIVATE_DNS=$(get_hostname)
-
 readonly DEPLOYMENT=$(get_attribute_value "deployment")
-readonly CONFIG=$(get_attribute_value "rtc-name")
-
-readonly EXTERNAL_IP_VAR_PATH=$(get_attribute_value "external-ip-variable-path")
-readonly SUCCESS_STATUS_PATH="$(get_attribute_value "status-success-base-path")/$(hostname)"
-readonly FAILURE_STATUS_PATH="$(get_attribute_value "status-failure-base-path")/$(hostname)"
-
 readonly LICENSE_KEY=$(get_attribute_value "license-key")
 
 sudo mv /etc/influxdb/influxdb.conf /etc/influxdb/influxdb.conf.backup
@@ -36,7 +27,28 @@ hostname = \"${NODE_PRIVATE_DNS}\"
 
 [enterprise]
   license-key = \"${LICENSE_KEY}\"
-" sudo tee -a /etc/influxdb/influxdb.conf > /dev/null
+
+[meta]
+  # Directory where the cluster metadata is stored.
+  dir = \"${INFLUX_DIR}/meta\"
+
+[data]
+  # The directory where the TSM storage engine stores TSM (read-optimized) files.
+  dir = \"${INFLUX_DIR}/data\"
+
+  # The directory where the TSM storage engine stores WAL (write-optimized) files.
+  wal-dir = \"${INFLUX_DIR}/wal\"
+
+[hinted-handoff]
+  # Determines whether hinted handoff is enabled.
+  #  enabled = true
+
+  # The directory where the hinted handoff queues are stored.
+  dir = \"${INFLUX_DIR}/hh\"
+" | sudo tee -a /etc/influxdb/influxdb.conf > /dev/null
+
+sudo mkdir "${INFLUX_DIR}/meta" "${INFLUX_DIR}/data" "${INFLUX_DIR}/wal" "${INFLUX_DIR}/hh"
+sudo chown -R influxdb:influxdb "${INFLUX_DIR}"
 
 sudo systemctl enable influxdb
 sudo systemctl start influxdb

@@ -6,6 +6,7 @@ imports:
   - path: data-node.jinja
   - path: data-node.jinja.schema
   - path: runtime-config.jinja
+  - path: runtime-config.jinja.schema
   - path: setup-common.sh
   - path: setup-meta.sh
   - path: setup-data.sh

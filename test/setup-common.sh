@@ -92,20 +92,13 @@ function read_rtc_var() {
 
 function filter_rtc_var() {
   local -r project_id="$(get_project_id)"
-  local -r access_token="$(get_access_token)"
 
   local -r rtc_name="$1"
   local -r filter="projects/${project_id}/configs/${rtc_name}/variables/$2"
-
-  curl -s -k -X GET \
-    -H "Authorization: Bearer ${access_token}" \
-    -H "Content-Type: application/json" \
-    -H "X-GFE-SSL: yes" \
-    "https://runtimeconfig.googleapis.com/v1beta1/projects/${project_id}/configs/${rtc_name}/variables" |
-      python -c 'import json,sys; o=json.load(sys.stdin); print "\n".join([v["name"] for v in o["variables"]]);' |
-      grep ${filter} |
-      sed "s|${filter}||" |
-      sort
+  local -r full_var_names=$(read_rtc_var "${rtc_name}" "" |
+    python -c 'import json,sys; o=json.load(sys.stdin); print "\n".join([v["name"] for v in o["variables"]]);')
+  
+  printf '%b\n' "${full_var_names}" | grep "${filter}" | sed "s|${filter}||" | sort
 }
 
 function get_rtc_var_text() {
@@ -192,25 +185,4 @@ function wait_for_rtc_waiter_success() {
     fi
   done
   echo "Waiter '${waiter_name}' succeeded"
-}
-
-# Manage hostnames
-function remove_hostname() {
-  local -r hostname="$1"
-  local -r etc_hosts="/etc/hosts"
-  local -r host_regex="\(\s\+\)${hostname}\s*$"
-  
-  sudo sed -ie "/[[:blank:]]${hostname}/d" "${etc_hosts}"
-}
-
-function add_hostname() {
-  local -r hostname="$1"
-  local -r ip_address="$2"
-  local -r etc_hosts="/etc/hosts"
-  
-  if grep -q "${hostname}" "${etc_hosts}"; then
-    echo "Replacing existing hostname ${hostname} with IP ${ip_address}"
-    remove_hostname "${hostname}"
-  fi
-  printf "%s\t%s\n" "${ip_address}" "${hostname}" | sudo tee -a "${etc_hosts}" > /dev/null;
 }
