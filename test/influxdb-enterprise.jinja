@@ -10,31 +10,27 @@
 
 
 resources:
-- name: meta-nodes
+- name: {{ deployment }}-meta-nodes
   type: meta-node.jinja
   metadata:
-    zone: {% zone %}
-    licenseKey: {% licenseKey %}
-    metaNodeMachineType: {% metaNodeMachineType %}
-    metaNodeDiskSizeGb: {% metaNodeDiskSizeGb %}
+    zone: {{ zone }}
+    licenseKey: {{ licenseKey }}
+    metaNodeMachineType: {{ metaNodeMachineType }}
+    metaNodeDiskSizeGb: {{ metaNodeDiskSizeGb }}
     startupScripts:
       - setup-common.sh
       - setup-meta.sh
 
-- name: data-nodes
+- name: {{ deployment }}-data-nodes
   type: data-node.jinja
   metadata:
-    zone: {% zone %}
-    licenseKey: {% licenseKey %}
-    dataNodeMachineType: {% dataNodeMachineType %}
-    dataNodeDiskSizeGb: {% dataNodeDiskSizeGb %}
+    zone: {{ zone }}
+    licenseKey: {{ licenseKey }}
+    dataNodeMachineType: {{ dataNodeMachineType }}
+    dataNodeDiskSizeGb: {{ dataNodeDiskSizeGb }}
     startupScripts:
       - setup-common.sh
       - setup-data.sh
 
-- name: runtime-config
+- name: {{ deployment }}-runtime-config
   type: runtime-config.jinja
-
-# outputs:
-# - name: cluster1-server-AdminUrl
-#   value: http://$(ref.deployment.externalIp-cluster1-group1):8091/
