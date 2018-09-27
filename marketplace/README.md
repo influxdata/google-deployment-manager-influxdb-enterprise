@@ -151,16 +151,3 @@ TODO(Gunnar): Confirm there are no other license agreements needed.
 
 #### Configure Deployment Package
 Only the "Upload a package" option will work for solutions that deploy multiple VMs. Upload the `influxdb-enterprise-byol.zip` file created by earlier by running the `package.sh` script. Make sure the "Keep metadata changes from `.jinja.display`" box remains checked.
-
-## Using Autogen (not currently used)
-
-[Deployment Manager `autogen`](https://github.com/GoogleCloudPlatform/deploymentmanager-autogen) is a useful tool for auto-generating a complete set of deployment manager templates from a single YAML file that describes a single solution. Unfortunately, it does not yet support instance groups and some other resources used in the BYOL listing and is therefore not used.
-
-The command to run autogen is shown below in case the tool is extended to cover the missing resource types.
-
-```
-autogen --input_type YAML --single_input autogen.yaml --output_type PACKAGE --output solution_folder
-
-autogen --input_type YAML --single_input example-config/solution.yaml --output_type PACKAGE --output solution_folder
-autogen --input_type YAML --single_input autogen.yaml --output_type PACKAGE --output solution_folder
-```

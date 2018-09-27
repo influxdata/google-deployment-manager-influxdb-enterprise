@@ -2,8 +2,10 @@
 {% set deployment = env['deployment'] %}
 {% set zone = properties['zone'] %}
 {% set machineType = properties['metaNodeMachineType'] %}
+{% set diskType = properties['metaNodeDiskType'] %}
 {% set diskSize = properties['metaNodeDiskSizeGb'] %}
 {% set licenseKey = properties['licenseKey'] %}
+{% set sourceImage = properties['sourceImage'] %}
 
 resources:
 # Instance template for meta nodes
@@ -25,14 +27,14 @@ resources:
         boot: True
         autoDelete: False
         initializeParams:
-          sourceImage: https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdata-debian-9-influxdb-enterprise-v20180917
-          diskType: pd-ssd
+          sourceImage: {{ sourceImage }}
+          diskType: pd-standard
           diskSizeGb: 10
       - deviceName: influxdb
         type: PERSISTENT
         autoDelete: False
         initializeParams:
-          diskType: pd-ssd
+          diskType: {{ diskType }}
           diskSizeGb: {{ diskSize }}
       metadata:
         items:

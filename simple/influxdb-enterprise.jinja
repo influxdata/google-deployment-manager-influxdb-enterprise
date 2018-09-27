@@ -4,10 +4,12 @@
 {% set zone = properties['zone'] %}
 {% set licenseKey = properties['licenseKey'] %}
 {% set metaNodeMachineType = properties['metaNodeMachineType'] %}
+{% set metaNodeDiskType = properties['metaNodeDiskType'] %}
 {% set metaNodeDiskSizeGb = properties['metaNodeDiskSizeGb'] %}
 {% set dataNodeMachineType = properties['dataNodeMachineType'] %}
 {% set dataNodeDiskSizeGb = properties['dataNodeDiskSizeGb'] %}
-
+{% set dataNodeDiskType = properties['dataNodeDiskType'] %}
+{% set sourceImage = 'https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdata-debian-9-influxdb-enterprise-v20180917' %}
 
 resources:
 - name: {{ deployment }}-meta-nodes
@@ -17,6 +19,7 @@ resources:
     licenseKey: {{ licenseKey }}
     metaNodeMachineType: {{ metaNodeMachineType }}
     metaNodeDiskSizeGb: {{ metaNodeDiskSizeGb }}
+    sourceImage: {{ sourceImage }}
     startupScripts:
       - setup-common.sh
       - setup-meta.sh
@@ -28,6 +31,7 @@ resources:
     licenseKey: {{ licenseKey }}
     dataNodeMachineType: {{ dataNodeMachineType }}
     dataNodeDiskSizeGb: {{ dataNodeDiskSizeGb }}
+    sourceImage: {{ sourceImage }}
     startupScripts:
       - setup-common.sh
       - setup-data.sh

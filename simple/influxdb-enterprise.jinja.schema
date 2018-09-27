@@ -28,6 +28,8 @@ properties:
   licenseKey:
     type: string
     default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    minLength: 36
+    maxLength: 36
   metaNodeMachineType:
     type: string
     default: n1-standard-1
@@ -37,6 +39,12 @@ properties:
       gceMachineType:
         minCpu: 1
         minRamGb: 1
+  metaNodeDiskType:
+    type: string
+    default: pd-ssd
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
   metaNodeDiskSizeGb:
     type: integer
     default: 10
@@ -55,6 +63,12 @@ properties:
       gceMachineType:
         minCpu: 2
         minRamGb: 4
+  dataNodeDiskType:
+    type: string
+    default: pd-ssd
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
   dataNodeDiskSizeGb:
     type: integer
     default: 250
