@@ -51,6 +51,9 @@ if [ "${HOSTNAME}" != "${META_LEADER}" ]; then
   exit
 fi
 
+# allow some time for all nodes to finish entitlement verification
+sleep 30
+
 filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/meta/" | while read line; do
   influxd-ctl add-meta $(get_rtc_var_text "${DEPLOYMENT}-rtc" "internal-dns/meta/${line}"):8091
 done

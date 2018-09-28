@@ -78,8 +78,9 @@ resources:
         port: 8086
 
 - name: {{ deployment }}-data-node-backend
-  type: compute.v1.backendService
+  type: compute.v1.regionBackendService
   properties:
+    region: {{ region }}
     loadBalancingScheme: INTERNAL
     sessionAffinity: NONE
     healthChecks: [ $(ref.{{ deployment }}-data-node-health.selfLink) ]
@@ -117,9 +118,7 @@ resources:
     targetTags: ["{{ deployment }}-data-node-fw"]
     allowed:
       - IPProtocol: TCP
-        ports: ["8086", "8088"]
-      - IPProtocol: ICMP
-        ports: ["8086", "8088"]
+        ports: ["8086"]
 
 outputs:
 - name: connectionIP
