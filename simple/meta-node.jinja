@@ -6,6 +6,7 @@
 {% set diskSize = properties['metaNodeDiskSizeGb'] %}
 {% set licenseKey = properties['licenseKey'] %}
 {% set sourceImage = properties['sourceImage'] %}
+{% set network = properties['network'] %}
 
 resources:
 # Instance template for meta nodes
@@ -17,7 +18,7 @@ resources:
     properties:
       machineType: {{ machineType }}
       networkInterfaces:
-        - network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/default
+        - network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/{{ network }}
           accessConfigs:
           - name: External-IP
             type: ONE_TO_ONE_NAT

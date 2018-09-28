@@ -35,6 +35,11 @@ properties:
   licenseKey:
     type: string
     default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  network:
+    type: string
+    default: default
+    x-googleProperty:
+      type: GCE_NETWORK
   startupScripts:
     type: array
     description: The startup script files.

@@ -10,6 +10,7 @@
 {% set dataNodeDiskSizeGb = properties['dataNodeDiskSizeGb'] %}
 {% set dataNodeDiskType = properties['dataNodeDiskType'] %}
 {% set sourceImage = 'https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdata-debian-9-influxdb-enterprise-v20180917' %}
+{% set network = properties['network'] %}
 
 resources:
 - name: {{ deployment }}-meta-nodes
@@ -17,6 +18,7 @@ resources:
   properties:
     zone: {{ zone }}
     licenseKey: {{ licenseKey }}
+    network: {{ network }}
     metaNodeMachineType: {{ metaNodeMachineType }}
     metaNodeDiskSizeGb: {{ metaNodeDiskSizeGb }}
     sourceImage: {{ sourceImage }}
@@ -29,6 +31,7 @@ resources:
   properties:
     zone: {{ zone }}
     licenseKey: {{ licenseKey }}
+    network: {{ network }}
     dataNodeMachineType: {{ dataNodeMachineType }}
     dataNodeDiskSizeGb: {{ dataNodeDiskSizeGb }}
     sourceImage: {{ sourceImage }}

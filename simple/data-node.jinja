@@ -1,11 +1,13 @@
 {% set project = env['project'] %}
 {% set deployment = env['deployment'] %}
 {% set zone = properties['zone'] %}
+{% set region = zone[:-2] %}
 {% set machineType = properties['dataNodeMachineType'] %}
 {% set diskType = properties['dataNodeDiskType'] %}
 {% set diskSize = properties['dataNodeDiskSizeGb'] %}
 {% set licenseKey = properties['licenseKey'] %}
 {% set sourceImage = properties['sourceImage'] %}
+{% set network = properties['network'] %}
 
 resources:
 # Instance template for data nodes
@@ -17,9 +19,9 @@ resources:
     properties:
       machineType: {{ machineType }}
       networkInterfaces:
-        - network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/default
+        - network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/{{ network }}
           accessConfigs:
-          - name: External-IP
+          - name: External NAT
             type: ONE_TO_ONE_NAT
       disks:
       - deviceName: boot
@@ -51,6 +53,9 @@ resources:
             {% for script in properties['startupScripts'] %}
             {{ imports[script]|indent(12) }}
             {% endfor %}
+      tags:
+        items:
+          - {{ deployment }}-data-node-fw
       serviceAccounts:
         - email: default
           scopes:
@@ -75,12 +80,22 @@ resources:
 - name: {{ deployment }}-data-node-backend
   type: compute.v1.backendService
   properties:
-    loadBalancingScheme: EXTERNAL
+    loadBalancingScheme: INTERNAL
     sessionAffinity: NONE
     healthChecks: [ $(ref.{{ deployment }}-data-node-health.selfLink) ]
     backends:
       - balacingMode: RATE
         group: $(ref.{{ deployment }}-data-node-igm.instanceGroup)
+
+- name: {{ deployment }}-data-node-fr
+  type: compute.v1.forwardingRule
+  properties:
+    region: {{ region }}
+    IPProtocol: TCP
+    ports:
+    - '8086'
+    loadBalancingScheme: INTERNAL
+    backendService: $(ref.{{ deployment }}-data-node-backend.selfLink)
 
 # content HTTP Health Check
 - name: {{ deployment }}-data-node-health
@@ -94,6 +109,20 @@ resources:
       port: 8086
       portName: tcp
 
+- name: {{ deployment }}-data-node-fw
+  type: compute.v1.firewall
+  properties:
+    network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/{{ network }}
+    sourceRanges: ["0.0.0.0/0"]
+    targetTags: ["{{ deployment }}-data-node-fw"]
+    allowed:
+      - IPProtocol: TCP
+        ports: ["8086", "8088"]
+      - IPProtocol: ICMP
+        ports: ["8086", "8088"]
+
 outputs:
+- name: connectionIP
+  value: $(ref.{{ deployment }}-data-node-fr.IPAddress)
 - name: group
   value: $(ref.{{ deployment }}-data-node-igm.instanceGroup)

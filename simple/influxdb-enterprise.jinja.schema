@@ -30,6 +30,11 @@ properties:
     default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     minLength: 36
     maxLength: 36
+  network:
+    type: string
+    default: default
+    x-googleProperty:
+      type: GCE_NETWORK
   metaNodeMachineType:
     type: string
     default: n1-standard-1
