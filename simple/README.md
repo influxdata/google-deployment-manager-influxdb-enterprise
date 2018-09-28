@@ -1,31 +1,29 @@
+# Deployment Manager Templates
 
+These are the base templates used by the GCP Marketplace listing.
 
+They can also be used to provision an InfluxDB Enterprise cluster using GCP Deployment Manager directly (not through the GCP Marketplace).
+
+## Create a cluster
+
+Install the [GCP command line tools](https://cloud.google.com/sdk/) or use the [GCP cloud shell](https://cloud.google.com/shell/).
+
+Set an environment named `LICENSE_KEY` that contains your InfluxDB Enterprise license key. Existing license keys can be found on the [InfluxData licensing portal](https://portal.influxdata.com/). Free trials are also available through the licensing portal.
+
+Run the following command to deploy an InfluxDB Enterprise cluster:
 
 ```
-gcloud deployment-manager deployments create influx-test \
-    --config parameters.simple.yaml \
+LICENSE_KEY="xxxxxxxx-xxxx-xxxx-xxxxxxxxxxxx"
+gcloud deployment-manager deployments create influxdb-enterprise-0 \
+    --config influxdb-enterprise.jinja \
     --properties "LICENSE_KEY:'${LICENSE_KEY}'" \
-    --preview \
     --automatic-rollback-on-error
 ```
 
-Rerun startup script
+## Delete a cluster
+
+To delete the cluster, run the following command:
+
 ```
-sudo google_metadata_script_runner --script-type startup
+gcloud deployment-manager delete influxdb-enterprise-0
 ```
-
-See startup script logs
-```
-sudo journalctl -u google-startup-scripts.service
-```
-
-
-Test setting a runtimeconfig variable
-```
-TOKEN=$(curl --retry 5 -s -f -H 'Metadata-Flavor: Google' http://metadata/computeMetadata/v1/instance/service-accounts/default/token | awk -F\" '{ print $4 }')
-
-TOKEN=$(curl --retry 5 -s -f -H 'Metadata-Flavor: Google' http://metadata/computeMetadata/v1/instance/service-accounts/default/token | python -c "import sys, json; print json.load(sys.stdin)['access_token']")
-
-curl -s -k -X GET -H 'Authorization: Bearer ${TOKEN}' -H 'Content-Type: application/json' -H 'X-GFE-SSL: yes' https://runtimeconfig.googleapis.com/v1beta1/projects/influxdata-dev/configs/rtc-name/variables/internal-ip-addresses
-
-
