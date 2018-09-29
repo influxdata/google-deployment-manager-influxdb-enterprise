@@ -11,14 +11,18 @@
 {% set dataNodeDiskType = properties['dataNodeDiskType'] %}
 {% set sourceImage = 'https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdata-debian-9-influxdb-enterprise-v20180917' %}
 {% set network = properties['network'] %}
+{% set subnetwork = properties['subnetwork'] %}
 
 resources:
-- name: {{ deployment }}-meta-nodes
+- name: {{ deployment }}-meta
   type: meta-node.jinja
   properties:
     zone: {{ zone }}
     licenseKey: {{ licenseKey }}
     network: {{ network }}
+    {% if properties.get("subnetwork") %}
+    subnetwork: {{ properties["subnetwork"] }}
+    {% endif %}
     metaNodeMachineType: {{ metaNodeMachineType }}
     metaNodeDiskSizeGb: {{ metaNodeDiskSizeGb }}
     sourceImage: {{ sourceImage }}
@@ -26,12 +30,15 @@ resources:
       - setup-common.sh
       - setup-meta.sh
 
-- name: {{ deployment }}-data-nodes
+- name: {{ deployment }}-data
   type: data-node.jinja
   properties:
     zone: {{ zone }}
     licenseKey: {{ licenseKey }}
     network: {{ network }}
+    {% if properties.get("subnetwork") %}
+    subnetwork: {{ properties["subnetwork"] }}
+    {% endif %}
     dataNodeMachineType: {{ dataNodeMachineType }}
     dataNodeDiskSizeGb: {{ dataNodeDiskSizeGb }}
     sourceImage: {{ sourceImage }}
@@ -39,7 +46,7 @@ resources:
       - setup-common.sh
       - setup-data.sh
 
-- name: {{ deployment }}-runtime-config
+- name: {{ deployment }}-rtc
   type: runtime-config.jinja
   properties:
     waiterTimeout: 600

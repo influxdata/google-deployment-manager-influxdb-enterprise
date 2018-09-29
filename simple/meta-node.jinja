@@ -1,17 +1,19 @@
 {% set project = env['project'] %}
 {% set deployment = env['deployment'] %}
 {% set zone = properties['zone'] %}
+{% set region = zone[:-2] %}
 {% set machineType = properties['metaNodeMachineType'] %}
 {% set diskType = properties['metaNodeDiskType'] %}
 {% set diskSize = properties['metaNodeDiskSizeGb'] %}
 {% set licenseKey = properties['licenseKey'] %}
 {% set sourceImage = properties['sourceImage'] %}
 {% set network = properties['network'] %}
+{% set subnetwork = properties['subnetwork'] %}
 
 resources:
 # Instance template for meta nodes
 # Used by the meta node instance group manager
-- name: {{ deployment }}-meta-node-it
+- name: {{ deployment }}-meta-it
   type: compute.v1.instanceTemplate
   properties:
     zone: {{ zone }}
@@ -19,6 +21,9 @@ resources:
       machineType: {{ machineType }}
       networkInterfaces:
         - network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/{{ network }}
+          {% if subnetwork %}
+          subnetwork: https://www.googleapis.com/compute/v1/projects/{{ project }}/regions/{{ region }}/subnetworks/{{ subnetwork }}
+          {% endif %}
           accessConfigs:
           - name: External-IP
             type: ONE_TO_ONE_NAT
@@ -62,11 +67,17 @@ resources:
             - 'https://www.googleapis.com/auth/monitoring.write'
             - 'https://www.googleapis.com/auth/cloudruntimeconfig'
 
-- name: {{ deployment }}-meta-node-igm
+- name: {{ deployment }}-meta-igm
   type: compute.v1.instanceGroupManager
+  metadata:
+    dependsOn:
+      - {{ deployment }}-meta-it
+      - {{ deployment }}-rtc
+      - {{ deployment }}-rtc-cluster-init-waiter
+      - {{ deployment }}-rtc-startup-waiter
   properties:
-    baseInstanceName: {{ deployment }}-meta-node-vm
-    instanceTemplate: $(ref.{{ deployment }}-meta-node-it.selfLink)
+    baseInstanceName: {{ deployment }}-meta-vm
+    instanceTemplate: $(ref.{{ deployment }}-meta-it.selfLink)
     targetSize: 3
     zone: {{ zone }}
     namedPorts:
@@ -75,4 +86,4 @@ resources:
 
 outputs:
 - name: group
-  value: $(ref.{{ deployment }}-meta-node-igm.instanceGroup)
+  value: $(ref.{{ deployment }}-meta-igm.instanceGroup)

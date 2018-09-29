@@ -12,7 +12,7 @@
 resources:
 # Instance template for data nodes
 # Used by the data node instance group manager
-- name: {{ deployment }}-data-node-it
+- name: {{ deployment }}-data-it
   type: compute.v1.instanceTemplate
   properties:
     zone: {{ zone }}
@@ -20,6 +20,9 @@ resources:
       machineType: {{ machineType }}
       networkInterfaces:
         - network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/{{ network }}
+          {% if subnetwork %}
+          subnetwork: https://www.googleapis.com/compute/v1/projects/{{ project }}/regions/{{ region }}/subnetworks/{{ subnetwork }}
+          {% endif %}
           accessConfigs:
           - name: External NAT
             type: ONE_TO_ONE_NAT
@@ -55,7 +58,7 @@ resources:
             {% endfor %}
       tags:
         items:
-          - {{ deployment }}-data-node-fw
+          - {{ deployment }}-data-fw
       serviceAccounts:
         - email: default
           scopes:
@@ -66,40 +69,57 @@ resources:
             - 'https://www.googleapis.com/auth/monitoring.write'
             - 'https://www.googleapis.com/auth/cloudruntimeconfig'
 
-- name: {{ deployment }}-data-node-igm
+- name: {{ deployment }}-data-igm
   type: compute.v1.instanceGroupManager
+  metadata:
+    dependsOn:
+      - {{ deployment }}-data-it
+      - {{ deployment }}-rtc
+      - {{ deployment }}-rtc-cluster-init-waiter
   properties:
-    baseInstanceName: {{ deployment }}-data-node-vm
-    instanceTemplate: $(ref.{{ deployment }}-data-node-it.selfLink)
+    baseInstanceName: {{ deployment }}-data-vm
+    instanceTemplate: $(ref.{{ deployment }}-data-it.selfLink)
     targetSize: 2
     zone: {{ zone }}
     namedPorts:
       - name: 'tcp'
         port: 8086
 
-- name: {{ deployment }}-data-node-backend
+- name: {{ deployment }}-data-be
   type: compute.v1.regionBackendService
+  metadata:
+    dependsOn:
+      - {{ deployment }}-data-igm
+      - {{ deployment }}-meta-igm
+      - {{ deployment }}-data-health
   properties:
     region: {{ region }}
     loadBalancingScheme: INTERNAL
     sessionAffinity: NONE
-    healthChecks: [ $(ref.{{ deployment }}-data-node-health.selfLink) ]
+    healthChecks: [ $(ref.{{ deployment }}-data-health.selfLink) ]
     backends:
-      - balacingMode: RATE
-        group: $(ref.{{ deployment }}-data-node-igm.instanceGroup)
+      - balacingMode: CONNECTION
+        group: $(ref.{{ deployment }}-data-igm.instanceGroup)
 
-- name: {{ deployment }}-data-node-fr
+- name: {{ deployment }}-data-fr
   type: compute.v1.forwardingRule
+  metadata:
+    dependsOn:
+      - {{ deployment }}-data-be
   properties:
+    network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/{{ network }}
+    {% if subnetwork %}
+    subnetwork: https://www.googleapis.com/compute/v1/projects/{{ project }}/regions/{{ region }}/subnetworks/{{ subnetwork }}
+    {% endif %}
     region: {{ region }}
     IPProtocol: TCP
     ports:
     - '8086'
     loadBalancingScheme: INTERNAL
-    backendService: $(ref.{{ deployment }}-data-node-backend.selfLink)
+    backendService: $(ref.{{ deployment }}-data-be.selfLink)
 
 # content HTTP Health Check
-- name: {{ deployment }}-data-node-health
+- name: {{ deployment }}-data-health
   type: compute.v1.healthCheck
   properties:
     type: TCP
@@ -110,18 +130,21 @@ resources:
       port: 8086
       portName: tcp
 
-- name: {{ deployment }}-data-node-fw
+- name: {{ deployment }}-data-fw
   type: compute.v1.firewall
   properties:
     network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/{{ network }}
+    {% if subnetwork %}
+    subnetwork: https://www.googleapis.com/compute/v1/projects/{{ project }}/regions/{{ region }}/subnetworks/{{ subnetwork }}
+    {% endif %}
     sourceRanges: ["0.0.0.0/0"]
-    targetTags: ["{{ deployment }}-data-node-fw"]
+    targetTags: ["{{ deployment }}-data-fw"]
     allowed:
       - IPProtocol: TCP
         ports: ["8086"]
 
 outputs:
 - name: connectionIP
-  value: $(ref.{{ deployment }}-data-node-fr.IPAddress)
+  value: $(ref.{{ deployment }}-data-fr.IPAddress)
 - name: group
-  value: $(ref.{{ deployment }}-data-node-igm.instanceGroup)
+  value: $(ref.{{ deployment }}-data-igm.instanceGroup)

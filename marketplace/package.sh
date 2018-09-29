@@ -2,15 +2,14 @@
 
 set -euxo pipefail
 
-rm influxdb-enterprise-byol.zip
-tmp="$(mktemp -t influxdb-enterprise-byol)"
+rm -f influxdb-enterprise-byol.zip
+tmp="$(mktemp -d -t influxdb-enterprise-byol)/"
 
 cp influxdb-enterprise-byol.jinja $tmp
 cp influxdb-enterprise-byol.jinja.schema $tmp
 cp influxdb-enterprise-byol.jinja.display $tmp
 cp test_config.yaml $tmp
 cp -r resources $tmp
-cp c2d_deployment_configuration.json $tmp
 
 cp ../simple/data-node.jinja $tmp
 cp ../simple/data-node.jinja.schema $tmp

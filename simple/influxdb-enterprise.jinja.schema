@@ -35,6 +35,13 @@ properties:
     default: default
     x-googleProperty:
       type: GCE_NETWORK
+  subnetwork:
+    type: string
+    x-googleProperty:
+      type: GCE_SUBNETWORK
+      zoneProperty: zone
+      gceSubnetwork:
+        networkProperty: network
   metaNodeMachineType:
     type: string
     default: n1-standard-1

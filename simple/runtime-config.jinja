@@ -13,8 +13,8 @@ resources:
   metadata:
     dependsOn:
       - {{ deployment }}-rtc
-      - {{ deployment }}-meta-node-igm
-      - {{ deployment }}-data-node-igm
+      - {{ deployment }}-meta-igm
+      - {{ deployment }}-data-igm
   properties:
     parent: $(ref.{{ deployment }}-rtc.name)
     waiter: {{ deployment }}-rtc-cluster-init-waiter
