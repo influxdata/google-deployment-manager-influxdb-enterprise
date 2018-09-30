@@ -58,4 +58,4 @@ properties:
     description: The startup script files.
   sourceImage:
     type: string
-    description: The source image used for the node.
+    description: The source image used for all VMs.

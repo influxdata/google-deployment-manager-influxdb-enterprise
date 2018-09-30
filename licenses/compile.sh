@@ -1,12 +1,38 @@
 #!/bin/bash
 
-cat license-links-raw.txt | while read -r line || [[ -n "$line" ]]; do
-    echo -e "-----\nLicense for $line:\n$(curl -s $line)\n" >> ALL_LICENSES
-done
-echo "Successfully fetched license plaintext to ALL_LICENSES"
+set -euxo pipefail
 
-mkdir mpl-source
-cat license-links-mpl.txt | while read -r line || [[ -n "$line" ]]; do
-    curl -s $line > mpl-source/test-$(echo "$line" | tail -c 20 | sed 's/\//-/g')
+rm licenses.tar.gz || true
+
+tmp="$(mktemp -d -t gcp-marketplace-license)"
+cwd=$(pwd)
+
+cd $tmp
+
+cat $cwd/license-links-raw.txt | while read -r line || [[ -n "$line" ]]; do
+    curl -s "${line}" --output "$(echo ${line} \
+        | tr '[:upper:]' '[:lower:]' \
+        | sed '
+        s|https://raw.githubusercontent|github|; s|https://github|github|; s|https://||
+s|[/.#+]|-|g; s/-master-/-/; s/-license/-/; s/-txt//; s/-md//; s/---/-/; s/-$//
+        s|$|-license.txt|
+        ' )"
 done
-echo "Successfully fetched MPL-licensed source to MPL_SOURCE.tar.gz"
+
+cat $cwd/license-links-html.txt | while read -r line || [[ -n "$line" ]]; do
+    curl -s "${line}" --output "$(echo ${line} \
+        | tr '[:upper:]' '[:lower:]' \
+        | sed '
+        s|https://raw.githubusercontent|github|; s|https://github|github|; s|https://||
+        s|[/.#+]|-|g; s/-master-/-/; s/-license/-/; s/-txt//; s/-md//; s/---/-/; s/-$//
+        s|$|license.html|
+        ' )"
+done
+
+cat $cwd/license-links-mpl.txt | while read -r line || [[ -n "$line" ]]; do
+    curl -s "${line}" --output "$(echo ${line} | sed 's|https://||' | sed 's|/|-|g' | sed 's|-archive-master\.zip$|-source\.zip|' )"
+done
+
+tar czvf $cwd/licenses.tar.gz .
+
+cd $cwd
