@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euxo pipefail
+
 INFLUXDB_ENTERPRISE_VERSION="1.6.2-c1.6.2"
 TELEGRAF_VERSION="1.7.4"
 
@@ -15,16 +17,17 @@ echo "Creating base instance: ${BASE_INSTANCE_NAME}"
 gcloud compute instances create ${BASE_INSTANCE_NAME} \
     --project ${PROJECT} \
     --zone ${ZONE} \
-    --machine-type "n1-standard-8" \
+    --machine-type "n1-standard-1" \
     --network "default" \
     --maintenance-policy "MIGRATE" \
-    --scopes default="https://www.googleapis.com/auth/cloud-platform" \
+    --scopes default \
     --image ${BASE_IMAGE_URI} \
     --boot-disk-size "10" \
-    --boot-disk-type "pd-ssd" \
+    --boot-disk-type "pd-standard" \
     --boot-disk-device-name ${INFLUX_IMAGE_NAME} \
     --no-boot-disk-auto-delete \
-    --scopes https://www.googleapis.com/auth/cloud-platform
+    --no-user-output-enabled \
+    --quiet
 
 sleep 60
 
@@ -37,10 +40,11 @@ gcloud compute ssh ${BASE_INSTANCE_NAME} --command "bash setup.sh ${INFLUXDB_ENT
 gcloud compute ssh ${BASE_INSTANCE_NAME} --command "rm setup.sh"
 
 echo "Deleting base instance."
-gcloud compute instances delete ${BASE_INSTANCE_NAME} -s \
+gcloud compute instances delete ${BASE_INSTANCE_NAME} \
     --project ${PROJECT} \
     --zone ${ZONE} \
-    --keep-disks "boot"
+    --keep-disks "boot" \
+    --no-user-output-enabled
 
 sleep 60
 
@@ -50,13 +54,13 @@ echo "Creating cleanup instance: ${CLEAN_INSTANCE_NAME}"
 gcloud compute instances create ${CLEAN_INSTANCE_NAME} \
     --project ${PROJECT} \
     --zone ${ZONE} \
-    --machine-type "n1-standard-8" \
+    --machine-type "n1-standard-1" \
     --network "default" \
     --maintenance-policy "MIGRATE" \
-    --scopes default="https://www.googleapis.com/auth/cloud-platform" \
+    --scopes default \
     --image ${BASE_IMAGE_URI} \
-    --scopes https://www.googleapis.com/auth/cloud-platform
-    --disk "disk-name=${INFLUX_IMAGE_NAME}"
+    --disk "disk-name=${INFLUX_IMAGE_NAME}" \
+    --no-user-output-enabled
 
 sleep 60
 
@@ -67,9 +71,11 @@ echo "Running cleanup script."
 gcloud compute ssh ${CLEAN_INSTANCE_NAME} --command "bash clean.sh"
 
 echo "Deleting cleanup instance."
-gcloud compute instances delete ${CLEAN_INSTANCE_NAME} -s \
+gcloud compute instances delete ${CLEAN_INSTANCE_NAME} \
     --project ${PROJECT} \
-    --zone ${ZONE}
+    --zone ${ZONE} \
+    --no-user-output-enabled \
+    --quiet
 
 sleep 60
 

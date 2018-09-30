@@ -35,7 +35,7 @@ gcloud compute instances create influxdb-enterprise-byol-base \
     --machine-type "n1-standard-8" \
     --network "default" \
     --maintenance-policy "MIGRATE" \
-    --scopes default="https://www.googleapis.com/auth/cloud-platform" \
+    --scopes default \
     --image "https://www.googleapis.com/compute/v1/projects/debian-cloud/global/images/debian-9-stretch-v20180911" \
     --boot-disk-size "10" \
     --boot-disk-type "pd-ssd" \
