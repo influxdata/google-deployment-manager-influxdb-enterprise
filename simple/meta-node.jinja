@@ -60,11 +60,6 @@ resources:
       serviceAccounts:
         - email: default
           scopes:
-            - 'https://www.googleapis.com/auth/cloud-platform'
-            - 'https://www.googleapis.com/auth/cloud.useraccounts.readonly'
-            - 'https://www.googleapis.com/auth/devstorage.read_only'
-            - 'https://www.googleapis.com/auth/logging.write'
-            - 'https://www.googleapis.com/auth/monitoring.write'
             - 'https://www.googleapis.com/auth/cloudruntimeconfig'
 
 - name: {{ deployment }}-meta-igm
@@ -73,8 +68,6 @@ resources:
     dependsOn:
       - {{ deployment }}-meta-it
       - {{ deployment }}-rtc
-      - {{ deployment }}-rtc-cluster-init-waiter
-      - {{ deployment }}-rtc-startup-waiter
   properties:
     baseInstanceName: {{ deployment }}-meta-vm
     instanceTemplate: $(ref.{{ deployment }}-meta-it.selfLink)

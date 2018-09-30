@@ -1,0 +1,22 @@
+info:
+  version: '1.0'
+  title: InfluxDB Enterprise network resources
+
+properties:
+  zone:
+    type: string
+    default: us-central1-f
+    x-googleProperty:
+      type: GCE_ZONE
+  network:
+    type: string
+    default: default
+    x-googleProperty:
+      type: GCE_NETWORK
+  subnetwork:
+    type: string
+    x-googleProperty:
+      type: GCE_SUBNETWORK
+      zoneProperty: zone
+      gceSubnetwork:
+        networkProperty: network

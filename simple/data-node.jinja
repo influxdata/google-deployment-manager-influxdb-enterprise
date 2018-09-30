@@ -8,6 +8,7 @@
 {% set licenseKey = properties['licenseKey'] %}
 {% set sourceImage = properties['sourceImage'] %}
 {% set network = properties['network'] %}
+{% set subnetwork = properties['subnetwork'] %}
 
 resources:
 # Instance template for data nodes
@@ -62,11 +63,6 @@ resources:
       serviceAccounts:
         - email: default
           scopes:
-            - 'https://www.googleapis.com/auth/cloud-platform'
-            - 'https://www.googleapis.com/auth/cloud.useraccounts.readonly'
-            - 'https://www.googleapis.com/auth/devstorage.read_only'
-            - 'https://www.googleapis.com/auth/logging.write'
-            - 'https://www.googleapis.com/auth/monitoring.write'
             - 'https://www.googleapis.com/auth/cloudruntimeconfig'
 
 - name: {{ deployment }}-data-igm
@@ -75,7 +71,6 @@ resources:
     dependsOn:
       - {{ deployment }}-data-it
       - {{ deployment }}-rtc
-      - {{ deployment }}-rtc-cluster-init-waiter
   properties:
     baseInstanceName: {{ deployment }}-data-vm
     instanceTemplate: $(ref.{{ deployment }}-data-it.selfLink)
@@ -85,66 +80,6 @@ resources:
       - name: 'tcp'
         port: 8086
 
-- name: {{ deployment }}-data-be
-  type: compute.v1.regionBackendService
-  metadata:
-    dependsOn:
-      - {{ deployment }}-data-igm
-      - {{ deployment }}-meta-igm
-      - {{ deployment }}-data-health
-  properties:
-    region: {{ region }}
-    loadBalancingScheme: INTERNAL
-    sessionAffinity: NONE
-    healthChecks: [ $(ref.{{ deployment }}-data-health.selfLink) ]
-    backends:
-      - balacingMode: CONNECTION
-        group: $(ref.{{ deployment }}-data-igm.instanceGroup)
-
-- name: {{ deployment }}-data-fr
-  type: compute.v1.forwardingRule
-  metadata:
-    dependsOn:
-      - {{ deployment }}-data-be
-  properties:
-    network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/{{ network }}
-    {% if subnetwork %}
-    subnetwork: https://www.googleapis.com/compute/v1/projects/{{ project }}/regions/{{ region }}/subnetworks/{{ subnetwork }}
-    {% endif %}
-    region: {{ region }}
-    IPProtocol: TCP
-    ports:
-    - '8086'
-    loadBalancingScheme: INTERNAL
-    backendService: $(ref.{{ deployment }}-data-be.selfLink)
-
-# content HTTP Health Check
-- name: {{ deployment }}-data-health
-  type: compute.v1.healthCheck
-  properties:
-    type: TCP
-    checkIntervalSec: 10
-    timeoutSec: 10
-    unhealthyThreshold: 2
-    tcpHealthCheck:
-      port: 8086
-      portName: tcp
-
-- name: {{ deployment }}-data-fw
-  type: compute.v1.firewall
-  properties:
-    network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/{{ network }}
-    {% if subnetwork %}
-    subnetwork: https://www.googleapis.com/compute/v1/projects/{{ project }}/regions/{{ region }}/subnetworks/{{ subnetwork }}
-    {% endif %}
-    sourceRanges: ["0.0.0.0/0"]
-    targetTags: ["{{ deployment }}-data-fw"]
-    allowed:
-      - IPProtocol: TCP
-        ports: ["8086"]
-
 outputs:
 - name: connectionIP
   value: $(ref.{{ deployment }}-data-fr.IPAddress)
-- name: group
-  value: $(ref.{{ deployment }}-data-igm.instanceGroup)

@@ -14,27 +14,6 @@ properties:
     default: us-central1-f
     x-googleProperty:
       type: GCE_ZONE
-  metaNodeMachineType:
-    type: string
-    default: n1-standard-1
-    x-googleProperty:
-      type: GCE_MACHINE_TYPE
-      zoneProperty: zone
-      gceMachineType:
-        minCpu: 1
-        minRamGb: 1
-  metaNodeDiskSizeGb:
-    type: integer
-    default: 10
-    minimum: 4
-    maximum: 5000
-    x-googleProperty:
-      type: GCE_DISK_SIZE
-      gceDiskSize:
-        diskTypeProperty: diskType
-  licenseKey:
-    type: string
-    default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
   network:
     type: string
     default: default
@@ -47,15 +26,36 @@ properties:
       zoneProperty: zone
       gceSubnetwork:
         networkProperty: network
-  startupScripts:
-    type: array
-    description: The startup script files.
-  sourceImage:
+  metaNodeMachineType:
     type: string
-    description: The source image used for the node.
+    default: n1-standard-1
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 1
+        minRamGb: 1
   metaNodeDiskType:
     type: string
     default: pd-ssd
     x-googleProperty:
       type: GCE_DISK_TYPE
       zoneProperty: zone
+  metaNodeDiskSizeGb:
+    type: integer
+    default: 10
+    minimum: 4
+    maximum: 5000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: diskType
+  licenseKey:
+    type: string
+    default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+  startupScripts:
+    type: array
+    description: The startup script files.
+  sourceImage:
+    type: string
+    description: The source image used for the node.

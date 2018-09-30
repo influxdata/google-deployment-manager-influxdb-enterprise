@@ -43,7 +43,7 @@ sudo systemctl start influxdb-meta
 
 set_rtc_var_text "${DEPLOYMENT}-rtc" "internal-dns/meta/${HOSTNAME}" "${NODE_PRIVATE_DNS}"
 
-wait_for_rtc_waiter_success "${DEPLOYMENT}-rtc" "${DEPLOYMENT}-rtc-cluster-init-waiter" "250"
+wait_for_rtc_waiter_success "${DEPLOYMENT}-rtc" "${DEPLOYMENT}-rtc-cluster-waiter" "250"
 
 readonly META_LEADER="$(filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/meta/" | head -n 1)"
 

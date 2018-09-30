@@ -8,16 +8,14 @@ resources:
   properties:
     config: {{ deployment }}-rtc
 
-- name: {{ deployment }}-rtc-cluster-init-waiter
+- name: {{ deployment }}-rtc-cluster-waiter
   type: runtimeconfig.v1beta1.waiter
   metadata:
     dependsOn:
       - {{ deployment }}-rtc
-      - {{ deployment }}-meta-igm
-      - {{ deployment }}-data-igm
   properties:
     parent: $(ref.{{ deployment }}-rtc.name)
-    waiter: {{ deployment }}-rtc-cluster-init-waiter
+    waiter: {{ deployment }}-rtc-cluster-waiter
     timeout: {{ waiterTimeout }}s
     success:
       cardinality:

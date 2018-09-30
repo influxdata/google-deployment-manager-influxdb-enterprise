@@ -14,6 +14,18 @@ properties:
     default: us-central1-f
     x-googleProperty:
       type: GCE_ZONE
+  network:
+    type: string
+    default: default
+    x-googleProperty:
+      type: GCE_NETWORK
+  subnetwork:
+    type: string
+    x-googleProperty:
+      type: GCE_SUBNETWORK
+      zoneProperty: zone
+      gceSubnetwork:
+        networkProperty: network
   dataNodeMachineType:
     type: string
     default: n1-standard-8
@@ -32,21 +44,15 @@ properties:
       type: GCE_DISK_SIZE
       gceDiskSize:
         diskTypeProperty: diskType
+  dataNodeDiskType:
+    type: string
+    default: pd-ssd
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
   licenseKey:
     type: string
     default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-  network:
-    type: string
-    default: default
-    x-googleProperty:
-      type: GCE_NETWORK
-  subnetwork:
-    type: string
-    x-googleProperty:
-      type: GCE_SUBNETWORK
-      zoneProperty: zone
-      gceSubnetwork:
-        networkProperty: network
   startupScripts:
     type: array
     description: The startup script files.

@@ -1,0 +1,69 @@
+{% set project = env['project'] %}
+{% set deployment = env['deployment'] %}
+{% set zone = properties['zone'] %}
+{% set region = zone[:-2] %}
+{% set network = properties['network'] %}
+{% set subnetwork = properties['subnetwork'] %}
+
+resources:
+# HTTP Health Check of data nodes
+- name: {{ deployment }}-data-health
+  type: compute.v1.healthCheck
+  properties:
+    type: TCP
+    checkIntervalSec: 10
+    timeoutSec: 10
+    unhealthyThreshold: 2
+    tcpHealthCheck:
+      port: 8086
+      portName: tcp
+
+- name: {{ deployment }}-data-be
+  type: compute.v1.regionBackendService
+  metadata:
+    dependsOn:
+      - {{ deployment }}-data-igm
+      - {{ deployment }}-meta-igm
+      - {{ deployment }}-data-health
+  properties:
+    region: {{ region }}
+    loadBalancingScheme: INTERNAL
+    sessionAffinity: NONE
+    healthChecks: [ $(ref.{{ deployment }}-data-health.selfLink) ]
+    backends:
+      - balacingMode: CONNECTION
+        group: $(ref.{{ deployment }}-data-igm.instanceGroup)
+
+- name: {{ deployment }}-data-fr
+  type: compute.v1.forwardingRule
+  metadata:
+    dependsOn:
+      - {{ deployment }}-data-be
+  properties:
+    network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/{{ network }}
+    {% if subnetwork %}
+    subnetwork: https://www.googleapis.com/compute/v1/projects/{{ project }}/regions/{{ region }}/subnetworks/{{ subnetwork }}
+    {% endif %}
+    region: {{ region }}
+    IPProtocol: TCP
+    ports:
+    - '8086'
+    loadBalancingScheme: INTERNAL
+    backendService: $(ref.{{ deployment }}-data-be.selfLink)
+
+- name: {{ deployment }}-data-fw
+  type: compute.v1.firewall
+  properties:
+    network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/{{ network }}
+    {% if subnetwork %}
+    subnetwork: https://www.googleapis.com/compute/v1/projects/{{ project }}/regions/{{ region }}/subnetworks/{{ subnetwork }}
+    {% endif %}
+    sourceRanges: ["0.0.0.0/0"]
+    targetTags: ["{{ deployment }}-data-fw"]
+    allowed:
+      - IPProtocol: TCP
+        ports: ["8086"]
+
+outputs:
+- name: connectionIP
+  value: $(ref.{{ deployment }}-data-fr.IPAddress)

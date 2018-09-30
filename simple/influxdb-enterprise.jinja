@@ -18,7 +18,6 @@ resources:
   type: meta-node.jinja
   properties:
     zone: {{ zone }}
-    licenseKey: {{ licenseKey }}
     network: {{ network }}
     {% if properties.get("subnetwork") %}
     subnetwork: {{ properties["subnetwork"] }}
@@ -26,6 +25,7 @@ resources:
     metaNodeMachineType: {{ metaNodeMachineType }}
     metaNodeDiskSizeGb: {{ metaNodeDiskSizeGb }}
     sourceImage: {{ sourceImage }}
+    licenseKey: {{ licenseKey }}
     startupScripts:
       - setup-common.sh
       - setup-meta.sh
@@ -34,7 +34,6 @@ resources:
   type: data-node.jinja
   properties:
     zone: {{ zone }}
-    licenseKey: {{ licenseKey }}
     network: {{ network }}
     {% if properties.get("subnetwork") %}
     subnetwork: {{ properties["subnetwork"] }}
@@ -42,6 +41,7 @@ resources:
     dataNodeMachineType: {{ dataNodeMachineType }}
     dataNodeDiskSizeGb: {{ dataNodeDiskSizeGb }}
     sourceImage: {{ sourceImage }}
+    licenseKey: {{ licenseKey }}
     startupScripts:
       - setup-common.sh
       - setup-data.sh
@@ -50,3 +50,12 @@ resources:
   type: runtime-config.jinja
   properties:
     waiterTimeout: 600
+
+- name: {{ deployment }}-net
+  type: network.jinja
+  properties:
+    zone: {{ zone }}
+    network: {{ network }}
+    {% if properties.get("subnetwork") %}
+    subnetwork: {{ properties["subnetwork"] }}
+    {% endif %}
