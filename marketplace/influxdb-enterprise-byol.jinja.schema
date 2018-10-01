@@ -1,6 +1,6 @@
 imports:
-  - path: influxdb-enterprise.jinja
-  - path: influxdb-enterprise.jinja.schema
+  - path: influxdb-enterprise-byol.jinja
+  - path: influxdb-enterprise-byol.jinja.schema
   - path: meta-node.jinja
   - path: meta-node.jinja.schema
   - path: data-node.jinja
@@ -68,7 +68,7 @@ properties:
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
-        diskTypeProperty: diskType
+        diskTypeProperty: metaDiskType
   dataTargetSize:
     type: integer
     default: 2
@@ -97,7 +97,7 @@ properties:
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
-        diskTypeProperty: diskType
+        diskTypeProperty: dataDiskType
   bootDiskType:
     type: string
     default: pd-standard
@@ -112,7 +112,7 @@ properties:
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
-        diskTypeProperty: diskType
+        diskTypeProperty: bootDiskType
   licenseKey:
     type: string
     default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx

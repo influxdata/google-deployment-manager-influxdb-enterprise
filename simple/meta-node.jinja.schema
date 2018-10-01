@@ -58,7 +58,7 @@ properties:
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
-        diskTypeProperty: diskType
+        diskTypeProperty: metaDiskType
   bootDiskType:
     type: string
     default: pd-standard
@@ -73,7 +73,7 @@ properties:
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
-        diskTypeProperty: diskType
+        diskTypeProperty: bootDiskType
   sourceImage:
     type: string
     description: The source image used for all VMs.
