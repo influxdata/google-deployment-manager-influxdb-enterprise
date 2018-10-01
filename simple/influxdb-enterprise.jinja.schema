@@ -14,7 +14,7 @@ imports:
   - path: setup-data.sh
 
 info:
-  version: '0.1'
+  version: '1.0'
   title: InfluxDB Enterprise Template
 
 required:
@@ -39,7 +39,12 @@ properties:
       zoneProperty: zone
       gceSubnetwork:
         networkProperty: network
-  metaNodeMachineType:
+  metaTargetSize:
+    type: integer
+    default: 3
+    minimum: 3
+    maximum: 7
+  metaMachineType:
     type: string
     default: n1-standard-1
     x-googleProperty:
@@ -48,13 +53,13 @@ properties:
       gceMachineType:
         minCpu: 1
         minRamGb: 1
-  metaNodeDiskType:
+  metaDiskType:
     type: string
     default: pd-ssd
     x-googleProperty:
       type: GCE_DISK_TYPE
       zoneProperty: zone
-  metaNodeDiskSizeGb:
+  metaDiskSizeGb:
     type: integer
     default: 10
     minimum: 10
@@ -63,7 +68,12 @@ properties:
       type: GCE_DISK_SIZE
       gceDiskSize:
         diskTypeProperty: diskType
-  dataNodeMachineType:
+  dataTargetSize:
+    type: integer
+    default: 2
+    minimum: 2
+    maximum: 20
+  dataMachineType:
     type: string
     default: n1-standard-8
     x-googleProperty:
@@ -72,16 +82,31 @@ properties:
       gceMachineType:
         minCpu: 2
         minRamGb: 4
-  dataNodeDiskType:
+  dataDiskType:
     type: string
     default: pd-ssd
     x-googleProperty:
       type: GCE_DISK_TYPE
       zoneProperty: zone
-  dataNodeDiskSizeGb:
+  dataDiskSizeGb:
     type: integer
     default: 250
     minimum: 50
+    maximum: 5000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: diskType
+  bootDiskType:
+    type: string
+    default: pd-standard
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  bootDiskSizeGb:
+    type: integer
+    default: 10
+    minimum: 10
     maximum: 5000
     x-googleProperty:
       type: GCE_DISK_SIZE

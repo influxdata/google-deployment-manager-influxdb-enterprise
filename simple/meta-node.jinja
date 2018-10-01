@@ -2,13 +2,16 @@
 {% set deployment = env['deployment'] %}
 {% set zone = properties['zone'] %}
 {% set region = zone[:-2] %}
-{% set machineType = properties['metaNodeMachineType'] %}
-{% set diskType = properties['metaNodeDiskType'] %}
-{% set diskSize = properties['metaNodeDiskSizeGb'] %}
-{% set licenseKey = properties['licenseKey'] %}
-{% set sourceImage = properties['sourceImage'] %}
 {% set network = properties['network'] %}
 {% set subnetwork = properties['subnetwork'] %}
+{% set targetSize = properties['metaTargetSize'] %}
+{% set machineType = properties['metaMachineType'] %}
+{% set diskType = properties['metaDiskType'] %}
+{% set diskSize = properties['metaDiskSizeGb'] %}
+{% set bootDiskType = properties['bootDiskType'] %}
+{% set bootDiskSize = properties['bootDiskSizeGb'] %}
+{% set sourceImage = properties['sourceImage'] %}
+{% set licenseKey = properties['licenseKey'] %}
 
 resources:
 # Instance template for meta nodes
@@ -34,8 +37,8 @@ resources:
         autoDelete: False
         initializeParams:
           sourceImage: {{ sourceImage }}
-          diskType: pd-standard
-          diskSizeGb: 10
+          diskType: {{ bootDiskType }}
+          diskSizeGb: {{ bootDiskSize }}
       - deviceName: influxdb
         type: PERSISTENT
         autoDelete: False
@@ -71,7 +74,7 @@ resources:
   properties:
     baseInstanceName: {{ deployment }}-meta-vm
     instanceTemplate: $(ref.{{ deployment }}-meta-it.selfLink)
-    targetSize: 3
+    targetSize: {{ targetSize }}
     zone: {{ zone }}
     namedPorts:
       - name: 'tcp'

@@ -6,7 +6,11 @@ imports:
 
 info:
   version: '1.0'
-  title: InfluxDB Enterprise BYOL
+  title: InfluxDB Enterprise data nodes
+
+required:
+  - zone
+  - licenseKey
 
 properties:
   zone:
@@ -26,7 +30,12 @@ properties:
       zoneProperty: zone
       gceSubnetwork:
         networkProperty: network
-  dataNodeMachineType:
+  dataTargetSize:
+    type: integer
+    default: 2
+    minimum: 2
+    maximum: 20
+  dataMachineType:
     type: string
     default: n1-standard-8
     x-googleProperty:
@@ -35,7 +44,7 @@ properties:
       gceMachineType:
         minCpu: 2
         minRamGb: 4
-  dataNodeDiskSizeGb:
+  dataDiskSizeGb:
     type: integer
     default: 250
     minimum: 50
@@ -44,18 +53,36 @@ properties:
       type: GCE_DISK_SIZE
       gceDiskSize:
         diskTypeProperty: diskType
-  dataNodeDiskType:
+  dataDiskType:
     type: string
     default: pd-ssd
     x-googleProperty:
       type: GCE_DISK_TYPE
       zoneProperty: zone
-  licenseKey:
+  bootDiskType:
     type: string
-    default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-  startupScripts:
-    type: array
-    description: The startup script files.
+    default: pd-standard
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  bootDiskSizeGb:
+    type: integer
+    default: 10
+    minimum: 10
+    maximum: 5000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: diskType
   sourceImage:
     type: string
     description: The source image used for all VMs.
+  licenseKey:
+    type: string
+    default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    minLength: 36
+    maxLength: 36
+    pattern: ^[A-Za-z0-9-]{32,36}$
+  startupScripts:
+    type: array
+    description: The startup script files.

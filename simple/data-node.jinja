@@ -2,13 +2,16 @@
 {% set deployment = env['deployment'] %}
 {% set zone = properties['zone'] %}
 {% set region = zone[:-2] %}
-{% set machineType = properties['dataNodeMachineType'] %}
-{% set diskType = properties['dataNodeDiskType'] %}
-{% set diskSize = properties['dataNodeDiskSizeGb'] %}
-{% set licenseKey = properties['licenseKey'] %}
-{% set sourceImage = properties['sourceImage'] %}
 {% set network = properties['network'] %}
 {% set subnetwork = properties['subnetwork'] %}
+{% set targetSize = properties['dataTargetSize'] %}
+{% set machineType = properties['dataMachineType'] %}
+{% set diskType = properties['dataDiskType'] %}
+{% set diskSize = properties['dataDiskSizeGb'] %}
+{% set bootDiskType = properties['bootDiskType'] %}
+{% set bootDiskSize = properties['bootDiskSizeGb'] %}
+{% set sourceImage = properties['sourceImage'] %}
+{% set licenseKey = properties['licenseKey'] %}
 
 resources:
 # Instance template for data nodes
@@ -31,11 +34,10 @@ resources:
       - deviceName: boot
         type: PERSISTENT
         boot: True
-        autoDelete: False
         initializeParams:
           sourceImage: {{ sourceImage }}
-          diskType: pd-standard
-          diskSizeGb: 10
+          diskType: {{ bootDiskType }}
+          diskSizeGb: {{ bootDiskSize }}
       - deviceName: influxdb
         type: PERSISTENT
         autoDelete: False
@@ -74,7 +76,7 @@ resources:
   properties:
     baseInstanceName: {{ deployment }}-data-vm
     instanceTemplate: $(ref.{{ deployment }}-data-it.selfLink)
-    targetSize: 2
+    targetSize: {{ targetSize }}
     zone: {{ zone }}
     namedPorts:
       - name: 'tcp'
