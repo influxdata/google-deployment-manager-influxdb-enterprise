@@ -20,6 +20,7 @@ cp ../simple/runtime-config.jinja.schema $tmp
 cp ../simple/setup-common.sh $tmp
 cp ../simple/setup-meta.sh $tmp
 cp ../simple/setup-data.sh $tmp
+cp ../simple/password.py $tmp
 
 zip -r -X influxdb-enterprise-byol.zip $tmp
 rm -rf $tmp
