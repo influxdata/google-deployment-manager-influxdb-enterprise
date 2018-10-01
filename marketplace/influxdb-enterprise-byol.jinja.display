@@ -1,38 +1,33 @@
+metadataVersion: v1
+
 description:
-  author:
-    title: InfluxData, Inc.
-    descriptionHtml: |
-      InfluxData, the creator of InfluxDB, provides a platform for time series data.
-    shortDescription: InfluxData, the creator of InfluxDB, provides a platform for time series data.
-    url: https://www.influxdata.com
-  descriptionHtml: This solution creates an InfluxDB Enterprise cluster with two data nodes of eight cores each.
-  logo: '@media/influxdb-enterprise-byol_store.png'
-  tagline: InfluxDB Enterprise cluster for highly-available and scalable time series metric and event storage
-  title: InfluxDB Enterprise BYOL
+  title: InfluxDB Enterprise (BYOL)
   url: https://www.influxdata.com
-  version: '1.0'
+  author:
+    title: InfluxData
+  tagline: The platform to collect, store, and use metric and event data.
+  descriptionHtml: 'InfluxDB Enterprise provides a highly available and scalable clustered version of the popular InfluxDB open source time series database.'
   eulaUrl: https://portal.influxdata.com/users/new/gcp
+  documentations:
+  - title: Getting Started on GCP Marketplace
+    url: https://docs.influxdata.com/enterprise_influxdb/v1.6/other_installation/google_marketplace/
+    destinations:
+    - DESTINATION_SOLUTION_DETAILS
+    - DESTINATION_CONFIGURATION
+    - DESTINATION_POST_DEPLOY
   softwareGroups:
   - type: SOFTWARE_GROUP_OS
     software:
     - title: Debian
-      version: 9 Stretch
-  documentations:
-  - title: Getting Started
-    url: https://docs.influxdata.com/enterprise_influxdb/v1.6/
-    description: Get started docs for this example solution
-    destinations:
-    - DESTINATION_POST_DEPLOY
-  - title: Some more docs
-    url: https://www.google.com
-    description: Additional docs for this solution
-    destinations:
-    - DESTINATION_POST_DEPLOY
-    - DESTINATION_CONFIGURATION
+      version: '9'
+  - software:
+    - title: InfluxDB Enterprise
+      version: '1.6.2-c1.6.2'
   support:
   - title: Support
-    descriptionHtml: Some description of the support provided for this solution
+    descriptionHtml: 'InfluxData provides worldwide, best-in-class support for all InfluxDB Enterprise clusters.'
     url: https://support.influxdb.com/hc/en-us
+
 
 input:
   properties:
@@ -44,49 +39,33 @@ input:
     - name: subnetwork
       title: Subnetwork name
       section: NETWORKING
-    - name: meta_instanceCount
+    - name: metaTargetSize
       title: Instance Count
       subtext: Always use three InfluxDB Enterprise meta nodes to quickly reach consensus. Additional nodes are not required.
       section: META_GROUP
-    - name: meta_machineType
+    - name: metaMachineType
       title: Machine type
       section: META_GROUP
-    - name: meta_bootDiskType
-      title: Boot disk type
-      section: META_GROUP
-    - name: meta_bootDiskSizeGb
-      title: Boot disk size in GB
-      section: META_GROUP
-    - name: data_instanceCount
+    - name: dataTargetSize
       title: Instance Count
-      subtext: Always use three InfluxDB Enterprise meta nodes to quickly reach consensus. Additional nodes are not required.
+      subtext: The InfluxDB Enterprise trial license is typically only valid for two data nodes.
       section: DATA_GROUP
-    - name: data_machineType
+    - name: dataMachineType
       title: Machine type
       section: DATA_GROUP
-    - name: data_bootDiskType
-      title: Boot disk type
-      section: DATA_GROUP
-    - name: data_bootDiskSizeGb
-      title: Boot disk size in GB
-      section: DATA_GROUP
-    - name: data_disk1_type
+    - name: dataDiskType
       title: Data disk type
       section: DATA_GROUP
-    - name: data_disk1_sizeGb
+    - name: dataDiskSizeGb
       title: Data disk size in GB
       section: DATA_GROUP
-    - name: data_tcp8086SourceRanges
-      title: Source IP ranges for TCP port 8086 traffic
-      tooltip: 'Traffic is only allowed from sources within these IP address ranges. Use CIDR notation when entering ranges. <a href="https://cloud.google.com/compute/docs/networking#firewalls">Learn more</a>'
-      placeholder: '0.0.0.0/0, 192.169.0.2/24'
-      section: DATA_GROUP
-      level: 1
-    - name: data_enableTcp8086
-      title: Allow TCP port 8086 traffic
-      section: DATA_GROUP
-      boolean_group: DATA_GROUP_FIREWALL
-    - name: input_LICENSE_KEY
+    - name: bootDiskType
+      title: Boot disk type
+      section: BOOT_GROUP
+    - name: bootDiskSizeGb
+      title: Boot disk size in GB
+      section: BOOT_GROUP
+    - name: licenseKey
       title: InfluxDB Enterprise license key
       tooltip: E.g. a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx
       placeholder: License key
@@ -95,49 +74,23 @@ input:
       title: InfluxDB Enterprise Meta Node
     - name: DATA_GROUP
       title: InfluxDB Enterprise Data Node
+    - name: BOOT_GROUP
+      title: InfluxDB Enterprise Boot Disk
     - name: NETWORKING
       title: Networking
-  boolean_groups:
-    - name: META_GROUP_FIREWALL
-      title: Firewall
-      tooltip: 'By default all incoming traffic from outside a network is blocked. Select the type of network traffic you want to allow. <a href="https://cloud.google.com/compute/docs/networking#firewalls">Learn more</a>'
-      subtext: Add tags and firewall rules to allow specific network traffic from the Internet
-    - name: DATA_GROUP_FIREWALL
-      title: Firewall
-      tooltip: 'By default all incoming traffic from outside a network is blocked. Select the type of network traffic you want to allow. <a href="https://cloud.google.com/compute/docs/networking#firewalls">Learn more</a>'
-      subtext: Add tags and firewall rules to allow specific network traffic from the Internet
 
 runtime:
   deployingMessage: Deployment can take several minutes to complete.
   applicationTable:
     rows:
+      - label: Admin username
+        value: '{{ properties().adminUser }}'
       - label: Admin password (Temporary)
-        value: '{{ outputs().password0 }}'
+        value: '{{ outputs().admin-password }}'
       - label: Zone
         value: '{{ properties().zone }}'
   suggestedActions:
     - heading: Read the getting started guide
-      description: Here is a link to the getting started guide.
-    - heading: Open TCP port 8086 traffic for InfluxDB Enterprise Data Node
-      description: >-
-        This firewall rule is not enabled.
-        To allow specific network traffic from the Internet,
-        create a firewall rule to open TCP port 8086 traffic
-        for target tag "{{ outputs().deployment }}-data-tcp-8086".
-        <a href="https://cloud.google.com/compute/docs/networking">Learn more</a><br>
-        If you are using Google Cloud SDK, type the following command in
-        the terminal:
-      snippet: >-
-        gcloud --project={{ outputs().project }} compute firewall-rules
-        create "{{ outputs().deployment }}-data-tcp-8086"
-        --network {{ properties().network }}
-        --allow tcp:8086
-        --target-tags "{{ outputs().deployment }}-data-tcp-8086"
-      showIf: '{{ !properties().data_enableTcp8086 }}'
+      description: The getting started guide and other useful information can be found in the <a href="https://cloud.google.com/compute/docs/networking">InfluxDB Enterprise documentation</a>.
     - heading: Change the temporary password
       description: For additional security, it is recommended that you change the password.
-
-annotations:
-  autogenSpecType: 'MULTI_VM'
-
-metadata_version: v1

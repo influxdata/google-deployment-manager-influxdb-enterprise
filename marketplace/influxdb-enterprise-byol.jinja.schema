@@ -1,6 +1,18 @@
 imports:
-  - path: meta_group.jinja
-  - path: data_group.jinja
+  - path: influxdb-enterprise.jinja
+  - path: influxdb-enterprise.jinja.schema
+  - path: meta-node.jinja
+  - path: meta-node.jinja.schema
+  - path: data-node.jinja
+  - path: data-node.jinja.schema
+  - path: runtime-config.jinja
+  - path: runtime-config.jinja.schema
+  - path: network.jinja
+  - path: network.jinja.schema
+  - path: setup-common.sh
+  - path: setup-meta.sh
+  - path: setup-data.sh
+  - path: password.py
 
 info:
   version: '1.0'
@@ -8,16 +20,7 @@ info:
 
 required:
   - zone
-  - network
-  - meta_instanceCount
-  - meta_machineType
-  - meta_bootDiskType
-  - meta_bootDiskSizeGb
-  - data_instanceCount
-  - data_machineType
-  - data_bootDiskType
-  - data_bootDiskSizeGb
-  - input_LICENSE_KEY
+  - licenseKey
 
 properties:
   zone:
@@ -37,82 +40,97 @@ properties:
       zoneProperty: zone
       gceSubnetwork:
         networkProperty: network
-  meta_instanceCount:
+  metaTargetSize:
     type: integer
     default: 3
-  meta_machineType:
+    minimum: 3
+    maximum: 7
+  metaMachineType:
     type: string
-    default: f1-micro
+    default: n1-standard-1
     x-googleProperty:
       type: GCE_MACHINE_TYPE
       zoneProperty: zone
-  meta_bootDiskType:
-    type: string
-    default: pd-standard
-    x-googleProperty:
-      type: GCE_DISK_TYPE
-      zoneProperty: zone
-  meta_bootDiskSizeGb:
-    type: integer
-    default: 10
-    minimum: 10
-    maximum: 10000
-    x-googleProperty:
-      type: GCE_DISK_SIZE
-      gceDiskSize:
-        diskTypeProperty: meta_bootDiskType
-  data_instanceCount:
-    type: integer
-    default: 2
-  data_machineType:
-    type: string
-    default: f1-micro
-    x-googleProperty:
-      type: GCE_MACHINE_TYPE
-      zoneProperty: zone
-  data_bootDiskType:
-    type: string
-    default: pd-standard
-    x-googleProperty:
-      type: GCE_DISK_TYPE
-      zoneProperty: zone
-  data_bootDiskSizeGb:
-    type: integer
-    default: 10
-    minimum: 10
-    maximum: 10000
-    x-googleProperty:
-      type: GCE_DISK_SIZE
-      gceDiskSize:
-        diskTypeProperty: data_bootDiskType
-  data_disk1_type:
+      gceMachineType:
+        minCpu: 1
+        minRamGb: 1
+  metaDiskType:
     type: string
     default: pd-ssd
     x-googleProperty:
       type: GCE_DISK_TYPE
       zoneProperty: zone
-  data_disk1_sizeGb:
+  metaDiskSizeGb:
     type: integer
-    default: 250
-    minimum: 20
-    maximum: 10000
+    default: 10
+    minimum: 10
+    maximum: 5000
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
-        diskTypeProperty: data_disk1_type
-  data_enableTcp8086:
-    type: boolean
-    default: True
-  data_tcp8086SourceRanges:
+        diskTypeProperty: diskType
+  dataTargetSize:
+    type: integer
+    default: 2
+    minimum: 2
+    maximum: 20
+  dataMachineType:
     type: string
-  input_LICENSE_KEY:
+    default: n1-standard-8
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 2
+        minRamGb: 4
+  dataDiskType:
     type: string
-    default: a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    default: pd-ssd
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  dataDiskSizeGb:
+    type: integer
+    default: 250
+    minimum: 50
+    maximum: 5000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: diskType
+  bootDiskType:
+    type: string
+    default: pd-standard
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  bootDiskSizeGb:
+    type: integer
+    default: 10
+    minimum: 10
+    maximum: 5000
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: diskType
+  licenseKey:
+    type: string
+    default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    minLength: 36
+    maxLength: 36
+    pattern: ^[A-Za-z0-9-]{32,36}$
+  adminUser:
+    type: string
+    default: admin
+  sourceImage:
+    type: string
+    default: https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdata-debian-9-influxdb-enterprise-v20180917
+    description: The source image used for all VMs.
 
 outputs:
   deployment:
     type: string
   project:
     type: string
-  password0:
+  adminPassword:
     type: string

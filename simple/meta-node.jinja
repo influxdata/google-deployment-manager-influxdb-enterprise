@@ -12,6 +12,8 @@
 {% set bootDiskSize = properties['bootDiskSizeGb'] %}
 {% set sourceImage = properties['sourceImage'] %}
 {% set licenseKey = properties['licenseKey'] %}
+{% set adminUser = properties['adminUser'] %}
+{% set adminPassword = properties['adminPassword'] %}
 
 resources:
 # Instance template for meta nodes
@@ -52,6 +54,10 @@ resources:
           value: {{ licenseKey }}
         - key: rtc-name
           value: {{ deployment }}-rtc
+        - key: admin-user
+          value: {{ adminUser }}
+        - key: admin-password
+          value: {{ adminPassword }}
         - key: startup-script
           value: |
             #!/bin/bash

@@ -12,6 +12,7 @@ imports:
   - path: setup-common.sh
   - path: setup-meta.sh
   - path: setup-data.sh
+  - path: password.py
 
 info:
   version: '1.0'
@@ -118,6 +119,9 @@ properties:
     minLength: 36
     maxLength: 36
     pattern: ^[A-Za-z0-9-]{32,36}$
+  adminUser:
+    type: string
+    default: admin
   sourceImage:
     type: string
     default: https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdata-debian-9-influxdb-enterprise-v20180917

@@ -83,6 +83,12 @@ properties:
     minLength: 36
     maxLength: 36
     pattern: ^[A-Za-z0-9-]{32,36}$
+  adminUser:
+    type: string
+    default: admin
+  adminPassword:
+    type: string
+    default: admin
   startupScripts:
     type: array
     description: The startup script files.

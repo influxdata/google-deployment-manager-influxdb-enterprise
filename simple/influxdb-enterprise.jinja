@@ -16,8 +16,15 @@
 {% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
 {% set sourceImage = 'https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdata-debian-9-influxdb-enterprise-v20180930' %}
 {% set licenseKey = properties['licenseKey'] %}
+{% set adminUser = properties['adminUser'] %}
 
 resources:
+- name: admin-password
+  type: password.py
+  properties:
+    length: 24
+    includeSymbols: False
+
 - name: {{ deployment }}-meta
   type: meta-node.jinja
   properties:
@@ -34,6 +41,8 @@ resources:
     bootDiskSizeGb: {{ bootDiskSizeGb }}
     sourceImage: {{ sourceImage }}
     licenseKey: {{ licenseKey }}
+    adminUser: {{ adminUser }}
+    adminPassword: $(ref.admin-password.password)
     startupScripts:
       - setup-common.sh
       - setup-meta.sh
@@ -70,3 +79,11 @@ resources:
     {% if properties.get("subnetwork") %}
     subnetwork: {{ properties["subnetwork"] }}
     {% endif %}
+
+outputs:
+- name: deployment
+  value: {{ env["deployment"] }}
+- name: project
+  value: {{ env["project"] }}
+- name: adminPassword
+  value: $(ref.admin-password.password)
