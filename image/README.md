@@ -130,7 +130,7 @@ The resulting disk is ready to be used for creating the final solution image.
 
 ### Upload the image
 
-To finish the image creation process, the disk needs to be used to create an image on the public InfluxData GCP project. The GCP `partner-utils` tool will be used to do from your local machine. The following commands install the tool.
+To finish the image creation process, the disk needs to be used to create an image on the public InfluxData GCP project. The GCP `partner-utils` tool will be used to do from your local machine. The following commands install the tool. This can also be done using the GCP Cloud Shell.
 
 ```
 mkdir partner-utils

@@ -24,7 +24,6 @@ gcloud compute instances create ${BASE_INSTANCE_NAME} \
     --image ${BASE_IMAGE_URI} \
     --boot-disk-size "10" \
     --boot-disk-type "pd-standard" \
-    --boot-disk-device-name ${INFLUX_IMAGE_NAME} \
     --no-boot-disk-auto-delete \
     --no-user-output-enabled \
     --quiet
@@ -40,7 +39,7 @@ gcloud compute ssh ${BASE_INSTANCE_NAME} --command "bash setup.sh ${INFLUXDB_ENT
 gcloud compute ssh ${BASE_INSTANCE_NAME} --command "rm setup.sh"
 
 echo "Deleting base instance."
-gcloud compute instances delete ${BASE_INSTANCE_NAME} \
+gcloud -q compute instances delete ${BASE_INSTANCE_NAME} \
     --project ${PROJECT} \
     --zone ${ZONE} \
     --keep-disks "boot" \
@@ -59,7 +58,7 @@ gcloud compute instances create ${CLEAN_INSTANCE_NAME} \
     --maintenance-policy "MIGRATE" \
     --scopes default \
     --image ${BASE_IMAGE_URI} \
-    --disk "disk-name=${INFLUX_IMAGE_NAME}" \
+    --disk "name=${BASE_INSTANCE_NAME}" \
     --no-user-output-enabled
 
 sleep 60
@@ -71,29 +70,14 @@ echo "Running cleanup script."
 gcloud compute ssh ${CLEAN_INSTANCE_NAME} --command "bash clean.sh"
 
 echo "Deleting cleanup instance."
-gcloud compute instances delete ${CLEAN_INSTANCE_NAME} \
+gcloud -q compute instances delete ${CLEAN_INSTANCE_NAME} \
     --project ${PROJECT} \
     --zone ${ZONE} \
-    --no-user-output-enabled \
-    --quiet
+    --no-user-output-enabled
 
 sleep 60
 
-echo "Installing the GCP partner-utils. Password required"
-mkdir partner-utils
-cd partner-utils
-curl -O https://storage.googleapis.com/c2d-install-scripts/partner-utils.tar.gz
-tar -xzvf partner-utils.tar.gz
-sudo python setup.py install
-
-echo "Creating the image."
-python image_creator.py --project ${PROJECT} \
-    --disk ${INFLUX_IMAGE_NAME} \
-    --name influxdata-debian-9-${INFLUX_IMAGE_NAME} \
-    --description "InfluxData, InfluxDB Enterprise, version ${INFLUXDB_ENTERPRISE_VERSION}, based on Debian 9 (stretch), amd64 built on ${IMAGE_VERSION}" \
-    --destination-project "influxdata-dev" \
-    --license "influxdata-dev/influxdb-enterprise-byol"
-
-echo "Cleaning up partner-utils."
-cd ..
-sudo rm -rf partner-utils
+echo "Publishing image via cloud-shell."
+gcloud alpha cloud-shell scp localhost:publish.sh cloudshell:
+gcloud alpha cloud-shell ssh --command "bash publish.sh ${PROJECT} ${INFLUX_IMAGE_NAME} ${INFLUXDB_ENTERPRISE_VERSION} ${IMAGE_VERSION}"
+gcloud alpha cloud-shell ssh --command "rm publish.sh"
