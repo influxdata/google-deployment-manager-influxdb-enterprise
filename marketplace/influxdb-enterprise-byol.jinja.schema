@@ -12,7 +12,8 @@ imports:
   - path: setup-common.sh
   - path: setup-meta.sh
   - path: setup-data.sh
-  - path: password.py
+  - name: password.py
+    path: common/password.py
 
 info:
   version: '1.0'
