@@ -5,4 +5,4 @@ resources:
 - name: influxdb-enterprise-byol
   type: influxdb-enterprise-byol.jinja
   properties:
-    input_LICENSE_KEY: a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    LICENSE_KEY: a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx

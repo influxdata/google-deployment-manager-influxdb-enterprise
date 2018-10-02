@@ -2,8 +2,6 @@ info:
   version: '1.0'
   title: InfluxDB Enterprise network resources
 
-
-
 properties:
   zone:
     type: string
