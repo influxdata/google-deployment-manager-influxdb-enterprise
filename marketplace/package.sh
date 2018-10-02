@@ -9,7 +9,6 @@ cwd=$PWD
 cp influxdb-enterprise-byol.jinja $tmp
 cp influxdb-enterprise-byol.jinja.schema $tmp
 cp influxdb-enterprise-byol.jinja.display $tmp
-cp test_config.yaml $tmp
 cp c2d_deployment_configuration.json $tmp
 cp -r resources $tmp
 
