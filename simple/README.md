@@ -16,7 +16,7 @@ Run the following command to deploy an InfluxDB Enterprise cluster:
 LICENSE_KEY="xxxxxxxx-xxxx-xxxx-xxxxxxxxxxxx"
 gcloud deployment-manager deployments create influxdb-enterprise-0 \
     --config influxdb-enterprise.jinja \
-    --properties "LICENSE_KEY:'${LICENSE_KEY}'" \
+    --properties "licenseKey:'${LICENSE_KEY}'" \
     --automatic-rollback-on-error
 ```
 
