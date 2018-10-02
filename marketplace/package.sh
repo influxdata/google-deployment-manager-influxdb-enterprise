@@ -3,7 +3,7 @@
 set -euxo pipefail
 
 rm -f influxdb-enterprise-byol.zip
-tmp="$(mktemp -d -t influxdb-enterprise-byol)/"
+tmp="$(mktemp -d -t influxdb-enterprise-byol-XXXXXX)/"
 cwd=$PWD
 
 cp influxdb-enterprise-byol.jinja $tmp
