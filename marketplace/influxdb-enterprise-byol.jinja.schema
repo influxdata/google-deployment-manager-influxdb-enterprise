@@ -1,6 +1,5 @@
 imports:
-  - path: influxdb-enterprise-byol.jinja
-  - path: influxdb-enterprise-byol.jinja.schema
+  - path: password.py
   - path: meta-node.jinja
   - path: meta-node.jinja.schema
   - path: data-node.jinja
@@ -12,8 +11,6 @@ imports:
   - path: setup-common.sh
   - path: setup-meta.sh
   - path: setup-data.sh
-  - name: password.py
-    path: common/password.py
 
 info:
   version: '1.0'
@@ -133,5 +130,7 @@ outputs:
     type: string
   project:
     type: string
-  adminPassword:
+  adminUser:
     type: string
+  adminPassword:
+    type: string    

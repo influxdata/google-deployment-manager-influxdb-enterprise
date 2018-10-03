@@ -1,6 +1,5 @@
 imports:
-  - name: password.py
-    path: common/password.py
+  - path: password.py
   - path: meta-node.jinja
   - path: meta-node.jinja.schema
   - path: data-node.jinja
@@ -125,3 +124,13 @@ properties:
     type: string
     default: https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdata-debian-9-influxdb-enterprise-v20180917
     description: The source image used for all VMs.
+
+outputs:
+  deployment:
+    type: string
+  project:
+    type: string
+  adminUser:
+    type: string
+  adminPassword:
+    type: string
