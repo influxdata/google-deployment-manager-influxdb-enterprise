@@ -1,6 +1,5 @@
 imports:
-  - name: password.py
-    path: common/password.py
+  - path: password.py
   - path: meta-node.jinja
   - path: meta-node.jinja.schema
   - path: data-node.jinja

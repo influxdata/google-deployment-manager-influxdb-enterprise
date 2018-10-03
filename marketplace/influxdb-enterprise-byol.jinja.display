@@ -8,7 +8,7 @@ description:
     title: InfluxData
   tagline: The platform to collect, store, and use metric and event data.
   descriptionHtml: 'InfluxDB Enterprise provides a highly available and scalable clustered version of the popular InfluxDB open source time series database.'
-  eulaUrl: https://portal.influxdata.com/users/new/gcp
+  eulaUrl: https://portal.influxdata.com/users/gcp
   documentations:
   - title: Getting Started on GCP Marketplace
     url: https://docs.influxdata.com/enterprise_influxdb/v1.6/other_installation/google_marketplace/
