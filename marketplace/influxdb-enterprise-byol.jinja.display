@@ -84,10 +84,12 @@ runtime:
   deployingMessage: Deployment can take several minutes to complete.
   applicationTable:
     rows:
+      - label: Connection IP
+        value: '{{ outputs().connectionIP }}'
       - label: Admin username
         value: '{{ properties().adminUser }}'
       - label: Admin password (Temporary)
-        value: '{{ outputs().admin-password }}'
+        value: '{{ outputs().adminPassword }}'
       - label: Zone
         value: '{{ properties().zone }}'
   suggestedActions:

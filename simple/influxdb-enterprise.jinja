@@ -82,8 +82,10 @@ resources:
 
 outputs:
 - name: deployment
-  value: {{ env["deployment"] }}
+  value: {{ deployment }}
 - name: project
-  value: {{ env["project"] }}
+  value: {{ project }}
+- name: adminUser
+  value: {{ adminUser }}
 - name: adminPassword
   value: $(ref.admin-password.password)

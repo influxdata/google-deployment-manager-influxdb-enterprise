@@ -23,8 +23,8 @@ cat $cwd/license-links-html.txt | while read -r line || [[ -n "$line" ]]; do
     curl -s "${line}" --output "$(echo ${line} \
         | tr '[:upper:]' '[:lower:]' \
         | sed '
-        s|https://raw.githubusercontent|github|; s|https://github|github|; s|https://||
-        s|[/.#+]|-|g; s/-master-/-/; s/-license/-/; s/-txt//; s/-md//; s/---/-/; s/-$//
+        s|https://raw.githubusercontent|github|; s|https://github|github|; s|https://||; s|http://||
+        s|[/.#+:]|-|g; s/-master-/-/; s/-license/-/; s/-txt//; s/-md//; s/---/-/; s/-$//
         s|$|license.html|
         ' )"
 done

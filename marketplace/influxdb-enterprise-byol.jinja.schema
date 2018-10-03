@@ -130,5 +130,7 @@ outputs:
     type: string
   project:
     type: string
-  adminPassword:
+  adminUser:
     type: string
+  adminPassword:
+    type: string    
