@@ -1,0 +1,7 @@
+{
+    "defaultDeploymentType": "MULTI_VM",
+    "templateName": "influxdata",
+    "projectId": "influxdata-public",
+    "imageName": "influxdata-debian-9-influxdb-enterprise-v20180930",
+    "useSolutionPackage": "true"
+  }
