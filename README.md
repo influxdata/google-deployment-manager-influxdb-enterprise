@@ -1,7 +1,5 @@
 # google-deployment-manager-influxdb-enterprise
 
-__Warning: The templates in this repository are not yet complete.__
-
 This repository contains everything needed to run InfluxDB Enterprise virtual machines in Google Cloud Platform (GCP) via Deployment Manager (DM) templates. This includes:
 
 - [Deployment Manager templates](simple/README.md) that can be used to spin up InfluxDB Enterprise cluster running on GCP VMs.

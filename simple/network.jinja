@@ -67,6 +67,23 @@ resources:
       - IPProtocol: TCP
         ports: ["8086"]
 
+- name: {{ deployment }}-internal-fw
+  type: compute.v1.firewall
+  properties:
+    network: https://www.googleapis.com/compute/v1/projects/{{ project }}/global/networks/{{ network }}
+    {% if subnetwork %}
+    subnetwork: https://www.googleapis.com/compute/v1/projects/{{ project }}/regions/{{ region }}/subnetworks/{{ subnetwork }}
+    {% endif %}
+    sourceTags:
+      - {{ deployment }}-data-fw
+      - {{ deployment }}-meta-fw
+    targetTags:
+      - {{ deployment }}-data-fw
+      - {{ deployment }}-meta-fw
+    allowed:
+      - IPProtocol: TCP
+        ports: ["8086", "8088", "8089", "8091"]
+
 outputs:
 - name: connectionIP
   value: $(ref.{{ deployment }}-data-fr.IPAddress)

@@ -46,6 +46,9 @@ resources:
         initializeParams:
           diskType: {{ diskType }}
           diskSizeGb: {{ diskSize }}
+      tags:
+        items:
+          - {{ deployment }}-meta-fw
       metadata:
         items:
         - key: deployment
