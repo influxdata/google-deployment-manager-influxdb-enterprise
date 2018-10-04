@@ -45,6 +45,10 @@ hostname = \"${NODE_PRIVATE_DNS}\"
 
   # The directory where the hinted handoff queues are stored.
   dir = \"${INFLUX_DIR}/hh\"
+
+[http]
+  # Determines whether HTTP authentication is enabled.
+  auth-enabled = true
 " | sudo tee -a /etc/influxdb/influxdb.conf > /dev/null
 
 sudo mkdir "${INFLUX_DIR}/meta" "${INFLUX_DIR}/data" "${INFLUX_DIR}/wal" "${INFLUX_DIR}/hh"

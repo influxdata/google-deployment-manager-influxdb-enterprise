@@ -56,10 +56,17 @@ sleep 30
 
 filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/meta/" | while read line; do
   influxd-ctl add-meta $(get_rtc_var_text "${DEPLOYMENT}-rtc" "internal-dns/meta/${line}"):8091
+
 done
 
 filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/data/" | while read line; do
   influxd-ctl add-data $(get_rtc_var_text "${DEPLOYMENT}-rtc" "internal-dns/data/${line}"):8088
 done
+
+readonly USERNAME=$(get_attribute_value "admin-user")
+readonly PASSWORD=$(get_attribute_value "admin-password")
+
+influx -host $(filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/data/" | head -n 1) \
+       -execute "CREATE USER ${USERNAME} WITH PASSWORD '${PASSWORD}' WITH ALL PRIVILEGES"
 
 set_rtc_var_text "${DEPLOYMENT}-rtc" "startup-status/success/test" "SUCCESS"
