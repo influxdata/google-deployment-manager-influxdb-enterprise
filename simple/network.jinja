@@ -58,7 +58,10 @@ resources:
     {% if subnetwork %}
     subnetwork: https://www.googleapis.com/compute/v1/projects/{{ project }}/regions/{{ region }}/subnetworks/{{ subnetwork }}
     {% endif %}
-    sourceRanges: ["0.0.0.0/0"]
+    sourceRanges:
+      - '10.0.0.0/8'
+      - '172.16.0.0/12'
+      - '192.168.0.0/16'
     targetTags: ["{{ deployment }}-data-fw"]
     allowed:
       - IPProtocol: TCP

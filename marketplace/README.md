@@ -31,8 +31,8 @@ data-setup.sh
 ```
 LICENSE_KEY="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
 gcloud deployment-manager deployments create my-deployment \
-    --config test_config.yaml \
-    --properties "licenseKey:'${LICENSE_KEY}'"
+    --template influxdb-enterprise-byol.jinja \
+    --properties "licenseKey:'${LICENSE_KEY}'" \
     --automatic-rollback-on-error
 ```
 
