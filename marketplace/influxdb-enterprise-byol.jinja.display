@@ -2,7 +2,7 @@ metadataVersion: v1
 
 description:
   title: InfluxDB Enterprise (BYOL)
-  version: '0.1'
+  version: '1.6'
   url: https://www.influxdata.com
   author:
     title: InfluxData
@@ -32,63 +32,85 @@ description:
 
 input:
   properties:
+    - name: licenseKey
+      title: InfluxDB Enterprise license key
+      subtext: A license key is required to deploy this solution. Visit <a href='https://portal.influxdata.com/users/gcp'>this link</a> to sign up for a free trial.
+      placeholder: E.g. a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    - name: adminUser
+      title: InfluxDB Enterprise admin username
+      placeholder: admin
     - name: zone
       title: Zone
+
     - name: network
       title: Network name
       section: NETWORKING
     - name: subnetwork
       title: Subnetwork name
       section: NETWORKING
-    - name: metaTargetSize
-      title: Instance Count
-      subtext: Always use three InfluxDB Enterprise meta nodes to quickly reach consensus. Additional nodes are not required.
-      section: META_GROUP
-    - name: metaMachineType
-      title: Machine type
-      section: META_GROUP
+
     - name: dataTargetSize
-      title: Instance Count
+      title: Data node instance count
       subtext: The InfluxDB Enterprise trial license is typically only valid for two data nodes.
       section: DATA_GROUP
     - name: dataMachineType
-      title: Machine type
-      section: DATA_GROUP
-    - name: dataDiskType
-      title: Data disk type
+      title: Data node machine type
       section: DATA_GROUP
     - name: dataDiskSizeGb
-      title: Data disk size in GB
+      title: Data node disk size in GB
       section: DATA_GROUP
+    - name: dataDiskType
+      title: Data node disk type
+      subtext: SSDs for data nodes are highly recommended.
+      section: DATA_GROUP
+      level: 1
+
+    - name: metaTargetSize
+      title: Meta node instance Count
+      subtext: Three meta nodes are recommended for almost all workloads.
+      section: META_GROUP
+      level: 1
+    - name: metaMachineType
+      title: Meta node machine type
+      subtext: Meta nodes require very little compute to maintain cluster consensus.
+      section: META_GROUP
+      level: 1
+    - name: metaDiskType
+      title: Machine type
+      section: META_GROUP
+      level: 1
+    - name: metaDiskSizeGb
+      title: Meta node disk size in GB
+      section: META_GROUP
+      level: 1
+
     - name: bootDiskType
       title: Boot disk type
       section: BOOT_GROUP
+      level: 1
     - name: bootDiskSizeGb
       title: Boot disk size in GB
       section: BOOT_GROUP
-    - name: licenseKey
-      title: InfluxDB Enterprise license key
-      tooltip: E.g. a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-      placeholder: License key
+      level: 1
   sections:
-    - name: META_GROUP
-      title: InfluxDB Enterprise Meta Node
-    - name: DATA_GROUP
-      title: InfluxDB Enterprise Data Node
-    - name: BOOT_GROUP
-      title: InfluxDB Enterprise Boot Disk
     - name: NETWORKING
       title: Networking
+    - name: DATA_GROUP
+      title: InfluxDB Enterprise Data Node
+    - name: META_GROUP
+      title: InfluxDB Enterprise Meta Node 
+    - name: BOOT_GROUP
+      title: InfluxDB Enterprise Boot Disk
 
 runtime:
   deployingMessage: Deployment can take several minutes to complete.
   applicationTable:
     rows:
-      - label: Connection IP
+      - label: Connection internal IP
         value: '{{ outputs().connectionIP }}'
       - label: Admin username
         value: '{{ properties().adminUser }}'
-      - label: Admin password (Temporary)
+      - label: Admin password (temporary)
         value: '{{ outputs().adminPassword }}'
       - label: Zone
         value: '{{ properties().zone }}'
@@ -96,4 +118,7 @@ runtime:
     - heading: Read the getting started guide
       description: The getting started guide and other useful information can be found in the <a href="https://cloud.google.com/compute/docs/networking">InfluxDB Enterprise documentation</a>.
     - heading: Change the temporary password
-      description: For additional security, it is recommended that you change the password.
+      description: For additional security, it is recommended that you change the password by running the following InfluxQL command.
+      snippet: SET PASSWORD FOR "{{ properties().adminUser }}" = 'my-new-password'
+    - heading: A note on accessing the cluster
+      description: The IP address is only reachable from within the GCP network so the cluster can only be reached from within the GCP network/subnetwork it was provisioned in.

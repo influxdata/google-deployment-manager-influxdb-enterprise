@@ -120,10 +120,6 @@ properties:
   adminUser:
     type: string
     default: admin
-  sourceImage:
-    type: string
-    default: https://www.googleapis.com/compute/v1/projects/influxdata-dev/global/images/influxdata-debian-9-influxdb-enterprise-v20180917
-    description: The source image used for all VMs.
 
 outputs:
   deployment:
@@ -133,4 +129,6 @@ outputs:
   adminUser:
     type: string
   adminPassword:
+    type: string
+  connectionIP:
     type: string

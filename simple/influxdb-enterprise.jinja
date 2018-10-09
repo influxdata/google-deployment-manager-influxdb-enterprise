@@ -89,3 +89,5 @@ outputs:
   value: {{ adminUser }}
 - name: adminPassword
   value: $(ref.admin-password.password)
+- name: connectionIP
+  value: $(ref.{{ deployment }}-data-fr.IPAddress)
