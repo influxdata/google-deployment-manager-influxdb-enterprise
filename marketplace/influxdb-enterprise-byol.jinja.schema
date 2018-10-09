@@ -113,7 +113,6 @@ properties:
         diskTypeProperty: bootDiskType
   licenseKey:
     type: string
-    default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     minLength: 36
     maxLength: 36
     pattern: ^[A-Za-z0-9-]{32,36}$
