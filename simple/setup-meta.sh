@@ -56,7 +56,6 @@ sleep 30
 
 filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/meta/" | while read line; do
   influxd-ctl add-meta $(get_rtc_var_text "${DEPLOYMENT}-rtc" "internal-dns/meta/${line}"):8091
-
 done
 
 filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/data/" | while read line; do

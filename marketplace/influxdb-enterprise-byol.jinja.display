@@ -6,6 +6,8 @@ description:
   url: https://www.influxdata.com
   author:
     title: InfluxData
+  icon: '@media/logo-icon.png'
+  logo: '@media/logo-medium.png'
   tagline: The platform to collect, store, and use metric and event data.
   descriptionHtml: 'InfluxDB Enterprise provides a highly available and scalable clustered version of the popular InfluxDB open source time series database.'
   eulaUrl: https://portal.influxdata.com/users/gcp
