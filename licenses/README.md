@@ -7,7 +7,7 @@ GCP Marketplace requires every revision of a Marketplace listing to provide up-t
 The following projects are currently included in the base image.
 
 1. InfluxDB Enterprise
-    - [Project license](https://docs.influxdata.com/enterprise_influxdb/v1.6/about-the-project/#commercial-license-https-www-influxdata-com-legal-slsa)
+    - [Project license](https://docs.influxdata.com/enterprise_influxdb/latest/about-the-project/#commercial-license-https-www-influxdata-com-legal-slsa)
     - [Licenses of dependencies](https://raw.githubusercontent.com/influxdata/docs.influxdata.com/master/content/enterprise_influxdb/v1.6/about-the-project/_index.md)
 2. InfluxDB OSS (main root dependency of InfluxDB Enterprise)
     - [Project license](https://raw.githubusercontent.com/influxdata/influxdb/v1.6.2/LICENSE)

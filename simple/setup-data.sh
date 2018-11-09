@@ -8,8 +8,13 @@ sudo mount -a
 readonly INFLUX_DIR="/mnt/influxdb"
 
 # mount influxdb volume if it is not already mounted
-if [ ! -d "/mnt/influxdb" ]; then
+if [ ! -d "${INFLUX_DIR}" ]; then
   format_and_mount_disk "influxdb" "${INFLUX_DIR}"
+fi
+
+if [ -d "${INFLUX_DIR}/data" ]; then
+  echo "InfluxDB data node is already configured. Exiting"
+  exit
 fi
 
 ###

@@ -2,8 +2,8 @@
 
 set -euxo pipefail
 
-INFLUXDB_ENTERPRISE_VERSION="1.6.2-c1.6.2"
-TELEGRAF_VERSION="1.7.4"
+INFLUXDB_ENTERPRISE_VERSION="1.6.4-c1.6.4"
+TELEGRAF_VERSION="1.8.3"
 
 IMAGE_VERSION="v$(date +%Y%m%d)"
 PROJECT="influxdata-dev"
@@ -79,5 +79,5 @@ sleep 60
 
 echo "Publishing image via cloud-shell."
 gcloud alpha cloud-shell scp localhost:publish.sh cloudshell:
-gcloud alpha cloud-shell ssh --command "bash publish.sh ${PROJECT} ${INFLUX_IMAGE_NAME} ${INFLUXDB_ENTERPRISE_VERSION} ${IMAGE_VERSION}"
+gcloud alpha cloud-shell ssh --command "bash publish.sh ${PROJECT} ${BASE_INSTANCE_NAME} ${INFLUX_IMAGE_NAME} ${INFLUXDB_ENTERPRISE_VERSION} ${IMAGE_VERSION}"
 gcloud alpha cloud-shell ssh --command "rm publish.sh"

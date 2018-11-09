@@ -12,6 +12,11 @@ if [ ! -d "/mnt/influxdb" ]; then
   format_and_mount_disk "influxdb" "${INFLUX_DIR}"
 fi
 
+if [ -d "${INFLUX_DIR}/meta" ]; then
+  echo "InfluxDB meta node is already configured. Exiting"
+  exit
+fi
+
 ###
 ### Set IP address as runtime config
 ###
