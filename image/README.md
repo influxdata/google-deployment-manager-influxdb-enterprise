@@ -15,6 +15,8 @@ INFLUXDB_ENTERPRISE_VERSION
 TELEGRAF_VERSION
 ```
 
+Finally, [confirm the image is public](https://cloud.google.com/marketplace/docs/partners/technical-components#make_the_image_public) by selecting the image to be published in the image list page of the GCP console in the `influxdata-public` project. Then check whether a permission for `allAuthenticatedUsers` member with the "Compute Image User" role exists.
+
 ## Manual image creation
 
 The following steps explain all the steps to create an image. Use these steps if the image creation script fails for some reason.
@@ -159,3 +161,5 @@ gcloud compute images create influxdata-debian-9-influxdb-enterprise-${IMAGE_VER
   --source-disk-zone "us-central1-f" \
   --family "influxdb-enterprise"
 ```
+
+Finally, [make the image public](https://cloud.google.com/marketplace/docs/partners/technical-components#make_the_image_public) by selecting the image to be published in the image list page of the GCP console in the `influxdata-public` project. Then add a permission to the `allAuthenticatedUsers` member with the "Compute Image User" role.

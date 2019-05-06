@@ -31,7 +31,7 @@ resources:
     sessionAffinity: NONE
     healthChecks: [ $(ref.{{ deployment }}-data-health.selfLink) ]
     backends:
-      - balacingMode: CONNECTION
+      - balancingMode: CONNECTION
         group: $(ref.{{ deployment }}-data-igm.instanceGroup)
 
 - name: {{ deployment }}-data-fr
