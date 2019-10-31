@@ -1,3 +1,4 @@
+Influx Enterprise
 MIT,armon/go-metrics,https://github.com/armon/go-metrics/blob/master/LICENSE
 MIT,dvsekhvalnov/jose2go,https://github.com/dvsekhvalnov/jose2go/blob/master/LICENSE
 MIT,kr/pretty,https://github.com/kr/pretty/blob/master/License
@@ -12,7 +13,7 @@ BSD-3,hashicorp/go-msgpack,https://github.com/hashicorp/go-msgpack/blob/master/L
 BSD-3,mark-rushakoff/ldapserver,https://github.com/markbates/going/blob/master/LICENSE
 BSD-3,gorilla/context,https://github.com/gorilla/context/blob/master/LICENSE
 MIT,influxdata/influxdb,https://github.com/influxdata/influxdb/blob/master/LICENSE
-MIT,bootstrap-3.3.5,https://github.com/twbs/bootstrap/blob/master/LICENSE
+MIT,bootstrap 3.3.5,https://github.com/twbs/bootstrap/blob/master/LICENSE
 MIT,github.com/BurntSushi/toml,https://github.com/BurntSushi/toml/blob/master/COPYING
 MIT,github.com/beorn7/perks,https://github.com/beorn7/perks/blob/master/LICENSE
 MIT,github.com/boltdb/bolt,https://github.com/boltdb/bolt/blob/master/LICENSE
@@ -37,7 +38,7 @@ MIT,github.com/tinylib/msgp,https://github.com/tinylib/msgp/blob/master/LICENSE
 MIT,go.uber.org/atomic,https://github.com/uber-go/atomic/blob/master/LICENSE.txt
 MIT,go.uber.org/multierr,https://github.com/uber-go/multierr/blob/master/LICENSE.txt
 MIT,go.uber.org/zap,https://github.com/uber-go/zap/blob/master/LICENSE.txt
-MIT,jquery-2.1.4,https://github.com/jquery/jquery/blob/master/LICENSE.txt
+MIT,jquery 2.1.4,https://github.com/jquery/jquery/blob/master/LICENSE.txt
 MIT,github.com/xlab/treeprint,https://github.com/xlab/treeprint/blob/master/LICENSE
 BSD-3,github.com/gogo/protobuf/proto,https://github.com/gogo/protobuf/blob/master/LICENSE
 BSD-3,github.com/golang/protobuf,https://github.com/golang/protobuf/blob/master/LICENSE
@@ -57,6 +58,14 @@ Apache-2.0,github.com/opentracing/opentracing-go,https://github.com/opentracing/
 Apache-2.0,github.com/prometheus/common,https://github.com/prometheus/common/blob/master/LICENSE
 Apache-2.0,github.com/prometheus/procfs,https://github.com/prometheus/procfs/blob/master/LICENSE
 Apache-2.0,github.com/rakyll/statik,https://github.com/rakyll/statik/blob/master/LICENSE
+MPL-2.0,hashicorp/yamux,https://github.com/hashicorp/yamux/blob/master/LICENSE
+MPL-2.0,hashicorp/raft,https://github.com/hashicorp/raft/blob/master/LICENS
+MPL-2.0,hashicorp/raft-boltdb,https://github.com/hashicorp/raft-boltdb/blob/master/LICENSE
+MPL-2.0,hashicorp/go-immutable-radix,https://github.com/hashicorp/go-immutable-radix/blob/maser/LICENSE
+MPL-2.0,hashicorp/golang-lru,https://github.com/hashicorp/golang-lru/blob/master/LICENSE
+MIT,github.com/bmizerany/pat,https://github.com/bmizerany/pat#license
+
+Telegraf
 MIT,influxdata/telegraf,https://github.com/influxdata/telegraf/blob/1.12.3/LICENSE
 MIT,collectd.org,https://git.octo.it/?p=collectd.git;a=blob;f=COPYING;hb=HEAD
 MIT,alecthomas/units,https://github.com/alecthomas/units/blob/master/COPYING
@@ -188,3 +197,8 @@ The-Unlicense,amir/raidman,https://github.com/amir/raidman/blob/master/UNLICENSE
 EPL-1.0,eclipse/paho.mqtt.golang,https://github.com/eclipse/paho.mqtt.golang/blob/master/LICENSE
 COUCHBASE-INC.-COMMUNITY-EDITION,couchbase/goutils,https://github.com/couchbase/goutils/blob/master/LICENSE.md
 zlib,kardianos/service,https://github.com/kardianos/service/blob/master/LICENSE
+MPL-2.0,go-sql-driver/mysql,https://github.com/go-sql-driver/mysql/blob/master/LICENSE
+MPL-2.0,hashicorp/consul,https://github.com/hashicorp/consul/blob/master/LICENSE
+MPL-2.0,hashicorp/go-cleanhttp,https://github.com/hashicorp/go-cleanhttp/blob/master/LICENSE
+MPL-2.0,hashicorp/go-rootcerts,https://github.com/hashicorp/go-rootcerts/blob/master/LICENSE
+MPL-2.0,hashicorp/serf,https://github.com/hashicorp/serf/blob/master/LICENSE

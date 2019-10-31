@@ -8,7 +8,7 @@ The following projects are currently included in the base image.
 
 1. InfluxDB Enterprise
     - [Project license](https://docs.influxdata.com/enterprise_influxdb/latest/about-the-project/#commercial-license-https-www-influxdata-com-legal-slsa)
-    - [Licenses of dependencies](https://raw.githubusercontent.com/influxdata/docs.influxdata.com/master/content/enterprise_influxdb/v1.6/about-the-project/_index.md)
+    - [Licenses of dependencies](https://raw.githubusercontent.com/influxdata/docs.influxdata.com/master/content/enterprise_influxdb/v1.7/about-the-project/_index.md)
 2. InfluxDB OSS (main root dependency of InfluxDB Enterprise)
     - [Project license](https://raw.githubusercontent.com/influxdata/influxdb/v1.6.2/LICENSE)
     - [Licenses of dependencies](https://raw.githubusercontent.com/influxdata/influxdb/v1.6.2/LICENSE_OF_DEPENDENCIES.md)

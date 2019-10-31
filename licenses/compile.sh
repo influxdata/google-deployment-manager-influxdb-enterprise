@@ -10,13 +10,12 @@ cwd=$(pwd)
 cd $tmp
 
 cat $cwd/license-links-raw.txt | while read -r line || [[ -n "$line" ]]; do
-    curl -s "${line}" --output "$(echo ${line} \
-        | tr '[:upper:]' '[:lower:]' \
+    curl -s "$(echo ${line} \
         | sed '
-        s|https://raw.githubusercontent|github|; s|https://github|github|; s|https://||
-s|[/.#+]|-|g; s/-master-/-/; s/-license/-/; s/-txt//; s/-md//; s/---/-/; s/-$//
-        s|$|-license.txt|
+            s|https://github|https://raw.githubusercontent|
+            s|[/.#+]|-|g
         ' )"
+    )" --output "$(echo ${line} | sed 's|[/.]|-|g' )"
 done
 
 cat $cwd/license-links-html.txt | while read -r line || [[ -n "$line" ]]; do

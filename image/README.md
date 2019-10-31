@@ -4,6 +4,32 @@ __PLEASE RECOMPILE LICENSE INFO BEFORE CREATING A NEW IMAGE!!__
 
 Follow the [license compilation instructions](licenses/README.md) in the `licenses` directory to put together an updated `licenses.tar.gz` archive, which will be added to the image.
 
+## Building the images
+
+Official images are available by subscribing to a GCP Marketplace InfluxDB
+Enterprise product on your GCP account so it is not necessary to build your own
+images.
+
+Building images is only necessary if you would like to deploy an InfluxDB
+Enterprise cluster using the simple DM template, which requires an InfluxDB
+Enterprise license.
+
+New images can be build with [Hashicorp's
+Packer](https://www.packer.io/docs/builders/amazon.html) using the templates in
+the `packer` directory.
+
+Before running Packer, you will need to install and configure the `gcloud` CLI
+tool. Also, set `GOOGLE_CLOUD_PROJECT=<your-project-id>`.
+
+Run the following commands to build the images:
+
+```sh
+packer build influxdb-enterprise-data.json
+packer build influxdb-enterprise-meta.json
+```
+
+After Packer completes the build, it will output the name of the image.
+
 ## Automated image creation script
 
 The `create.sh` script will automatically create the disk needed for the image and upload it to the GCP Marketplace solution.

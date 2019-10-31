@@ -12,9 +12,9 @@ sudo python setup.py install
 echo "Creating the image."
 python image_creator.py --project $1 \
     --disk $2 \
-    --name influxdata-debian-9-$3 \
+    --name $2 \
     --family "influxdb-enterprise" \
-    --description "InfluxData, InfluxDB Enterprise, version $4, based on Debian 9 (stretch), amd64 built on $5" \
+    --description "InfluxData, InfluxDB Enterprise, version $3, based on Debian 9 (stretch), amd64 built on $4" \
     --destination-project "influxdata-public" \
     --license "influxdata-public/influxdb-enterprise-byol"
 

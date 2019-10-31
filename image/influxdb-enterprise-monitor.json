@@ -1,0 +1,73 @@
+{
+    "min_packer_version": "0.12.0",
+    "variables": {
+        "project_id": "{{env `GOOGLE_CLOUD_PROJECT`}}",
+        "service_account_json": "{{env `GOOGLE_CREDENTIALS`}}",
+        "region": "us-central1",
+        "zone": "us-central1-f",
+        "influxdb_version": "1.7.8",
+        "telegraf_version": "1.12.3",
+        "grafana_version": "6.4.1",
+        "kapacitor_version": "1.5.3"
+    },
+    "builders": [
+        {
+            "name": "gcp",
+            "type": "googlecompute",
+            "project_id": "{{user `project_id`}}",
+            "machine_type": "n1-standard-1",
+            "source_image_family": "ubuntu-1804-lts",
+            "region": "{{user `region`}}",
+            "zone": "{{user `zone`}}",
+            "image_description": "An Ubuntu 18.04 AMI that has the InfluxDB TIG (plus Kapacitor) stack installed.",
+            "image_name": "influxdb-monitor-{{ user `influxdb_version` | clean_image_name}}-ubuntu-{{isotime | clean_ami_name}}",
+            "image_family": "influxdb-enterprise",
+            "account_file": "{{ user `service_account_json`}}",
+            "ssh_username": "ubuntu"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "shell",
+            "pause_before": "30s",
+            "inline": [
+                "sudo DEBIAN_FRONTEND=noninteractive apt-get update -y",
+                "sudo apt-get install -y jq google-cloud-sdk"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "./licenses/licenses.tar.gz",
+            "destination": "/tmp"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo mkdir /usr/local/share/licenses",
+                "sudo tar xvzf /tmp/licenses.tar.gz --directory /usr/local/share/licenses/",
+                "rm licenses.tar.gz"
+            ]
+        },
+        {
+            "type": "file",
+            "source": "./config",
+            "destination": "/tmp"
+        },
+        {
+            "type": "file",
+            "source": "./scripts",
+            "destination": "/tmp"
+        },
+        {
+            "type": "shell",
+            "inline": [
+                "sudo /tmp/scripts/setup-influxdb-monitor.sh {{ user `influxdb_version` }}",
+                "sudo /tmp/scripts/setup-telegraf.sh {{ user `telegraf_version` }} monitor",
+                "sudo /tmp/scripts/setup-grafana.sh {{ user `grafana_version` }}",
+                "sudo /tmp/scripts/setup-kapacitor.sh {{ user `kapacitor_version` }}",
+                "sudo rm -r /tmp/scripts /tmp/config",
+                "rm .ssh/authorized_keys ; sudo rm /root/.ssh/authorized_keys"
+            ]
+        }
+    ]
+}
