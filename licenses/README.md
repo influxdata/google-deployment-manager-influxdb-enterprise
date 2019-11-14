@@ -1,8 +1,16 @@
-# How to handle licenses
+# InfluxDB Enterprise Licensing for GCP Marketplace
 
-GCP Marketplace requires every revision of a Marketplace listing to provide up-to-date information on licensing. The GCP Marketplace OSS checklist form is [here](https://docs.google.com/spreadsheets/d/1qkpFjAYfqadg7IVmJGEpzEPxyhjE6L8Xi5epE98OCw0/edit#gid=0) (this is an authenticated link).
+GCP Marketplace requires every revision of a Marketplace solution to provide
+up-to-date licensing information on all open source components used in the
+solution. This directory explains the steps to compile this information.
 
-## Lists of licenses and dependency licenses
+The license information needs to be submitted in the [open source compliance
+worksheet](https://docs.google.com/spreadsheets/d/1qkpFjAYfqadg7IVmJGEpzEPxyhjE6L8Xi5epE98OCw0/edit#gid=0)
+for the InfluxDB Enterprise solution on GCP Marketplace. Images published as
+part of the solution also need to include a copy of all licenses and, in some
+cases, source code.
+
+## Links to license lists
 
 The following projects are currently included in the base image.
 
@@ -16,17 +24,42 @@ The following projects are currently included in the base image.
     - [Project license](https://raw.githubusercontent.com/influxdata/telegraf/1.7.4/LICENSE)
     - [License of Dependencies](https://raw.githubusercontent.com/influxdata/telegraf/1.7.4/docs/LICENSE_OF_DEPENDENCIES.md)
 
+Grafana is also installed through the GCP package repository mirror, therefore Grafana licenses do not need to be included in this list.
+
 ## Compile licenses list
 
-This directory contains the four types of files that need to be successively assembled using the following process:
+Follow these steps to compile the archive of license info to be included in the
+image.
 
-1. `[influxdb|influxdb-enterprise|telegraf]-licenses.csv`: These files contain the list of licenses and additional info to be included in the GCP Marketplace open source compliance form.
-    - Manually create each CSV from the content found in the links of the [preceding section]().
-2. `license-links-[raw|html|mpl].txt`: These files contain the links to all licenses to be listed in the `ALL_LICENSES` file. The list is manually created from the links in the preceding section.
-    - The `license-links-raw.txt` file should be a newline separated list of all links to licenses from all the product-specific files. Only links that return a direct request of a license file in plaintext should be included, e.g. `https://raw.githubusercontent.com/...`. Includes MPL licenses.
-    - The `license-links-html.txt` file should be a list of links to all other licenses from the product-specific files that do not have a plaintext download link, e.g. `https://github.com/chuckpreslar/rcon#license` and `http://mattn.mit-license.org/2013`.
-    - The `license-links-mpl.txt` file should be a list of links to the _source code_ of all dependencies from the product-specific files which are licensed with a Mozilla Public License (MPL) or MPL 2.0, e.g. `https://github.com/hashicorp/raft/archive/master.zip`.
-3. `licenses.tar.gz`: This archive is the master file of the full text of all licenses and MPL-licensed source code. This is the file that is actually uploaded to the VM image used in the GCP Marketplace BYOL listing. It needs to be recompiled for every update to the base image.
-    - Run the `compile.sh` script in this directory to fetch the plaintext of all licenses in the `license-links-raw.txt` file, the HTML of all licenses in `license-links-raw.txt`, and all source code from the links listed in the `license-links-mpl.txt` file, then put the files into the `licenses.tar.gz` archive.
+1. Update the `licenses.csv` file with a list of licenses for all projects. The
+    list should be in CSV format with the following columns:
+        ```license short name, library name, link to license file```
+    Comments on a new line starting with a `#` and new lines themselves will
+    be ignored. Use the license short names defined in the
+    [license mapping section below](#license-mapping)
+2. If any libraries do not have a license file or are not hosted on Github the
+    script will not work correctly. Those license text for those dependencies
+    will need to be manually added to the `./manual` directory directory with the
+    following file name format:
+        ```./manual/{license-short-name}/{library-name}```
+    If source is required, a zip file of the library should be put in the
+    following directory:
+        ```./manual/{license-short-name}/source/{library-name}.zip```
+3. Run the `compile.sh` script to create a `licenses.tar.gz` archive.
 
-That's it! The license compilition process currently requires many manual steps. If you can find a way to streamline this process, please contribute! Thanks!
+The `licenses.tar.gz` archive contains the plain text of all open source dependency licenses and source code for MPL-2.0 and EPL-1.0 licensed dependencies. This file will be included in the image used in the solution.
+
+## License Mapping
+
+Licenses are tagged using the short names defined by the [SPDX License List](https://spdx.org/license-list).
+
+[MIT License (`MIT`)](https://spdx.org/licenses/MIT.html)
+[BSD 2-Clause "Simplified" License (`BSD-2-Clause`)](https://spdx.org/licenses/BSD-2-Clause.html)
+[BSD 3-Clause "New" or "Revised" License (`BSD-3-Clause`)](https://spdx.org/licenses/BSD-3-Clause.html)
+[BSD 3-Clause Clear License (`BSD-3-Clause-Clear`)](https://spdx.org/licenses/BSD-3-Clause-Clear.html)
+[ISC License (`ISC`)](https://spdx.org/licenses/ISC.html)
+[Apache License 2.0 (`Apache-2.0`)](https://spdx.org/licenses/Apache-2.0.html)
+[Mozilla Public License 2.0 (`MPL-2.0`)](https://spdx.org/licenses/MPL-2.0.html)
+[The Unlicense (`Unlicense`)](https://spdx.org/licenses/Unlicense.html)
+[Eclipse Publice License 1.0 (`EPL-1.0`)](https://github.com/eclipse/paho.mqtt.golang/blob/master/LICENSE)
+[zlib License (`Zlib`)](https://spdx.org/licenses/Zlib.html)
