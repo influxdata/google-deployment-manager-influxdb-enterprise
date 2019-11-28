@@ -10,7 +10,6 @@ info:
 
 required:
   - zone
-  - licenseKey
 
 properties:
   zone:
