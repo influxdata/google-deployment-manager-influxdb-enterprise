@@ -6,8 +6,8 @@
         "region": "us-central1",
         "zone": "us-central1-f",
         "listing_type": "billing",
-        "influxdb_version": "1.7.8",
-        "telegraf_version": "1.12.3"
+        "influxdb_version": "1.7.9",
+        "telegraf_version": "1.12.5"
     },
     "builders": [
         {
@@ -18,8 +18,8 @@
             "source_image_family": "ubuntu-1804-lts",
             "region": "{{user `region`}}",
             "zone": "{{user `zone`}}",
-            "image_description": "InfluxData's InfluxDB Enterprise meta node, v{{ user `influxdb_version` }}, based on Ubuntu 18.04 LTS, built on {{ isotime "2006-01-02" }}.",
-            "image_name": "influxdb-enterprise-{{user `listing_type`}}-meta-{{ user `influxdb_version` | clean_image_name}}-ubuntu-{{ isotime "2006-01-02" | clean_image_name }}",
+            "image_description": "InfluxData's InfluxDB Enterprise meta node, v{{ user `influxdb_version` }}, based on Ubuntu 18.04 LTS, built on {{ isotime \"2006-01-02\" }}.",
+            "image_name": "influxdb-enterprise-{{user `listing_type`}}-meta-{{ user `influxdb_version` | clean_image_name}}-ubuntu-{{ isotime \"2006-01-02\" | clean_image_name }}",
             "image_family": "influxdb-enterprise",
             "image_licenses": [
                 "https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/licenses/ubuntu-1804-lts",
