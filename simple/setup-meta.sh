@@ -1,7 +1,6 @@
 ###
 ### Mount disk
 ###
-
 # confirm fstab mounts are created before continuing
 sudo mount -a
 
@@ -70,8 +69,11 @@ done
 
 readonly USERNAME=$(get_attribute_value "admin-user")
 readonly PASSWORD=$(get_attribute_value "admin-password")
+readonly REMOTE_HOST=$(filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/data/" | head -n 1)
 
-influx -host $(filter_rtc_var "${DEPLOYMENT}-rtc" "internal-dns/data/" | head -n 1) \
-       -execute "CREATE USER ${USERNAME} WITH PASSWORD '${PASSWORD}' WITH ALL PRIVILEGES"
+payload="q=CREATE USER ${USERNAME} WITH PASSWORD '${PASSWORD}' WITH ALL PRIVILEGES"
+curl -s -k -X POST \
+    -d "${payload}" \
+    "http://${REMOTE_HOST}:8086/query"
 
 set_rtc_var_text "${DEPLOYMENT}-rtc" "startup-status/success/test" "SUCCESS"
