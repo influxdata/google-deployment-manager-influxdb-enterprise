@@ -14,7 +14,8 @@
 {% set dataDiskSizeGb = properties['dataDiskSizeGb'] %}
 {% set bootDiskType = properties["bootDiskType"] %}
 {% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
-{% set sourceImage = 'https://www.googleapis.com/compute/v1/projects/influxdata-public/global/images/influxdata-debian-9-influxdb-enterprise-v20181109' %}
+{% set sourceImageData = 'https://www.googleapis.com/compute/v1/projects/influxdata-public/global/images/influxdb-enterprise-billing-data-1-7-9-ubuntu-2019-11-14' %}
+{% set sourceImageMeta = 'https://www.googleapis.com/compute/v1/projects/influxdata-public/global/images/influxdb-enterprise-billing-meta-1-7-9-ubuntu-2019-11-14' %}
 {% set licenseKey = properties['licenseKey'] %}
 {% set adminUser = properties['adminUser'] %}
 
@@ -39,7 +40,7 @@ resources:
     metaDiskSizeGb: {{ metaDiskSizeGb }}
     bootDiskType: {{ bootDiskType }}
     bootDiskSizeGb: {{ bootDiskSizeGb }}
-    sourceImage: {{ sourceImage }}
+    sourceImage: {{ sourceImageMeta }}
     licenseKey: {{ licenseKey }}
     adminUser: {{ adminUser }}
     adminPassword: $(ref.admin-password.password)
@@ -60,7 +61,7 @@ resources:
     dataDiskSizeGb: {{ dataDiskSizeGb }}
     bootDiskType: {{ bootDiskType }}
     bootDiskSizeGb: {{ bootDiskSizeGb }}
-    sourceImage: {{ sourceImage }}
+    sourceImage: {{ sourceImageData }}
     licenseKey: {{ licenseKey }}
     startupScripts:
       - setup-common.sh

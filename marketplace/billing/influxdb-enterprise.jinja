@@ -16,7 +16,6 @@
 {% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
 {% set sourceImageData = 'https://www.googleapis.com/compute/v1/projects/influxdata-public/global/images/influxdb-enterprise-billing-data-1-7-9-ubuntu-2019-11-14' %}
 {% set sourceImageMeta = 'https://www.googleapis.com/compute/v1/projects/influxdata-public/global/images/influxdb-enterprise-billing-meta-1-7-9-ubuntu-2019-11-14' %}
-{% set licenseKey = properties['licenseKey'] %}
 {% set adminUser = properties['adminUser'] %}
 
 resources:
@@ -41,7 +40,6 @@ resources:
     bootDiskType: {{ bootDiskType }}
     bootDiskSizeGb: {{ bootDiskSizeGb }}
     sourceImage: {{ sourceImageMeta }}
-    licenseKey: {{ licenseKey }}
     adminUser: {{ adminUser }}
     adminPassword: $(ref.admin-password.password)
     startupScripts:
@@ -62,7 +60,6 @@ resources:
     bootDiskType: {{ bootDiskType }}
     bootDiskSizeGb: {{ bootDiskSizeGb }}
     sourceImage: {{ sourceImageData }}
-    licenseKey: {{ licenseKey }}
     startupScripts:
       - setup-common.sh
       - setup-data.sh

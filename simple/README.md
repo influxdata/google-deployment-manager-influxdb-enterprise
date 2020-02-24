@@ -20,6 +20,10 @@ gcloud deployment-manager deployments create influxdb-enterprise-0 \
     --automatic-rollback-on-error
 ```
 
+gcloud deployment-manager deployments create influxdb-enterprise-0 \
+    --template influxdb-enterprise.jinja \
+    --automatic-rollback-on-error
+
 ## Delete a cluster
 
 To delete the cluster, run the following command:

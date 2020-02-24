@@ -3,14 +3,14 @@
 set -euxo pipefail
 
 rm -f influxdb-enterprise-byol.zip
-tmp="$(mktemp -d -t influxdb-enterprise-byol-XXXXXX)/"
+tmp="$(mktemp -d -t influxdb-enterprise-XXXXXX)/"
 cwd=$PWD
 
-cp influxdb-enterprise-byol.jinja $tmp
-cp influxdb-enterprise-byol.jinja.schema $tmp
-cp influxdb-enterprise-byol.jinja.display $tmp
-cp test_config.yaml $tmp
-cp c2d_deployment_configuration.json $tmp
+cp "$1"/influxdb-enterprise.jinja $tmp
+cp "$1"/influxdb-enterprise.jinja.schema $tmp
+cp "$1"/influxdb-enterprise.jinja.display $tmp
+cp "$1"/c2d_deployment_configuration.json $tmp
+cp "$1"/test_config.yaml $tmp
 cp -r resources $tmp
 
 cp ../simple/data-node.jinja $tmp
@@ -27,6 +27,6 @@ cp ../simple/setup-data.sh $tmp
 cp ../simple/password.py $tmp
 
 cd $tmp
-zip -r -X $cwd/influxdb-enterprise-byol.zip ./*
+zip -r -X $cwd/influxdb-enterprise.zip ./*
 cd -
 rm -rf $tmp

@@ -1,15 +1,15 @@
 metadataVersion: v1
 
 description:
-  title: InfluxDB Enterprise (BYOL)
-  version: '1.6'
+  title: InfluxDB Enterprise
+  version: '1.7'
   url: https://www.influxdata.com
   author:
     title: InfluxData
   icon: '@media/logo-icon.png'
   logo: '@media/logo-medium.png'
-  tagline: The platform to collect, store, and use metric and event data.
-  descriptionHtml: 'InfluxDB Enterprise provides a highly available and scalable clustered version of the popular InfluxDB open source time series database.'
+  tagline: 'The platform to collect, store, and use metric and event data.'
+  descriptionHtml: 'InfluxDB Enterprise provides a highly available and scalable clustered version of the popular InfluxDB open source time series database.\nThis solution provides InfluxDB Enterprise licensing billed through GCP Marketplace.'
   eulaUrl: https://portal.influxdata.com/users/gcp
   documentations:
   - title: Getting Started on GCP Marketplace
@@ -25,7 +25,7 @@ description:
       version: '9'
   - software:
     - title: InfluxDB Enterprise
-      version: '1.6.2-c1.6.2'
+      version: '1.7.9-c1.7.9'
   support:
   - title: Support
     descriptionHtml: 'InfluxData provides worldwide, best-in-class support for all InfluxDB Enterprise clusters.'
@@ -34,10 +34,6 @@ description:
 
 input:
   properties:
-    - name: licenseKey
-      title: InfluxDB Enterprise license key
-      subtext: A license key is required to deploy this solution. Visit <a href='https://portal.influxdata.com/users/gcp'>this link</a> to sign up for a free trial.
-      placeholder: E.g. a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     - name: adminUser
       title: InfluxDB Enterprise admin username
       placeholder: admin
@@ -53,7 +49,7 @@ input:
 
     - name: dataTargetSize
       title: Data node instance count
-      subtext: The InfluxDB Enterprise trial license is typically only valid for two data nodes.
+      subtext: Two data nodes are recommended as an initial starting point.
       section: DATA_GROUP
     - name: dataMachineType
       title: Data node machine type

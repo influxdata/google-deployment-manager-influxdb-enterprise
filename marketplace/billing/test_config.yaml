@@ -1,0 +1,6 @@
+imports:
+- path: influxdb-enterprise.jinja
+
+resources:
+- name: influxdb-enterprise
+  type: influxdb-enterprise.jinja

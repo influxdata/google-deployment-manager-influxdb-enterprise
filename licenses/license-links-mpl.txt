@@ -1,6 +1,0 @@
-https://github.com/hashicorp/raft/archive/master.zip
-https://github.com/hashicorp/raft-boltdb/archive/master.zip
-https://github.com/hashicorp/yamux/archive/master.zip
-https://github.com/go-sql-driver/mysql/archive/master.zip
-https://github.com/hashicorp/consul/archive/master.zip
-https://github.com/influxdata/yamux/archive/master.zip

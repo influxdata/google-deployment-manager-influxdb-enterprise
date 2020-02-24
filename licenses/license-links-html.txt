@@ -1,6 +1,0 @@
-https://github.com/bmizerany/pat#license
-https://github.com/chuckpreslar/rcon#license
-https://go.googlesource.com/net/+/master/LICENSE
-https://go.googlesource.com/text/+/master/LICENSE
-https://go.googlesource.com/sys/+/master/LICENSE
-http://mattn.mit-license.org/2013

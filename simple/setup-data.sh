@@ -32,6 +32,7 @@ hostname = \"${NODE_PRIVATE_DNS}\"
 
 [enterprise]
   license-key = \"${LICENSE_KEY}\"
+  marketplace-env = \"gcp\"
 
 [meta]
   # Directory where the cluster metadata is stored.
