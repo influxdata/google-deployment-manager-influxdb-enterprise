@@ -1,6 +1,9 @@
 ###
 ### Mount disk
 ###
+ # Uncomment the following line to enable debug output
+# set -euxo pipefail
+
 # confirm fstab mounts are created before continuing
 sudo mount -a
 
