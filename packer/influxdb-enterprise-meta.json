@@ -22,7 +22,7 @@
             "image_name": "influxdb-enterprise-{{user `listing_type`}}-meta-{{ user `influxdb_version` | clean_image_name}}-ubuntu-{{ isotime \"2006-01-02\" | clean_image_name }}",
             "image_family": "influxdb-enterprise",
             "image_licenses": [
-                "https://www.googleapis.com/compute/v1/projects/influxdata-public/global/licenses/influxdb-enterprise-vm"
+              "https://www.googleapis.com/compute/v1/projects/influxdata-public/global/licenses/influxdb-ent-vm-meta"
             ],
             "disk_size": "10",
             "disk_type": "pd-standard",

@@ -21,11 +21,11 @@ description:
   softwareGroups:
   - type: SOFTWARE_GROUP_OS
     software:
-    - title: Debian
-      version: '9'
+    - title: Ubuntu
+      version: '18'
   - software:
     - title: InfluxDB Enterprise
-      version: '1.7.9-c1.7.9'
+      version: '1.7.10-c1.7.10'
   support:
   - title: Support
     descriptionHtml: 'InfluxData provides worldwide, best-in-class support for all InfluxDB Enterprise clusters.'
@@ -96,7 +96,7 @@ input:
     - name: DATA_GROUP
       title: InfluxDB Enterprise Data Node
     - name: META_GROUP
-      title: InfluxDB Enterprise Meta Node 
+      title: InfluxDB Enterprise Meta Node
     - name: BOOT_GROUP
       title: InfluxDB Enterprise Boot Disk
 
