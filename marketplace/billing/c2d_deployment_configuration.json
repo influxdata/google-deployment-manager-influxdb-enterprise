@@ -2,6 +2,6 @@
     "defaultDeploymentType": "MULTI_VM",
     "templateName": "influxdata",
     "projectId": "influxdata-public",
-    "imageName": "influxdb-enterprise-billing-data-1-7-10-ubuntu-2020-02-28",
+    "imageName": "influxdb-enterprise-billing-data-1-7-10-ubuntu-2020-02-29",
     "useSolutionPackage": "true"
   }
