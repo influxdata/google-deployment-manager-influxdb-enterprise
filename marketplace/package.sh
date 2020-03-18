@@ -6,9 +6,9 @@ rm -f influxdb-enterprise-byol.zip
 tmp="$(mktemp -d -t influxdb-enterprise-XXXXXX)/"
 cwd=$PWD
 
-cp "$1"/influxdb-enterprise.jinja $tmp
-cp "$1"/influxdb-enterprise.jinja.schema $tmp
-cp "$1"/influxdb-enterprise.jinja.display $tmp
+cp "$1"/influxdb-enterprise-${2}.jinja $tmp
+cp "$1"/influxdb-enterprise-${2}.jinja.schema $tmp
+cp "$1"/influxdb-enterprise-${2}.jinja.display $tmp
 cp "$1"/c2d_deployment_configuration.json $tmp
 cp "$1"/test_config.yaml $tmp
 cp -r resources $tmp

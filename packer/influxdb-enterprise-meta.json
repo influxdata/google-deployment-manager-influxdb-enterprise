@@ -5,9 +5,9 @@
         "service_account_json": "{{env `GOOGLE_CREDENTIALS`}}",
         "region": "us-central1",
         "zone": "us-central1-f",
-        "listing_type": "billing",
-        "influxdb_version": "1.7.9",
-        "telegraf_version": "1.12.5"
+        "listing_type": "byol",
+        "influxdb_version": "1.7.10",
+        "telegraf_version": "1.13.4"
     },
     "builders": [
         {
@@ -22,9 +22,7 @@
             "image_name": "influxdb-enterprise-{{user `listing_type`}}-meta-{{ user `influxdb_version` | clean_image_name}}-ubuntu-{{ isotime \"2006-01-02\" | clean_image_name }}",
             "image_family": "influxdb-enterprise",
             "image_licenses": [
-                "https://www.googleapis.com/compute/v1/projects/ubuntu-os-cloud/global/licenses/ubuntu-1804-lts",
-                "https://www.googleapis.com/compute/v1/projects/influxdata-public/global/licenses/influxdb-ent-vm-meta",
-                "https://www.googleapis.com/compute/v1/projects/influxdata-public/global/licenses/influxdb-enterprise-vm"
+              "https://www.googleapis.com/compute/v1/projects/influxdata-public/global/licenses/influxdb-ent-vm-meta"
             ],
             "disk_size": "10",
             "disk_type": "pd-standard",
