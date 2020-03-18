@@ -28,6 +28,10 @@ readonly NODE_PRIVATE_DNS=$(get_hostname)
 readonly DEPLOYMENT=$(get_attribute_value "deployment")
 readonly LICENSE_KEY=$(get_attribute_value "license-key")
 
+###
+### Set license type {license-key or marketplace-env}
+###
+
 if [ -z "${LICENSE_KEY}" ]; then
   readonly LICENSE_TYPE="marketplace-env = \"gcp\""
 else
