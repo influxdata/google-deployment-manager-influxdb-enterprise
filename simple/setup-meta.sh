@@ -26,12 +26,14 @@ fi
 readonly NODE_PRIVATE_DNS=$(get_hostname)
 readonly DEPLOYMENT=$(get_attribute_value "deployment")
 readonly LICENSE_KEY=$(get_attribute_value "license-key")
+readonly PRODUCT_TYPE=$(get_attribute_value "product-type")
+
 
 ###
-### Set license type {license-key or marketplace-env}
+### Set product type {license-key or marketplace-env}
 ###
 
-if [ -z "${LICENSE_KEY}" ]; then
+if [ "${PRODUCT_TYPE}" = "billing" ]; then
   readonly LICENSE_TYPE="marketplace-env = \"gcp\""
 else
   readonly LICENSE_TYPE="license-key = \"${LICENSE_KEY}\""

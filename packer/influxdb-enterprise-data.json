@@ -5,9 +5,9 @@
         "service_account_json": "{{env `GOOGLE_CREDENTIALS`}}",
         "region": "us-central1",
         "zone": "us-central1-f",
-        "listing_type": "byol",
-        "influxdb_version": "1.7.10",
-        "telegraf_version": "1.13.4"
+        "listing_type": "billing",
+        "influxdb_version": "1.8.0",
+        "telegraf_version": "1.14.0"
     },
     "builders": [
         {

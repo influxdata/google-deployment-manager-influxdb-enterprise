@@ -27,12 +27,14 @@ fi
 readonly NODE_PRIVATE_DNS=$(get_hostname)
 readonly DEPLOYMENT=$(get_attribute_value "deployment")
 readonly LICENSE_KEY=$(get_attribute_value "license-key")
+readonly PRODUCT_TYPE=$(get_attribute_value "product-type")
+
 
 ###
-### Set license type {license-key or marketplace-env}
+### Set product type {license-key or marketplace-env}
 ###
 
-if [ -z "${LICENSE_KEY}" ]; then
+if [ "${PRODUCT_TYPE}" = "billing" ]; then
   readonly LICENSE_TYPE="marketplace-env = \"gcp\""
 else
   readonly LICENSE_TYPE="license-key = \"${LICENSE_KEY}\""
@@ -57,6 +59,9 @@ hostname = \"${NODE_PRIVATE_DNS}\"
   # The directory where the TSM storage engine stores WAL (write-optimized) files.
   wal-dir = \"${INFLUX_DIR}/wal\"
 
+  # The index-engine type is for InfluxDB series data.
+  index-version = \"tsi1\"
+
 [hinted-handoff]
   # Determines whether hinted handoff is enabled.
   #  enabled = true
@@ -67,6 +72,9 @@ hostname = \"${NODE_PRIVATE_DNS}\"
 [http]
   # Determines whether HTTP authentication is enabled.
   auth-enabled = true
+
+  # Enable Flux functional data scripting language
+  flux-enabled = true
 " | sudo tee -a /etc/influxdb/influxdb.conf > /dev/null
 
 sudo mkdir "${INFLUX_DIR}/meta" "${INFLUX_DIR}/data" "${INFLUX_DIR}/wal" "${INFLUX_DIR}/hh"

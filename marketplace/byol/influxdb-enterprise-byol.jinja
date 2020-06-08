@@ -14,9 +14,10 @@
 {% set dataDiskSizeGb = properties['dataDiskSizeGb'] %}
 {% set bootDiskType = properties["bootDiskType"] %}
 {% set bootDiskSizeGb = properties["bootDiskSizeGb"] %}
-{% set sourceImageData = 'https://www.googleapis.com/compute/v1/projects/influxdata-public/global/images/influxdb-enterprise-byol-data-1-7-10-ubuntu-2020-03-18' %}
-{% set sourceImageMeta = 'https://www.googleapis.com/compute/v1/projects/influxdata-public/global/images/influxdb-enterprise-byol-meta-1-7-10-ubuntu-2020-03-18' %}
+{% set sourceImageData = 'https://www.googleapis.com/compute/v1/projects/influxdata-public/global/images/influxdb-enterprise-byol-data-1-8-0-ubuntu-2020-06-12' %}
+{% set sourceImageMeta = 'https://www.googleapis.com/compute/v1/projects/influxdata-public/global/images/influxdb-enterprise-byol-meta-1-8-0-ubuntu-2020-06-12' %}
 {% set licenseKey = properties['licenseKey'] %}
+{% set productType = 'byol' %}
 {% set adminUser = properties['adminUser'] %}
 
 resources:
