@@ -1,8 +1,6 @@
 # Deployment Manager Templates
 
-These are the base templates used by the GCP Marketplace listing.
-
-They can also be used to provision a BYOL version of the InfluxDB Enterprise cluster using GCP Deployment Manager directly (not through the GCP Marketplace).
+The temaplets available in this repository can be used to provision an InfluxDB Enterprise cluster using GCP Deployment Manager directly (not through the GCP Marketplace). 
 
 ## Create a cluster
 

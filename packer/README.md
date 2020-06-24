@@ -1,15 +1,13 @@
 # InfluxDB Enterprise Image Build 
 
-**Note:** Official images are available by subscribing to a GCP Marketplace InfluxDB Enterprise product on your GCP account so it is not necessary to build your
-own images. [InfluxDB Enterprise (Official Version)](https://console.cloud.google.com/marketplace/details/influxdata-public/influxdb-enterprise-vm?q=influxdb).
+__PLEASE USE OFFICIAL INFLUXDB DEPLOYMENT TEMPLATES AVAILABLE IN GCP MARKETPLACE!__
+
+**Note:** The official supported version of the InfluxDB Enterprise deployment is available by subscribing to the GCP Marketplace on your GCP account. It is not necessary to build your own images. [InfluxDB Enterprise (Official Version)](https://console.cloud.google.com/marketplace/details/influxdata-public/influxdb-enterprise-vm?q=influxdb).
+
 
 ## Building the images
 
-__PLEASE RECOMPILE LICENSE INFO BEFORE CREATING A NEW IMAGE!!__
-
 Follow the [license compilation instructions](../licenses/README.md) in the `licenses` directory to put together an updated `licenses.tar.gz` archive, which will be added to the image.
-
-Building images is only necessary if you would like to deploy an InfluxDB Enterprise cluster using a different version or configration from the supported deployment templates, which requires an InfluxDB Enterprise license.
 
 New images can be build with [Hashicorp's
 Packer](https://www.packer.io/docs/builders/amazon.html) using the templates in
