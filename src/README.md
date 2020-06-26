@@ -1,6 +1,6 @@
-# Deployment Manager Templates
+# Deploy InfluxDB Enterpise using the gcloud CLI
 
-The temaplets available in this repository can be used to provision an InfluxDB Enterprise cluster using GCP Deployment Manager directly (not through the GCP Marketplace). 
+These templates can be used to provision an InfluxDB Enterprise cluster using GCP Deployment Manager directly (not through the GCP Marketplace). An InfluxDB Enterprise license key is required to run. [Sign up for a free two-week trial license here](https://portal.influxdata.com/users/new).
 
 ## Create a cluster
 
