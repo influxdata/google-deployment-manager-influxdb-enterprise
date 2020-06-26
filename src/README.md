@@ -1,4 +1,8 @@
-# Deploy InfluxDB Enterpise using the gcloud CLI
+# Google Deployment Manager Templates for InfluxDB Enterpise 
+
+__OFFICIAL INFLUXDB DEPLOYMENT TEMPLATES AVAILABLE IN GCP MARKETPLACE (Recommend)__
+
+**Note:** The official supported version of the InfluxDB Enterprise software deployment is available by subscribing to the GCP Marketplace on your GCP account. [InfluxDB Enterprise (Official Version)](https://console.cloud.google.com/marketplace/details/influxdata-public/influxdb-enterprise-vm?q=influxdb).
 
 These templates can be used to provision an InfluxDB Enterprise cluster using GCP Deployment Manager directly (not through the GCP Marketplace). An InfluxDB Enterprise license key is required to run. [Sign up for a free two-week trial license here](https://portal.influxdata.com/users/new).
 
