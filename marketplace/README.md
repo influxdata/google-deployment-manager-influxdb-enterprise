@@ -1,4 +1,4 @@
-# Package Custom Images
+# Package Templates
 
 __OFFICIAL INFLUXDB DEPLOYMENT TEMPLATES AVAILABLE IN GCP MARKETPLACE (Recommend)__
 
