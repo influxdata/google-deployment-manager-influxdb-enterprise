@@ -1,22 +1,17 @@
-# InfluxDB Enterprise BYOL Image 
+# InfluxDB Enterprise Image Build 
 
-__PLEASE RECOMPILE LICENSE INFO BEFORE CREATING A NEW IMAGE!!__
+__OFFICIAL INFLUXDB DEPLOYMENT TEMPLATES AVAILABLE IN GCP MARKETPLACE (Recommend)__
 
-Follow the [license compilation instructions](licenses/README.md) in the `licenses` directory to put together an updated `licenses.tar.gz` archive, which will be added to the image.
+**Note:** The official supported version of the InfluxDB Enterprise software deployment is available by subscribing to the GCP Marketplace on your GCP account. It is not necessary to build your own images. [InfluxDB Enterprise (Official Version)](https://console.cloud.google.com/marketplace/details/influxdata-public/influxdb-enterprise-vm?q=influxdb).
+
 
 ## Building the images
 
-Official images are available by subscribing to a GCP Marketplace InfluxDB
-Enterprise product on your GCP account so it is not necessary to build your own
-images.
-
-Building images is only necessary if you would like to deploy an InfluxDB
-Enterprise cluster using the simple DM template, which requires an InfluxDB
-Enterprise license.
+Follow the [license compilation instructions](../licenses/README.md) in the `licenses` directory to put together an updated `licenses.tar.gz` archive, which will be added to the image.
 
 New images can be build with [Hashicorp's
 Packer](https://www.packer.io/docs/builders/amazon.html) using the templates in
-the `packer` directory.
+this directory.
 
 Before running Packer, you will need to install and configure the `gcloud` CLI
 tool. Also, set `GOOGLE_CLOUD_PROJECT=<your-project-id>`.

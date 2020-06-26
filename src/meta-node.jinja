@@ -12,6 +12,7 @@
 {% set bootDiskSize = properties['bootDiskSizeGb'] %}
 {% set sourceImage = properties['sourceImage'] %}
 {% set licenseKey = properties['licenseKey'] %}
+{% set productType = properties['productType'] %}
 {% set adminUser = properties['adminUser'] %}
 {% set adminPassword = properties['adminPassword'] %}
 
@@ -55,6 +56,8 @@ resources:
           value: {{ deployment }}
         - key: license-key
           value: {{ licenseKey }}
+        - key: product-type
+          value: {{ productType }}
         - key: rtc-name
           value: {{ deployment }}-rtc
         - key: admin-user

@@ -1,16 +1,16 @@
 # InfluxDB Enterprise Licensing for GCP Marketplace
 
-GCP Marketplace requires every revision of a Marketplace solution to provide
-up-to-date licensing information on all open source components used in the
-solution. This directory explains the steps to compile this information.
+__OFFICIAL INFLUXDB DEPLOYMENT TEMPLATES AVAILABLE IN GCP MARKETPLACE (Recommend)__
 
-The license information needs to be submitted in the [open source compliance
-worksheet](https://docs.google.com/spreadsheets/d/1qkpFjAYfqadg7IVmJGEpzEPxyhjE6L8Xi5epE98OCw0/edit#gid=0)
-for the InfluxDB Enterprise solution on GCP Marketplace. Images published as
-part of the solution also need to include a copy of all licenses and, in some
-cases, source code.
+**Note:** The official supported version of the InfluxDB Enterprise software deployment is available by subscribing to the GCP Marketplace on your GCP account. It is not necessary to submit new license information. [InfluxDB Enterprise (Official Version)](https://console.cloud.google.com/marketplace/details/influxdata-public/influxdb-enterprise-vm?q=influxdb).
+
 
 ## Links to license lists
+
+GCP Marketplace requires every revision of a Marketplace solution to provide up-to-date licensing information on all open source components used in the
+solution. This directory explains the steps to compile this information.
+
+The license information needs to be submitted in the [open source compliance worksheet](https://docs.google.com/spreadsheets/d/1qkpFjAYfqadg7IVmJGEpzEPxyhjE6L8Xi5epE98OCw0/edit#gid=0) for the InfluxDB Enterprise solution on GCP Marketplace. Images published as part of the solution also need to include a copy of all licenses and, in some cases, source code.
 
 The following projects are currently included in the base image.
 

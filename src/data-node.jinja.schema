@@ -82,6 +82,11 @@ properties:
     minLength: 36
     maxLength: 36
     pattern: ^[A-Za-z0-9-]{32,36}$
+  productType:
+    type: string
+    description: The product type either byol or billing
+    minLength: 4
+    maxLength: 7
   startupScripts:
     type: array
     description: The startup script files.

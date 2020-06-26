@@ -1,10 +1,10 @@
-# Deployment Manager Templates
+# Google Deployment Manager Templates for InfluxDB Enterpise 
 
-These are the base templates used by the GCP Marketplace listing.
+__OFFICIAL INFLUXDB DEPLOYMENT TEMPLATES AVAILABLE IN GCP MARKETPLACE (Recommend)__
 
-They can also be used to provision an InfluxDB Enterprise cluster using GCP Deployment Manager directly (not through the GCP Marketplace).
+**BYOL:** The templates in this repository can be used to provision an InfluxDB Enterprise cluster using GCP Deployment Manager directly (not through the GCP Marketplace). An InfluxDB Enterprise license key is required to run. [Sign up for a free two-week trial license here](https://portal.influxdata.com/users/new).
 
-## Create a cluster
+## Getting Started
 
 Install the [GCP command line tools](https://cloud.google.com/sdk/) or use the [GCP cloud shell](https://cloud.google.com/shell/).
 
