@@ -1,0 +1,88 @@
+{
+    "min_packer_version": "0.12.0",
+    "variables": {
+        "project_id": "{{env `GOOGLE_CLOUD_PROJECT`}}",
+        "service_account_json": "{{env `GOOGLE_CREDENTIALS`}}",
+        "region": "us-central1",
+        "zone": "us-central1-f",
+        "influxdb_version": "1.8.2",
+        "telegraf_version": "1.17.0"
+    },
+    "builders": [
+        {
+            "name": "enterprise-data",
+            "image_family": "influxdb-enterprise",
+            "image_name": "influxdb-enterprise-data-{{user `influxdb_version` | clean_resource_name}}-ubuntu-{{timestamp}}",
+            "project_id": "{{user `project_id`}}",
+            "image_description": "InfluxDB Enterprise data node based on Ubuntu 20.04 LTS.",
+            "type": "googlecompute",
+            "machine_type": "n1-standard-1",
+            "source_image_family": "debian-10",
+            "region": "{{user `region`}}",
+            "zone": "{{user `zone`}}",
+            "image_licenses": [
+                "https://www.googleapis.com/compute/v1/projects/influxdata-public/global/licenses/influxdb-ent-vm-data",
+                "https://www.googleapis.com/compute/v1/projects/influxdata-public/global/licenses/influxdb-enterprise-vm"
+            ],
+            "disk_size": "10",
+            "disk_type": "pd-standard",
+            "account_file": "{{ user `service_account_json`}}",
+            "ssh_username": "ubuntu"
+        },
+        {
+            "name": "enterprise-meta",
+            "image_family": "influxdb-enterprise",
+            "image_name": "influxdb-enterprise-meta-{{user `influxdb_version` | clean_resource_name}}-ubuntu-{{timestamp}}",
+            "project_id": "{{user `project_id`}}",
+            "image_description": "InfluxDB Enterprise meta node based on Ubuntu 20.04 LTS.",
+            "type": "googlecompute",
+            "machine_type": "n1-standard-1",
+            "source_image_family": "debian-10",
+            "region": "{{user `region`}}",
+            "zone": "{{user `zone`}}",
+            "image_licenses": [
+                "https://www.googleapis.com/compute/v1/projects/influxdata-public/global/licenses/influxdb-ent-vm-meta",
+                "https://www.googleapis.com/compute/v1/projects/influxdata-public/global/licenses/influxdb-enterprise-vm"
+            ],
+            "disk_size": "10",
+            "disk_type": "pd-standard",
+            "account_file": "{{ user `service_account_json`}}",
+            "ssh_username": "ubuntu"
+        }
+    ],
+    "provisioners": [
+        {
+            "type": "file",
+            "source": "../licenses/licenses.tar.gz",
+            "destination": "/tmp/licenses.tar.gz"
+        },
+        {
+            "type": "file",
+            "source": "./config",
+            "destination": "/tmp"
+        },
+        {
+            "type": "file",
+            "source": "./scripts",
+            "destination": "/tmp"
+        },
+        {
+            "type": "shell",
+            "environment_vars": [
+                "INFLUXDB_VERSION={{user `influxdb_version`}}",
+                "TELEGRAF_VERSION={{user `telegraf_version`}}"
+            ],
+            "scripts": [
+                "./scripts/setup.sh"
+            ],
+            "pause_before": "20s"
+        }
+    ],
+    "post-processors": [
+        {
+            "output": "manifest.json",
+            "strip_path": true,
+            "type": "manifest"
+        }
+    ]
+}

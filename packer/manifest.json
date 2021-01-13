@@ -1,0 +1,23 @@
+{
+  "builds": [
+    {
+      "name": "enterprise-data",
+      "builder_type": "googlecompute",
+      "build_time": 1610532439,
+      "files": null,
+      "artifact_id": "influxdb-enterprise-data-1-8-2-ubuntu-1610532159",
+      "packer_run_uuid": "d86df006-6dbf-3799-f94e-82108cc8d414",
+      "custom_data": null
+    },
+    {
+      "name": "enterprise-meta",
+      "builder_type": "googlecompute",
+      "build_time": 1610532442,
+      "files": null,
+      "artifact_id": "influxdb-enterprise-meta-1-8-2-ubuntu-1610532159",
+      "packer_run_uuid": "d86df006-6dbf-3799-f94e-82108cc8d414",
+      "custom_data": null
+    }
+  ],
+  "last_run_uuid": "d86df006-6dbf-3799-f94e-82108cc8d414"
+}
