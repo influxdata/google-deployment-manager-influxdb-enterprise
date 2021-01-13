@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Volume mount operations
 function format_and_mount_disk() {
   local -r disk_name="$1"
