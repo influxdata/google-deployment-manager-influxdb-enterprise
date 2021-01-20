@@ -1,27 +1,30 @@
-# Package Templates
+# Google Cloud Marketplace Publishing Instructions
 
-__OFFICIAL INFLUXDB DEPLOYMENT TEMPLATES AVAILABLE IN GCP MARKETPLACE (Recommend)__
-
-**Note:** The official supported version of the InfluxDB Enterprise software deployment is available by subscribing to the GCP Marketplace on your GCP account. It is not necessary to package your own templates. [InfluxDB Enterprise (Official Version)](https://console.cloud.google.com/marketplace/details/influxdata-public/influxdb-enterprise-vm?q=influxdb).
+This doc describes how to publish new images to the [InfluxDB Enterprise
+(Official
+Version)](https://console.cloud.google.com/marketplace/details/influxdata-public/influxdb-enterprise-vm?q=influxdb)
+solution on Google Cloud Marketplace.
 
 ## Overview
 
-This directory contains a listing of the deployment template files needed for packaging a new InfluxDB Enterprise deployment listing
-for the GCP Marketplace. 
+This directory contains a listing of the deployment template files needed for
+packaging a new InfluxDB Enterprise deployment listing for the GCP Marketplace.
 
-The GCP Marketplace manager template for a InfluxDB Enterprise deplyment contains the following files.
+The GCP Marketplace manager template for a InfluxDB Enterprise deplyment
+contains the following files.
 
-```
-./billing/influxdb-enterprise.jinja
-./billing/influxdb-enterprise.jinja.schema
-./billing/influxdb-enterprise.jinja.display
-./billing/test_config.yaml
+```sh
+./src/influxdb-enterprise.jinja
+./src/influxdb-enterprise.jinja.schema
+./src/influxdb-enterprise.jinja.display
+./src/test_config.yaml
 ./resources/us-en/logo.png
 ```
 
- The GCP Marketplace  deplyment also requires the follwoing template files from the `source` directory:
+The GCP Marketplace  deplyment also requires the following template files from
+the `src` directory:
 
-```
+```sh
 ../simple/data-node.jinja $tmp
 ../simple/data-node.jinja.schema $tmp
 ../simple/meta-node.jinja $tmp
@@ -38,4 +41,17 @@ The GCP Marketplace manager template for a InfluxDB Enterprise deplyment contain
 
 ## Create Deployment Package
 
-Once all deployment manager templates are updated for a release, create a new deployment package by running the `package.sh` script in this directory. It will create a file called `influxdb-enterprise.zip`, which will be uploaded in the following section.
+Once all deployment manager templates are updated for a release, create a new
+deployment package by running the `package.sh` script in this directory. It will
+create a file called `influxdb-enterprise.zip`, which will be uploaded in the
+following section.
+
+## Make images public
+
+To publish a new image on GCP Marketplace, the images need to be made public
+with the following command.
+
+```sh
+gcloud compute images add-iam-policy-binding influxdb-enterprise-data-1-8-2-ubuntu-1611160220 --member=allAuthenticatedUsers --role=roles/compute.imageUser
+gcloud compute images add-iam-policy-binding influxdb-enterprise-meta-1-8-2-ubuntu-1611160220 --member=allAuthenticatedUsers --role=roles/compute.imageUser
+```

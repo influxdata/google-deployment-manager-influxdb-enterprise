@@ -4,15 +4,15 @@
 {% set region = zone[:-2] %}
 {% set network = properties['network'] %}
 {% set subnetwork = properties['subnetwork'] %}
-{% set targetSize = properties['dataTargetSize'] %}
-{% set machineType = properties['dataMachineType'] %}
-{% set diskType = properties['dataDiskType'] %}
-{% set diskSize = properties['dataDiskSizeGb'] %}
+{% set regionalNetwork = properties['regionalNetwork'] %}
+{% set targetSize = properties['targetSize'] %}
+{% set machineType = properties['machineType'] %}
+{% set diskType = properties['influxdbDiskType'] %}
+{% set diskSize = properties['influxdbDiskSizeGb'] %}
 {% set bootDiskType = properties['bootDiskType'] %}
 {% set bootDiskSize = properties['bootDiskSizeGb'] %}
-{% set sourceImage = properties['sourceImage'] %}
-{% set licenseKey = properties['licenseKey'] %}
-{% set productType = properties['productType'] %}
+{% set sourceImageName = properties['sourceImageName'] %}
+{% set sourceImageProject = properties['sourceImageProject'] %}
 
 
 resources:
@@ -37,7 +37,7 @@ resources:
         type: PERSISTENT
         boot: True
         initializeParams:
-          sourceImage: {{ sourceImage }}
+          sourceImage: https://www.googleapis.com/compute/v1/projects/{{ sourceImageProject }}/global/images/{{ sourceImageName }}
           diskType: {{ bootDiskType }}
           diskSizeGb: {{ bootDiskSize }}
       - deviceName: influxdb
@@ -50,10 +50,10 @@ resources:
         items:
         - key: deployment
           value: {{ deployment }}
+        {% if properties['licenseKey'] %}
         - key: license-key
-          value: {{ licenseKey }}
-        - key: product-type
-          value: {{ productType }}
+          value: {{ properties['licenseKey'] }}
+        {% endif %}
         - key: rtc-name
           value: {{ deployment }}-rtc
         - key: startup-script
@@ -85,6 +85,23 @@ resources:
     namedPorts:
       - name: 'tcp'
         port: 8086
+    statefulPolicy:
+      preservedState:
+        disks:
+          boot:
+            autoDelete: ON_PERMANENT_INSTANCE_DELETION
+          influxdb:
+            autoDelete: NEVER
+    updatePolicy:
+      type: OPPORTUNISTIC
+      replacementMethod: RECREATE
+      {% if regionalNetwork %}
+      instanceRedistributionType: NONE
+      {% endif %}
+      maxUnavailable:
+        fixed: 1
+      maxSurge:
+        fixed: 0
 
 outputs:
 - name: connectionIP

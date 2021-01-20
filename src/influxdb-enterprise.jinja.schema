@@ -41,7 +41,6 @@ properties:
     type: integer
     default: 3
     minimum: 3
-    maximum: 7
   metaMachineType:
     type: string
     default: n1-standard-1
@@ -61,7 +60,6 @@ properties:
     type: integer
     default: 10
     minimum: 10
-    maximum: 5000
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
@@ -70,7 +68,6 @@ properties:
     type: integer
     default: 2
     minimum: 2
-    maximum: 20
   dataMachineType:
     type: string
     default: n1-standard-8
@@ -90,7 +87,6 @@ properties:
     type: integer
     default: 250
     minimum: 50
-    maximum: 5000
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
@@ -105,17 +101,22 @@ properties:
     type: integer
     default: 10
     minimum: 10
-    maximum: 5000
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
         diskTypeProperty: bootDiskType
+  sourceImageVersion:
+    type: string
+    default: 1-8-2-ubuntu-1611160220
+    description: The InfluxDB Enterprise source image version used for all VMs in the cluster.
+  sourceImageProject:
+    type: string
+    default: influxdata-public
+    description: The project of the InfluxDB Enterprise source image.
   licenseKey:
     type: string
-    default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-    minLength: 36
+    placeholder: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     maxLength: 36
-    pattern: ^[A-Za-z0-9-]{32,36}$
   adminUser:
     type: string
     default: admin

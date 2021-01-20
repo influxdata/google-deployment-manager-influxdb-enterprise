@@ -41,7 +41,6 @@ properties:
     type: integer
     default: 3
     minimum: 3
-    maximum: 7
   metaMachineType:
     type: string
     default: n1-standard-1
@@ -61,7 +60,6 @@ properties:
     type: integer
     default: 10
     minimum: 10
-    maximum: 5000
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
@@ -70,7 +68,6 @@ properties:
     type: integer
     default: 2
     minimum: 2
-    maximum: 20
   dataMachineType:
     type: string
     default: n1-standard-4
@@ -90,7 +87,6 @@ properties:
     type: integer
     default: 250
     minimum: 50
-    maximum: 5000
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
@@ -105,7 +101,6 @@ properties:
     type: integer
     default: 10
     minimum: 10
-    maximum: 5000
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:

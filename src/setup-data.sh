@@ -1,30 +1,21 @@
 #!/bin/bash
 
 # Uncomment the following line to enable debug output
-# set -euxo pipefail
+set -euxo pipefail
+
+signal_failure() {
+  set_rtc_var_text "${DEPLOYMENT}-rtc" "startup-status/failure/signal" "FAILURE"
+}
+trap signal_failure ERR
 
 # confirm fstab mounts are created before continuing
 sudo mount -a
 
-readonly INFLUX_DIR="/mnt/influxdb"
+readonly INFLUX_DIR="/influxdb"
 readonly DATA_ENV_FILE="/etc/default/influxdb"
 readonly HOSTNAME=$(get_hostname)
 readonly DEPLOYMENT=$(get_attribute_value "deployment")
 readonly LICENSE_KEY=$(get_attribute_value "license-key")
-readonly LOG_FILE="/var/log/influxdb-setup-data.log"
-
-log() {
-  while read -r
-  do
-    printf "%(%T)T %s\n" -1 "stdout: $REPLY" | tee -a "${LOG_FILE}"
-  done
-}
-logerr() {
-  while read -r
-  do
-    printf "%(%T)T %s\n" -1 "err: $REPLY" >> "${LOG_FILE}"
-  done
-}
 
 # Create etc/default/influxdb file to over-ride configuration defaults.
 if touch "${DATA_ENV_FILE}"; then
@@ -42,14 +33,14 @@ INFLUXDB_ANTI_ENTROPY_ENABLED="true"
 INFLUXDB_HINTED_HANDOFF_DIR="/influxdb/hh"
 EOF
 else
-  logerr  "cannot create /etc/default/influxdb file. manual configuration required"
+  echo  "cannot create /etc/default/influxdb file. manual configuration required"
   exit 1
 fi
 
 if [ -z "${LICENSE_KEY}" ]; then
   printf "INFLUXDB_ENTERPRISE_MARKETPLACE_ENV=\"gcp\"" >> "${DATA_ENV_FILE}"
 else
-  printf "INFLUXDB_LICENSE_KEY=\"%s\"" "${LICENSE_KEY}" >> "${DATA_ENV_FILE}"
+  printf "INFLUXDB_ENTERPRISE_LICENSE_KEY=\"%s\"" "${LICENSE_KEY}" >> "${DATA_ENV_FILE}"
 fi
 
 # Mount influxdb volume if it is not already mounted
@@ -58,7 +49,7 @@ if [ ! -d "${INFLUX_DIR}" ]; then
 fi
 
 if [ -d "${INFLUX_DIR}/data" ]; then
-  log "InfluxDB Enterprise data node is already configured. exiting"
+  echo "InfluxDB Enterprise data node is already configured. exiting"
   exit
 fi
 
@@ -68,4 +59,6 @@ sudo chown -R influxdb:influxdb "${INFLUX_DIR}"
 sudo systemctl enable influxdb
 sudo systemctl start influxdb
 
-set_rtc_var_text "${DEPLOYMENT}-rtc" "internal-dns/data/${HOSTNAME}" "${NODE_PRIVATE_DNS}"
+set_rtc_var_text "${DEPLOYMENT}-rtc" "nodes/data/${HOSTNAME}" "$(hostname)"
+
+printf "instance setup complete. waiting for meta node leader to initialize cluster"
