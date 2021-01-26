@@ -1,4 +1,4 @@
 *.zip
 *.tar.gz
-packer/key*
+packer/key*.json
 packer/manifest*

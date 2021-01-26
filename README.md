@@ -1,147 +1,98 @@
-# google-deployment-manager-influxdb-enterprise
+# InfluxDB Enterprise on Google Cloud Platform
 
-This repository contains all templates necessary to deploy InfluxDB Enterprise
-virtual machines in Google Cloud Platform (GCP) via Deployment Manager (DM)
-templates.
-
-This repository contains:
-
-- Google Deployment Manager templates in the [`src/` directory](src/) can be
-  used to directly provision an InfluxDB Enterprise cluster.
-- Packer templates in the [`packer/` directory](#build-custom-images) to build
-  custom InfluxDB Enterprise images on Google Cloud Platform.
-
-**Note:** [InfluxDB Enterprise (Official
-Version)](https://console.cloud.google.com/marketplace/details/influxdata-public/influxdb-enterprise-vm?q=influxdb)
-is available through the Google Cloud Marketplace. This repository contains the
-resources used in the marketplace offer for reference and use by customers with
-InfluxDB Enterprise license key purchased outside the GCP Marketplace ([sign up
-for a free two-week trial](https://portal.influxdata.com/users/gcp)).
+Deploy an InfluxDB Enterprise cluster on Google Cloud Platform (GCP) Compute
+Engine virtual machines with Google Deployment Manager (DM) templates.
 
 ## Getting started
 
-Install the [GCP command line tools](https://cloud.google.com/sdk/) or use the
-[GCP cloud shell](https://cloud.google.com/shell/). Set the active configuration
-to the project and zone where you would like the cluster to be deployed.
+There are two ways to use the templates in this repository:
 
-Purchase the [InfluxDB Enterprise (Official
-Version)](https://console.cloud.google.com/marketplace/details/influxdata-public/influxdb-enterprise-vm?q=influxdb)
-offer from Google Cloud Marketplace.
+- Subscribe to the [InfluxDB Enterprise offer on Google Cloud
+  Marketplace](https://console.cloud.google.com/marketplace/details/influxdata-public/influxdb-enterprise-vm?q=influxdb)
+  and follow the instructions to [deploy a cluster](#deploy-with-a-marketplace-subscription). All VMs
+  created through GCP Marketplace are automatically licensed.
+- Obtain an InfluxDB Enterprise license key and follow the instructions to
+  [deploy with a license](#deploy-with-a-license-key).
 
-An InfluxDB Enterprise cluster can be deployed directly from the GCP console UI
-after signing up for the offer. Alternatively, an InfluxDB Enterprise cluster
-can be deployed using the templates in this repository using the following
-command.
+## Deploy with a marketplace subscription
+
+Subscribe to [InfluxDB Enterprise on GCP
+Marketplace](https://console.cloud.google.com/marketplace/details/influxdata-public/influxdb-enterprise-vm?q=influxdb).
+After subscribing, all VMs deployed using InfluxDB Enterprise images from GCP
+Marketplace will automatically include a license billed to the associated GCP
+account.
+
+After subscribing to the offer, a cluster can be deployed directly from the GCP
+console UI.
+
+Alternatively, the templates in this repository can also be used to deploy an
+InfluxDB Enterprise cluster from the command line using [Google Cloud
+Shell](https://cloud.google.com/shell/) or the `gcloud` CLI tool from the
+[Google Cloud SDK](https://cloud.google.com/sdk/), which also required cloning
+this repo.
+
+[![Open in Cloud Shell](http://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?git_repo=https%3A%2F%2Fgithub.com%2Finfluxdata%2Fgoogle-deployment-manager-influxdb-enterprise&page=editor)
+
+Then run the following command to deploy a cluster:
 
 ```sh
+git clone https://github.com/influxdata/google-deployment-manager-influxdb-enterprise.git
+cd google-deployment-manager-influxdb-enterprise
 gcloud deployment-manager deployments create influxdb-enterprise-0 \
     --template src/influxdb-enterprise.jinja \
     --automatic-rollback-on-error
 ```
 
-Once the cluster is deployed successfully, read more in the documentation on
-[how to access and use the
-cluster](https://docs.influxdata.com/enterprise_influxdb/v1.8/install-and-deploy/deploying/google-cloud-platform/#access-the-cluster).
+> **Note:** `gcloud` must have an [active
+> configuration](https://cloud.google.com/sdk/docs/configurations) with a
+> project and compute zone name defined.
 
-## Custom deployment
+Once the cluster has successfully deployed, learn [how to access and manage
+InfluxDB Enterprise on
+GCP](https://docs.influxdata.com/enterprise_influxdb/v1.8/install-and-deploy/deploying/google-cloud-platform/#access-the-cluster).
 
-The configuration in the repository can also be used to deploy an InfluxDB
-Enterprise cluster in Google Cloud Platform outside the GCP Marketplace. This
-requires three steps:
+## Deploy with a license key
 
-1. Acquire an InfluxDB Enterprise license. ([Sign up for a free two-week trial
-   license](https://portal.influxdata.com/users/new))
-2. Build custom InfluxDB Enterprise images in your GCP account.
-3. Deploying the DM templates using the custom images.
+If you have InfluxDB Enterprise license key from
+[InfluxData](https://www.influxdata.com/contact-sales/) or a [trial
+sign-up](https://portal.influxdata.com/users/gcp), the templates in this
+repository can be used to deploy a cluster in Google Cloud Platform (no GCP
+Marketplace subscription required).
 
-### Deploy cluster from DM templates
+### Prerequisites
 
-Install the [GCP command line tools](https://cloud.google.com/sdk/) or use the
-[GCP cloud shell](https://cloud.google.com/shell/).
+- [Packer](https://learn.hashicorp.com/tutorials/packer/getting-started-install).
+- [`gcloud` CLI tool via the Google Cloud SDK](https://cloud.google.com/sdk/docs/quickstart).
 
-Set an environment named `LICENSE_KEY` that contains your InfluxDB Enterprise
-license key. Existing license keys can be found on the [InfluxData licensing
-portal](https://portal.influxdata.com/). Free trials are also available through
-the licensing portal.
+### Build images
 
-Run the following command to deploy an InfluxDB Enterprise cluster with the
-images available through [InfluxDB
-Enterprise](https://console.cloud.google.com/marketplace/details/influxdata-public/influxdb-enterprise-vm?q=influxdb)
-on Google Cloud Marketplace. To generate your own source images, follow the
-[instructions to build images](#building-images).
+You will need to build images for InfluxDB Enterprise in your GCP account using
+[Hashicorp's Packer tool](https://www.packer.io/docs/builders/amazon.html) and
+the templates in the `packer/` directory.
 
-```sh
-export LICENSE_KEY="xxxxxxxx-xxxx-xxxx-xxxxxxxxxxxx"
-
-gcloud deployment-manager deployments create influxdb-enterprise-0 \
-    --template src/influxdb-enterprise.jinja \
-    --properties "licenseKey:'${LICENSE_KEY}',sourceImageProject:'influxdata-public',sourceImageVersion:'1-8-2-ubuntu-1611160220'" \
-    --automatic-rollback-on-error
-```
-
-To check the status of the deployment:
+Run the following commands to generate a Google service account key for Packer and
+then build the images:
 
 ```sh
-gcloud deployment-manager deployments describe influxdb-enterprise-0
-```
-
-### Delete cluster
-
-To delete the cluster, run the following command:
-
-```sh
-gcloud deployment-manager delete influxdb-enterprise-0
-```
-
-## Images
-
-The InfluxDB Enterprise images are based on Debian source images.
-
-### Building images
-
-New images can be build with [Hashicorp's
-Packer](https://www.packer.io/docs/builders/amazon.html) using the templates in
-the `packer/` directory.
-
-#### Prerequisites
-
-Install
-[Packer](https://learn.hashicorp.com/tutorials/packer/getting-started-install).
-
-Before running Packer, you will need to [install the `gcloud` CLI via the Google
-Cloud SDK](https://cloud.google.com/sdk/docs/quickstart).
-
-Run the following commands to create a GCP service account with permissions
-scoped for building InfluxDB Enterprise images in the GCP project you wish to
-use and generate a `key.json` file in the current directory.
-
-```sh
-cd packer
+# Replace "your-gcp-project" with the name of the Google Cloud project
 export GOOGLE_CLOUD_PROJECT="your-gcp-project"
 
-gcloud auth login
-gcloud iam service-accounts create packer --project ${GOOGLE_CLOUD_PROJECT} --description="InfluxDB Enterprise on Marketplace Packer Service Account" --display-name="Marketplace Packer Service Account"
-gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT} --member=serviceAccount:packer@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com --role=roles/compute.instanceAdmin.v1
-gcloud projects add-iam-policy-binding ${GOOGLE_CLOUD_PROJECT} --member=serviceAccount:packer@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com --role=roles/iam.serviceAccountUser
-gcloud projects get-iam-policy ${GOOGLE_CLOUD_PROJECT} --flatten="bindings[].members" --format="value(bindings.members[])"
-gcloud iam service-accounts keys create key.json --iam-account packer@${GOOGLE_CLOUD_PROJECT}.iam.gserviceaccount.com
-```
+# File where the Google Service Account key will be stored
+export GOOGLE_SERVICE_ACCOUNT_KEY="key.json"
 
-#### Run Packer
-
-Finally, run Packer to build InfluxDB Enterprise images:
-
-```sh
-cd packer
+# Ensure the Google Cloud SDK is authenticated
 gcloud auth login
 
-export GOOGLE_CLOUD_PROJECT="your-gcp-project"
-export GOOGLE_CREDENTIALS=key.json
+# Generate a Google Service Account for Packer with the
+# "compute.instanceAdmin.v1" and "iam.serviceAccountUser" roles
+./packer/generate-google-service-account-key.sh "${GOOGLE_CLOUD_PROJECT}" "${GOOGLE_SERVICE_ACCOUNT_KEY}"
 
-packer build influxdb.json
+# Build images
+packer build packer/influxdb.json
 ```
 
-After Packer completes the build, it will print the names of the images created.
+Once the build is complete, Packer outputs the InfluxDB Enterprise image names
+to the terminal and the `manifest.json` file.
 
 ```txt
 ==> Builds finished. The artifacts of successful builds are:
@@ -152,3 +103,34 @@ After Packer completes the build, it will print the names of the images created.
 The portion of the image name after `influxdb-enterprise-data-` can be used as
 the sourceImageVersion property when deploying the DM templates, e.g.
 `1-8-2-ubuntu-1611160220`.
+
+### Deploy a cluster
+
+Run the following command to deploy an InfluxDB Enterprise cluster with the
+images created by Packer.
+
+```sh
+# Replace "your-gcp-project" with the name of the Google Cloud project
+export GOOGLE_CLOUD_PROJECT="your-gcp-project"
+
+# Set this to your InfluxDB Enterprise license key
+export INFLUXDB_ENTERPRISE_LICENSE_KEY="xxxxxxxx-xxxx-xxxx-xxxxxxxxxxxx"
+
+# Set this to the version string obtained when building the images
+export INFLUXDB_ENTERPRISE_IMAGE_VERSION="1-8-2-ubuntu-xxxxxxxx"
+
+gcloud deployment-manager deployments create influxdb-enterprise-0 \
+    --template src/influxdb-enterprise.jinja \
+    --properties "licenseKey:'${INFLUXDB_ENTERPRISE_LICENSE_KEY}',\
+                  sourceImageProject:'${GOOGLE_CLOUD_PROJECT}',\
+                  sourceImageVersion:'${INFLUXDB_ENTERPRISE_IMAGE_NAME}'" \
+    --automatic-rollback-on-error
+```
+
+### Delete the cluster
+
+To delete the cluster, run the following command:
+
+```sh
+gcloud deployment-manager delete influxdb-enterprise-0
+```
