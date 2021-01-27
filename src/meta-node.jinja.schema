@@ -29,12 +29,14 @@ properties:
       zoneProperty: zone
       gceSubnetwork:
         networkProperty: network
-  metaTargetSize:
+  regionalNetwork:
+    type: boolean
+    default: false
+  targetSize:
     type: integer
     default: 3
     minimum: 3
-    maximum: 7
-  metaMachineType:
+  machineType:
     type: string
     default: n1-standard-1
     x-googleProperty:
@@ -43,21 +45,20 @@ properties:
       gceMachineType:
         minCpu: 1
         minRamGb: 1
-  metaDiskType:
+  influxdbDiskType:
     type: string
     default: pd-ssd
     x-googleProperty:
       type: GCE_DISK_TYPE
       zoneProperty: zone
-  metaDiskSizeGb:
+  influxdbDiskSizeGb:
     type: integer
     default: 10
     minimum: 4
-    maximum: 5000
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
-        diskTypeProperty: metaDiskType
+        diskTypeProperty: influxdbDiskType
   bootDiskType:
     type: string
     default: pd-standard
@@ -68,25 +69,21 @@ properties:
     type: integer
     default: 10
     minimum: 10
-    maximum: 5000
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
         diskTypeProperty: bootDiskType
-  sourceImage:
+  sourceImageName:
     type: string
-    description: The source image used for all VMs.
+    description: The InfluxDB Enterprise source image name used for meta VMs.
+  sourceImageProject:
+    type: string
+    default: influxdata-public
+    description: The project of the InfluxDB Enterprise source image.
   licenseKey:
     type: string
-    default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-    minLength: 36
+    placeholder: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     maxLength: 36
-    pattern: ^[A-Za-z0-9-]{32,36}$
-  productType:
-    type: string
-    description: The product type either byol or billing
-    minLength: 4
-    maxLength: 7
   adminUser:
     type: string
     default: admin

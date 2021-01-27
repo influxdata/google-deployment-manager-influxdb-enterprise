@@ -2,38 +2,38 @@
 {% set waiterTimeout = properties['waiterTimeout'] %}
 
 resources:
-# Runtime Config to store the gloabl IP for meta nodes
+# Runtime Config to store the internal IP for nodes
 - name: {{ deployment }}-rtc
   type: runtimeconfig.v1beta1.config
   properties:
     config: {{ deployment }}-rtc
 
-- name: {{ deployment }}-rtc-cluster-waiter
+- name: {{ deployment }}-rtc-cluster-nodes-waiter
   type: runtimeconfig.v1beta1.waiter
   metadata:
     dependsOn:
       - {{ deployment }}-rtc
   properties:
     parent: $(ref.{{ deployment }}-rtc.name)
-    waiter: {{ deployment }}-rtc-cluster-waiter
+    waiter: {{ deployment }}-rtc-cluster-nodes-waiter
     timeout: {{ waiterTimeout }}s
     success:
       cardinality:
-        path: internal-dns
+        path: nodes
         number: 5
     failure:
       cardinality:
         path: failure
         number: 1
 
-- name: {{ deployment }}-rtc-startup-waiter
+- name: {{ deployment }}-rtc-cluster-created-waiter
   type: runtimeconfig.v1beta1.waiter
   metadata:
     dependsOn:
       - {{ deployment }}-rtc
   properties:
     parent: $(ref.{{ deployment }}-rtc.name)
-    waiter: {{ deployment }}-rtc-startup-waiter
+    waiter: {{ deployment }}-rtc-cluster-created-waiter
     timeout: {{ waiterTimeout }}s
     success:
       cardinality:
@@ -46,5 +46,5 @@ resources:
 
 
 outputs:
-- name: configName
+- name: clusterNodes
   value: $(ref.{{ deployment }}-rtc.name)

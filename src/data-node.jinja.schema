@@ -29,12 +29,14 @@ properties:
       zoneProperty: zone
       gceSubnetwork:
         networkProperty: network
-  dataTargetSize:
+  regionalNetwork:
+    type: boolean
+    default: false
+  targetSize:
     type: integer
     default: 2
     minimum: 2
-    maximum: 20
-  dataMachineType:
+  machineType:
     type: string
     default: n1-standard-8
     x-googleProperty:
@@ -43,16 +45,15 @@ properties:
       gceMachineType:
         minCpu: 2
         minRamGb: 4
-  dataDiskSizeGb:
+  influxdbDiskSizeGb:
     type: integer
     default: 250
     minimum: 50
-    maximum: 5000
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
-        diskTypeProperty: dataDiskType
-  dataDiskType:
+        diskTypeProperty: influxdbDiskType
+  influxdbDiskType:
     type: string
     default: pd-ssd
     x-googleProperty:
@@ -68,25 +69,21 @@ properties:
     type: integer
     default: 10
     minimum: 10
-    maximum: 5000
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
         diskTypeProperty: bootDiskType
-  sourceImage:
+  sourceImageName:
     type: string
-    description: The source image used for all VMs.
+    description: The InfluxDB Enterprise source image name used for data VMs.
+  sourceImageProject:
+    type: string
+    default: influxdata-public
+    description: The project of the InfluxDB Enterprise source image.
   licenseKey:
     type: string
-    default: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-    minLength: 36
+    placeholder: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     maxLength: 36
-    pattern: ^[A-Za-z0-9-]{32,36}$
-  productType:
-    type: string
-    description: The product type either byol or billing
-    minLength: 4
-    maxLength: 7
   startupScripts:
     type: array
     description: The startup script files.

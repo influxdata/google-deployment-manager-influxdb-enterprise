@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -euxo pipefail
+
 # Volume mount operations
 function format_and_mount_disk() {
   local -r disk_name="$1"
@@ -17,7 +19,7 @@ function format_and_mount_disk() {
   local -r disk_path="/dev/disk/by-id/google-${disk_name}"
 
   # Create mount directory.
-  mkdir -p "${mount_dir}"
+  sudo mkdir -p "${mount_dir}"
   chmod 0755 "${mount_dir}"
 
   case "${filesystem}" in
@@ -97,17 +99,17 @@ function filter_rtc_var() {
 
   local -r rtc_name="$1"
   local -r filter="projects/${project_id}/configs/${rtc_name}/variables/$2"
-  local -r full_var_names=$(read_rtc_var "${rtc_name}" "" |
-    python -c 'import json,sys; o=json.load(sys.stdin); print "\n".join([v["name"] for v in o["variables"]]);')
+  # local -r full_var_names=$(read_rtc_var "${rtc_name}" "")
   
-  printf '%b\n' "${full_var_names}" | grep "${filter}" | sed "s|${filter}||" | sort
+  read_rtc_var "${rtc_name}" "" | jq --raw-output '.variables[].name' | grep -oP "${filter}\K(.*)" | sort
+  # printf '%b\n' "${full_var_names}" | jq --raw-output '.variables[].name' | grep -oP "${filter}\K(.*)" | sort
 }
 
 function get_rtc_var_text() {
   local -r rtc_name="$1"
   local -r var_name="$2"
-  read_rtc_var "${rtc_name}" "${var_name}" |
-    python -c 'import json,sys; o=json.load(sys.stdin); print o["text"];'
+  read_rtc_var "${rtc_name}" "${var_name}" | jq '.text'
+    # python -c 'import json,sys; o=json.load(sys.stdin); print o["text"];'
 }
 
 function set_rtc_var_text() {
@@ -168,7 +170,7 @@ function get_current_time_in_sec() {
 function wait_for_rtc_waiter_success() {
   local -r rtc_name="$1"
   local -r waiter_name="$2"
-  local -r timeout_sec="${3:-600}"
+  local -r timeout_sec="${3:-3600}"
 
   local -r timeout_time_sec=$(($(get_current_time_in_sec) + "${timeout_sec}"))
 

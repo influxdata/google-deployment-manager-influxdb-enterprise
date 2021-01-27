@@ -1,45 +1,37 @@
-metadataVersion: v1
-
 description:
-  title: InfluxDB Enterprise (BYOL)
-  version: '1.8'
-  url: https://www.influxdata.com
+  title: InfluxDB Enterprise
+  version: '1.8.2'
+  url: https://www.influxdata.com/products/influxdb-enterprise/
   author:
     title: InfluxData
-  icon: '@media/logo-icon.png'
-  logo: '@media/logo-medium.png'
-  tagline: 'The platform to collect, store, and use metric and event data.'
-  descriptionHtml: 'InfluxDB Enterprise provides a highly available and scalable clustered version of the popular InfluxDB open source time series database.\nThis solution provides InfluxDB Enterprise licensing billed through GCP Marketplace.'
-  eulaUrl: https://portal.influxdata.com/users/gcp
+  eulaUrl: https://www.influxdata.com/legal/slsa/
   documentations:
   - title: Getting Started on GCP Marketplace
-    url: https://docs.influxdata.com/enterprise_influxdb/v1.6/other_installation/google_marketplace/
+    url: https://docs.influxdata.com/enterprise_influxdb/latest/install-and-deploy/deploying/google-cloud-platform/
     destinations:
-    - DESTINATION_SOLUTION_DETAILS
     - DESTINATION_CONFIGURATION
     - DESTINATION_POST_DEPLOY
+    - DESTINATION_SOLUTION_CALL_TO_ACTION
   softwareGroups:
   - type: SOFTWARE_GROUP_OS
     software:
-    - title: Ubuntu
-      version: '18'
+    - title: Debian
+      version: 10
   - software:
     - title: InfluxDB Enterprise
-      version: '1.8.0-c1.8.0'
+      version: 1.8.2
+  - software:
+    - title: Telegraf
+      version: 1.17.0
   support:
   - title: Support
-    descriptionHtml: 'InfluxData provides worldwide, best-in-class support for all InfluxDB Enterprise clusters.'
-    url: https://support.influxdb.com/hc/en-us
-
+    descriptionHtml: 'InfluxData provides worldwide, best-in-class support. InfluxDB Enterprise clusters purchased through Google Cloud Marketplace are entitled to the Gold support plan (https://www.influxdata.com/legal/support-policy/). Please contact sales for other support options (https://www.influxdata.com/contact-sales/).'
+    url: https://support.influxdata.com/s/
 
 input:
   properties:
-    - name: licenseKey
-      title: InfluxDB Enterprise license key
-      subtext: A license key is required to deploy this solution. Visit <a href='https://portal.influxdata.com/users/gcp'>this link</a> to sign up for a free trial.
-      placeholder: E.g. a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx
     - name: adminUser
-      title: InfluxDB Enterprise admin username
+      title: InfluxDB Enterprise initial username
       placeholder: admin
     - name: zone
       title: Zone
@@ -53,7 +45,7 @@ input:
 
     - name: dataTargetSize
       title: Data node instance count
-      subtext: The InfluxDB Enterprise trial license is typically only valid for two data nodes.
+      subtext: Two data nodes are recommended as an initial starting point.
       section: DATA_GROUP
     - name: dataMachineType
       title: Data node machine type
@@ -118,9 +110,11 @@ runtime:
         value: '{{ properties().zone }}'
   suggestedActions:
     - heading: Read the getting started guide
-      description: The getting started guide and other useful information can be found in the <a href="https://cloud.google.com/compute/docs/networking">InfluxDB Enterprise documentation</a>.
+      description: The getting started guide and other useful information can be found in the <a href="https://docs.influxdata.com/enterprise_influxdb/latest/install-and-deploy/deploying/google-cloud-platform/">InfluxDB Enterprise documentation</a>.
+    - heading: Connect to InfluxDB Enterprise cluster
+      description: The cluster resides in an internal network and the IP address is only reachable from within the GCP network/subnetwork it was provisioned in.
     - heading: Change the temporary password
       description: For additional security, it is recommended that you change the password by running the following InfluxQL command.
       snippet: SET PASSWORD FOR "{{ properties().adminUser }}" = 'my-new-password'
-    - heading: A note on accessing the cluster
-      description: The IP address is only reachable from within the GCP network so the cluster can only be reached from within the GCP network/subnetwork it was provisioned in.
+
+metadataVersion: v1

@@ -1,23 +1,23 @@
 imports:
-  - path: meta_tier.jinja
-  - path: data_tier.jinja
+  - path: password.py
+  - path: meta-node.jinja
+  - path: meta-node.jinja.schema
+  - path: data-node.jinja
+  - path: data-node.jinja.schema
+  - path: runtime-config.jinja
+  - path: runtime-config.jinja.schema
+  - path: network.jinja
+  - path: network.jinja.schema
+  - path: setup-common.sh
+  - path: setup-meta.sh
+  - path: setup-data.sh
 
 info:
   version: '1.0'
-  title: InfluxDB Enterprise BYOL Template
+  title: InfluxDB Enterprise Template
 
 required:
   - zone
-  - network
-  - meta_instanceCount
-  - meta_machineType
-  - meta_bootDiskType
-  - meta_bootDiskSizeGb
-  - data_instanceCount
-  - data_machineType
-  - data_bootDiskType
-  - data_bootDiskSizeGb
-  - input_LICENSE_KEY
 
 properties:
   zone:
@@ -37,94 +37,86 @@ properties:
       zoneProperty: zone
       gceSubnetwork:
         networkProperty: network
-  meta_instanceCount:
+  metaTargetSize:
     type: integer
     default: 3
-  meta_machineType:
+    minimum: 3
+  metaMachineType:
     type: string
-    default: f1-micro
+    default: n1-standard-1
     x-googleProperty:
       type: GCE_MACHINE_TYPE
       zoneProperty: zone
-  meta_externalIP:
-    type: string
-    enum:
-      - Ephemeral
-      - None
-    default: Ephemeral
-  meta_bootDiskType:
-    type: string
-    default: pd-standard
-    x-googleProperty:
-      type: GCE_DISK_TYPE
-      zoneProperty: zone
-  meta_bootDiskSizeGb:
-    type: integer
-    default: 10
-    minimum: 10
-    maximum: 10000
-    x-googleProperty:
-      type: GCE_DISK_SIZE
-      gceDiskSize:
-        diskTypeProperty: meta_bootDiskType
-  data_instanceCount:
-    type: integer
-    default: 2
-  data_machineType:
-    type: string
-    default: f1-micro
-    x-googleProperty:
-      type: GCE_MACHINE_TYPE
-      zoneProperty: zone
-  data_externalIP:
-    type: string
-    enum:
-      - Ephemeral
-      - None
-    default: Ephemeral
-  data_bootDiskType:
-    type: string
-    default: pd-standard
-    x-googleProperty:
-      type: GCE_DISK_TYPE
-      zoneProperty: zone
-  data_bootDiskSizeGb:
-    type: integer
-    default: 10
-    minimum: 10
-    maximum: 10000
-    x-googleProperty:
-      type: GCE_DISK_SIZE
-      gceDiskSize:
-        diskTypeProperty: data_bootDiskType
-  data_disk1_type:
+      gceMachineType:
+        minCpu: 1
+        minRamGb: 1
+  metaDiskType:
     type: string
     default: pd-ssd
     x-googleProperty:
       type: GCE_DISK_TYPE
       zoneProperty: zone
-  data_disk1_sizeGb:
+  metaDiskSizeGb:
     type: integer
-    default: 250
-    minimum: 20
-    maximum: 10000
+    default: 10
+    minimum: 10
     x-googleProperty:
       type: GCE_DISK_SIZE
       gceDiskSize:
-        diskTypeProperty: data_disk1_type
-  data_enableTcp8086:
-    type: boolean
-    default: True
-  data_tcp8086SourceRanges:
+        diskTypeProperty: metaDiskType
+  dataTargetSize:
+    type: integer
+    default: 2
+    minimum: 2
+  dataMachineType:
     type: string
-  input_LICENSE_KEY:
+    default: n1-standard-4
+    x-googleProperty:
+      type: GCE_MACHINE_TYPE
+      zoneProperty: zone
+      gceMachineType:
+        minCpu: 2
+        minRamGb: 4
+  dataDiskType:
     type: string
-    default: a1b2c3d4-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    default: pd-ssd
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  dataDiskSizeGb:
+    type: integer
+    default: 250
+    minimum: 50
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: dataDiskType
+  bootDiskType:
+    type: string
+    default: pd-standard
+    x-googleProperty:
+      type: GCE_DISK_TYPE
+      zoneProperty: zone
+  bootDiskSizeGb:
+    type: integer
+    default: 10
+    minimum: 10
+    x-googleProperty:
+      type: GCE_DISK_SIZE
+      gceDiskSize:
+        diskTypeProperty: bootDiskType
+  adminUser:
+    type: string
+    default: admin
 
 outputs:
   deployment:
     type: string
   project:
     type: string
-  password0:
+  adminUser:
+    type: string
+  adminPassword:
+    type: string
+  connectionIP:
     type: string

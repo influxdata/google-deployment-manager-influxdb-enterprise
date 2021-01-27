@@ -2,16 +2,16 @@
 
 set -euxo pipefail
 
-rm -f influxdb-enterprise-billing.zip
+rm -f influxdb-enterprise.zip
 tmp="$(mktemp -d -t influxdb-enterprise-XXXXXX)/"
 cwd=$PWD
 
-cp ./billing/influxdb-enterprise.jinja $tmp
-cp ./billing/influxdb-enterprise.jinja.schema $tmp
-cp ./billing/influxdb-enterprise.jinja.display $tmp
-cp ./billing/c2d_deployment_configuration.json $tmp
-cp ./billing/test_config.yaml $tmp
-cp -r resources $tmp
+cp ./src/influxdb-enterprise.jinja $tmp
+cp ./src/influxdb-enterprise.jinja.schema $tmp
+cp ./src/influxdb-enterprise.jinja.display $tmp
+cp ./src/c2d_deployment_configuration.json $tmp
+cp ./src/test_config.yaml $tmp
+# cp -r resources $tmp
 
 cp ../src/data-node.jinja $tmp
 cp ../src/data-node.jinja.schema $tmp
